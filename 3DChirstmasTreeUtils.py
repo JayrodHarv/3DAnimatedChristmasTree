@@ -8,6 +8,8 @@ import cv2
 # Usefull Constants
 NUM_LIGHTS = 550
 
+TREE_COORDS_FILENAME = "tree_d_coords.txt"
+
 good_colors = [
 	(127,0,0),     # Red
 	(0,127,0),     # Blue
@@ -228,5 +230,8 @@ def main():
     print_menu()
     userInput = input("Enter function you would like to perform: ")
     # if (userInput == "1"):
+
+    if (userInput == "2"):
+        show3DCoords(TREE_COORDS_FILENAME)
 
 main()
