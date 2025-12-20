@@ -55,6 +55,25 @@ def read_in_coords(coordsFileName):
 #             IMAGE PROCESSING            #
 # --------------------------------------- #
 
+# All images are jpg's and stored in the following file structure:
+# - *root folder*
+#   - Front_Facing
+#       - (1).jpg
+#       - (2).jpg
+#       - ...
+#   - Right_Facing
+#       - images...
+#   - Back_Facing
+#       - images
+#   - Left_Facing
+#       - images
+# Note: I used a AutoHotKey macro to take all the pictures (~2000 total)
+#       It switches between the camera app and my remote terminal into the Raspberry pi 
+#       which runs a script I wrote to increment which light is on when enter is pressed.
+# Another Note (Arguably more important than the last): In order to extrapolate 3D coordinates from the tree,
+#       you need to take a picture of each light and do so from 4 different directions by rotating the tree 90 degrees 4 times.
+#       I seperated those images into different folders to keep them straight
+
 def load_image(light_num, folderPath):
     # Load the image
     return cv2.imread(f'{folderPath}/({light_num}).jpg')
@@ -106,22 +125,22 @@ def get_upright_coord(coord):
     # y coordinate needs fliped (Image is 1920x1080)
     return [coord[0], 1080 - coord[1]]
 
-def generateCoordinatesFromImages(numImages, folderPath):
+def generate_coords_from_images(folderPath, writeToFile=False):
     tempstr = ""
-    for i in range(1, numImages + 1):
-        coords = get_brightest_point(i, folderPath)
-        # DO NOT FLIP COORDS MORON
-        # Flip y axis so that tree is upright
+    coords = []
+    for i in range(1, NUM_LIGHTS + 1):
+        coord = get_brightest_point(i, folderPath)
+        coords.append(coord)
         # coords = get_upright_coord(coords)
-        tempstr += f"{coords}\n"
-    # write coordinates to text file seperated by commas
-    with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
-        file.write(tempstr)
+        if writeToFile:
+            tempstr += f"{coord}\n"
+    if writeToFile:
+        # write coordinates to text file seperated by commas
+        with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
+            file.write(tempstr)
+    return coords
 
-# Format:
-# [[(fx1,fy1), (rx1,ry1), (bx1,by1), (lx1,ly1)], [light2], [light3], ...]
-# fx = Front x value, fy = Front y value, b = Back, r = Right, l = Left
-def packageDirectionalCoordinateListsTogether():
+def generate_3D_coords_from_images(folderPath):
     # Read in coordinates
     frontCoords = read_in_coords("3D Tree Coords/Front_Facing_Coords.txt")
     rightCoords = read_in_coords("3D Tree Coords/Right_Facing_Coords.txt")
@@ -168,7 +187,7 @@ def extract_xyz_from_csv(path):
 def show3DCoords(coordsFileName):
     """Takes in a file name and reads in the coords from the file and displays them by plotting the coords on a 3D graph
     """
-    coords = np.array(readInCoords(coordsFileName))
+    coords = np.array(read_in_coords(coordsFileName))
 
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -196,4 +215,18 @@ def show3DCoords(coordsFileName):
     plt.show()
 
 # Exampe Usage:
-show3DCoords("tree_d_coords.txt")
+# show3DCoords("tree_d_coords.txt")
+
+def print_menu():
+    print("3D Christmas Tree Main Menu:")
+    print("(1) - Scan Tree")
+    print("(2) - Graph 3D Coordinates of Tree")
+    print("(3) - Generate 3D Coordinates From Images")
+
+def main():
+    # command line interface to run certain functions
+    print_menu()
+    userInput = input("Enter function you would like to perform: ")
+    # if (userInput == "1"):
+
+main()
