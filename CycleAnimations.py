@@ -2,7 +2,7 @@ import time
 import random
 import numpy as np
 import board, neopixel
-import TreeUtils
+import my_utils
 
 from animations import ANIMATIONS
 
@@ -26,7 +26,7 @@ pixels = neopixel.NeoPixel(
 # ===================================================
 # LOAD COORDINATES
 # ===================================================
-coords = TreeUtils.read_in_coords(COORDS_FILE)
+coords = my_utils.read_in_coords(COORDS_FILE)
 
 # ===================================================
 # SCHEDULER LOOP
