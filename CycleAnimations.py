@@ -41,7 +41,7 @@ try:
         anim = random.choice(ANIMATIONS)
         duration = random.randint(MIN_DURATION * 3600, MAX_DURATION * 3600)
 
-        print(f"Playing {anim.__name__} for {duration} minutes")
+        print(f"Playing {anim.__name__} for {duration // 3600} minutes")
         anim(coords, pixels, duration)
 
         # small blackout between animations
