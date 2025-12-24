@@ -39,21 +39,20 @@ def make_letter_image(letter: str):
     draw.text(((IMG_WIDTH - w) / 2, (IMG_HEIGHT - h) / 2), letter, fill=255, font=font)
     return np.array(img) / 255.0
 
-letters = [make_letter_image(ch) for ch in TEXT]
-
 # ===================================================
 # MAIN LOOP
 # ===================================================
-print("One-letter-at-a-time rotating billboard (Z = up)...")
-frame_delay = 1.0 / FPS
-angle = 0.0
-letter_index = 0
-
 def run(coords, pixels, duration):
     start_time = time.time()
     NUM_LEDS = len(coords)
 
     coords -= np.mean(coords, axis=0)
+
+    frame_delay = 1.0 / FPS
+    angle = 0.0
+    letter_index = 0
+
+    letters = [make_letter_image(ch) for ch in TEXT]
 
     # ===================================================
     # NORMALIZE GEOMETRY
