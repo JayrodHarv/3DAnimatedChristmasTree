@@ -48,7 +48,6 @@ try:
         # small blackout between animations
         pixels.fill((0,0,0))
         pixels.show()
-        time.sleep(2)
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))
