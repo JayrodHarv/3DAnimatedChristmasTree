@@ -1,18 +1,6 @@
 import time
 import numpy as np
-import board
-import neopixel
-import my_utils
 
-# ===========================
-# USER CONFIGURATION
-# ===========================
-
-# NeoPixel setup
-NUM_LEDS = 550        # <-- change to match your LED count
-PIXEL_PIN = board.D18 # GPIO pin (must support PWM!)
-ORDER = neopixel.GRB  # Most NeoPixels are GRB
-BRIGHTNESS = 0.5
 
 # Plane animation parameters
 NUM_PLANES = 2
@@ -24,37 +12,30 @@ FPS = 60
 GOLD = np.array([0, 255, 255], dtype=float)
 DARK = np.array([0, 0, 0], dtype=float)
 
-# ===========================
-# INITIALIZATION
-# ===========================
 
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN, NUM_LEDS, brightness=BRIGHTNESS, auto_write=False, pixel_order=ORDER
-)
+def run(coords, pixels, duration):
+    start_time = time.time()
+    NUM_LEDS = len(coords)
 
-# Load LED coordinates (assuming LightID,X,Y,Z)
-coords = np.asarray(my_utils.read_in_coords("tree_d_coords.txt"))
-coords -= np.mean(coords, axis=0)  # center tree
+    coords -= np.mean(coords, axis=0)  # center tree
 
-extent = np.max(np.ptp(coords, axis=0)) / 2
+    extent = np.max(np.ptp(coords, axis=0)) / 2
 
-# Generate random planes
-rng = np.random.default_rng()
-normals = rng.normal(size=(NUM_PLANES, 3))
-normals /= np.linalg.norm(normals, axis=1)[:, None]
-speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
-offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
+    # Generate random planes
+    rng = np.random.default_rng()
+    normals = rng.normal(size=(NUM_PLANES, 3))
+    normals /= np.linalg.norm(normals, axis=1)[:, None]
+    speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
+    offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
 
-half_thick = THICKNESS / 2.0
-frame_delay = 1.0 / FPS
+    half_thick = THICKNESS / 2.0
+    frame_delay = 1.0 / FPS
 
-print("Starting Minecraft Enchantment Glint animation... Press Ctrl+C to stop.")
-
-# ===========================
-# MAIN ANIMATION LOOP
-# ===========================
-try:
-    while True:
+    # ===========================
+    # MAIN ANIMATION LOOP
+    # ===========================
+    
+    while time.time() - start_time < duration:
         # Advance plane offsets
         offsets += speeds
         offsets = np.where(offsets > extent, -extent, offsets)
@@ -76,8 +57,3 @@ try:
         pixels.show()
 
         time.sleep(frame_delay)
-
-except KeyboardInterrupt:
-    print("\nAnimation stopped. Clearing LEDs...")
-    pixels.fill((0, 0, 0))
-    pixels.show()

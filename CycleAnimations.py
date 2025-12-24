@@ -4,6 +4,8 @@ import numpy as np
 import board, neopixel
 import TreeUtils
 
+from animations import ANIMATIONS
+
 # ===================================================
 # LED SETUP
 # ===================================================
@@ -27,64 +29,19 @@ pixels = neopixel.NeoPixel(
 coords = TreeUtils.read_in_coords(COORDS_FILE)
 
 # ===================================================
-# IMPORT / DEFINE ANIMATIONS
-# ===================================================
-def random_direction_scan():
-    return
-
-def breathing_tree():
-    return
-
-def swirling_candy_cane():
-    return
-
-def rainbow_swirl():
-    return
-
-def scrolling_text():
-    return
-
-def fire():
-    return
-
-def vertical_scan():
-    return
-
-def xmaslights_spin():
-    return
-
-def enchantment_glint():
-    return
-
-# ===================================================
-# ANIMATION REGISTRY
-# ===================================================
-ANIMATIONS = [
-    random_direction_scan,
-    breathing_tree,
-    swirling_candy_cane,
-    rainbow_swirl,
-    scrolling_text,
-    fire,
-    vertical_scan,
-    xmaslights_spin,
-    enchantment_glint
-]
-
-# ===================================================
 # SCHEDULER LOOP
 # ===================================================
-MIN_DURATION = 60      # seconds
-MAX_DURATION = 180     # seconds
+MIN_DURATION = 1      # 1 Minute
+MAX_DURATION = 3     # 3 Minutes
 
-print("🎄 Tree animation scheduler running...")
+print("Tree animation scheduler running...")
 
 try:
     while True:
         anim = random.choice(ANIMATIONS)
-        duration = random.randint(MIN_DURATION, MAX_DURATION)
+        duration = random.randint(MIN_DURATION * 3600, MAX_DURATION * 3600)
 
-        print(f"▶ Playing {anim.__name__} for {duration}s")
+        print(f"Playing {anim.__name__} for {duration} minutes")
         anim(pixels, coords, duration)
 
         # small blackout between animations

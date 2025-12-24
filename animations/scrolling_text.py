@@ -1,16 +1,7 @@
 import time
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-import board, neopixel
 import my_utils
-
-# ===================================================
-# USER SETTINGS
-# ===================================================
-NUM_LEDS = 550
-PIXEL_PIN = board.D18
-ORDER = neopixel.RGB
-BRIGHTNESS = 0.7
 
 TEXT = "MERRYCHRISTMAS!"
 FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -38,17 +29,6 @@ LETTER_COLORS = np.array([
 BG_COLOR = np.array([0, 0, 0], dtype=float)
 
 # ===================================================
-# INIT NEOPIXELS
-# ===================================================
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN, NUM_LEDS, brightness=BRIGHTNESS, auto_write=False, pixel_order=ORDER
-)
-
-# Load LED coordinates
-coords = my_utils.read_in_coords("tree_d_coords.txt")
-coords -= np.mean(coords, axis=0)
-
-# ===================================================
 # PREPARE LETTER IMAGES
 # ===================================================
 def make_letter_image(letter: str):
@@ -62,16 +42,6 @@ def make_letter_image(letter: str):
 letters = [make_letter_image(ch) for ch in TEXT]
 
 # ===================================================
-# NORMALIZE GEOMETRY
-# ===================================================
-z_vals = coords[:, 2]
-z_min, z_max = np.min(z_vals), np.max(z_vals)
-z_norm = (z_vals - z_min) / (z_max - z_min)
-radius = np.max(np.linalg.norm(coords[:, :2], axis=1))
-angles = np.arctan2(coords[:, 1], coords[:, 0])  # radians around Z
-angles = (angles + np.pi) % (2 * np.pi)
-
-# ===================================================
 # MAIN LOOP
 # ===================================================
 print("One-letter-at-a-time rotating billboard (Z = up)...")
@@ -79,8 +49,24 @@ frame_delay = 1.0 / FPS
 angle = 0.0
 letter_index = 0
 
-try:
-    while True:
+def run(coords, pixels, duration):
+    start_time = time.time()
+    NUM_LEDS = len(coords)
+
+    coords -= np.mean(coords, axis=0)
+
+    # ===================================================
+    # NORMALIZE GEOMETRY
+    # ===================================================
+    z_vals = coords[:, 2]
+    z_min, z_max = np.min(z_vals), np.max(z_vals)
+    z_norm = (z_vals - z_min) / (z_max - z_min)
+    radius = np.max(np.linalg.norm(coords[:, :2], axis=1))
+    angles = np.arctan2(coords[:, 1], coords[:, 0])  # radians around Z
+    angles = (angles + np.pi) % (2 * np.pi)
+
+
+    while time.time() - start_time < duration:
         img = letters[letter_index]
         color = LETTER_COLORS[letter_index % len(LETTER_COLORS)]
 
@@ -123,8 +109,3 @@ try:
             time.sleep(PAUSE_BETWEEN_LETTERS)
 
         time.sleep(frame_delay)
-
-except KeyboardInterrupt:
-    pixels.fill((0, 0, 0))
-    pixels.show()
-    print("\nStopped.")

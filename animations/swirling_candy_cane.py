@@ -1,16 +1,5 @@
 import time
 import numpy as np
-import board
-import neopixel
-import my_utils
-
-# =========================================================
-# USER CONFIGURATION
-# =========================================================
-
-NUM_LEDS = 550                    # match your tree
-PIXEL_PIN = board.D18             # GPIO pin for NeoPixels
-ORDER = neopixel.RGB              # color order for your LEDs
 
 FPS = 60
 SPIN_SPEED = 0.5     # radians per frame
@@ -20,33 +9,27 @@ SPIRAL_TWIST = 4   # how tightly the spiral wraps around trunk
 COLOR_RED   = np.array([127, 0, 0], dtype=float)
 COLOR_WHITE = np.array([127, 127, 127], dtype=float)
 
-# =========================================================
-# INITIALIZATION
-# =========================================================
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN, NUM_LEDS, auto_write=False, pixel_order=ORDER
-)
+def run(coords, pixels, duration):
+    start_time = time.time()
+    NUM_LEDS = len(coords)
 
-# Load LED coordinates
-coords = np.asarray(my_utils.read_in_coords("tree_d_coords.txt"))
-# Center and normalize
-coords -= np.mean(coords, axis=0)
-max_height = np.max(coords[:, 2]) - np.min(coords[:, 2])
-radius = np.max(np.linalg.norm(coords[:, [0,1]], axis=1))
+    # Center and normalize
+    coords -= np.mean(coords, axis=0)
+    max_height = np.max(coords[:, 2]) - np.min(coords[:, 2])
+    radius = np.max(np.linalg.norm(coords[:, [0,1]], axis=1))
 
-# Compute polar coordinates around Y-axis (treat Y as vertical)
-angles = np.arctan2(coords[:, 1], coords[:, 0])
-heights = (coords[:, 2] - np.min(coords[:, 2])) / max_height  # 0–1 normalized
+    # Compute polar coordinates around Y-axis (treat Y as vertical)
+    angles = np.arctan2(coords[:, 1], coords[:, 0])
+    heights = (coords[:, 2] - np.min(coords[:, 2])) / max_height  # 0–1 normalized
 
-# =========================================================
-# ANIMATION LOOP
-# =========================================================
-print("Starting candy-cane swirl... Press Ctrl+C to stop.")
-frame_delay = 1.0 / FPS
-theta = 0.0
+    # =========================================================
+    # ANIMATION LOOP
+    # =========================================================
+    
+    frame_delay = 1.0 / FPS
+    theta = 0.0
 
-try:
-    while True:
+    while time.time() - start_time < duration:
         # For each LED, compute color from its polar angle + height
         phase = angles + heights * 2 * np.pi * SPIRAL_TWIST + theta
         # stripe pattern alternating every STRIPE_WIDTH radians
@@ -63,8 +46,3 @@ try:
         # spin
         theta += SPIN_SPEED
         time.sleep(frame_delay)
-
-except KeyboardInterrupt:
-    print("\nStopping animation, clearing LEDs...")
-    pixels.fill((0, 0, 0))
-    pixels.show()

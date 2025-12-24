@@ -1,17 +1,7 @@
 import time
 import numpy as np
-import board, neopixel
 import colorsys
-import math
-import my_utils
 
-# ===================================================
-# USER SETTINGS
-# ===================================================
-NUM_LEDS = 550
-PIXEL_PIN = board.D18
-ORDER = neopixel.RGB
-BRIGHTNESS = 0.5
 FPS = 60
 
 # swirl parameters
@@ -21,45 +11,36 @@ Z_SCALE = 3           # how much z affects color swirl tightness
 SATURATION = 1.0        # 0–1 color saturation
 VALUE = 1.0             # 0–1 brightness
 
-# ===================================================
-# INIT NEOPIXELS
-# ===================================================
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN, NUM_LEDS, brightness=BRIGHTNESS, auto_write=False, pixel_order=ORDER
-)
 
-# ===================================================
-# LOAD COORDINATES
-# ===================================================
-coords = my_utils.read_in_coords("tree_d_coords.txt")
-coords -= np.mean(coords, axis=0)  # center tree
+def run(coords, pixels, duration):
+    NUM_LEDS = len(coords)
 
-x, y, z = coords[:, 0], coords[:, 1], coords[:, 2]
+    coords -= np.mean(coords, axis=0)  # center tree
 
-# Normalize vertical axis (z = height)
-z_min, z_max = z.min(), z.max()
-z_norm = (z - z_min) / (z_max - z_min)
+    x, y, z = coords[:, 0], coords[:, 1], coords[:, 2]
 
-# Compute angle around trunk for each LED
-theta = np.arctan2(y, x)
+    # Normalize vertical axis (z = height)
+    z_min, z_max = z.min(), z.max()
+    z_norm = (z - z_min) / (z_max - z_min)
 
-# ===================================================
-# HELPER: HSV to RGB (0–255)
-# ===================================================
-def hsv_to_rgb(h, s, v):
-    r, g, b = colorsys.hsv_to_rgb(h, s, v)
-    return int(r * 255), int(g * 255), int(b * 255)
+    # Compute angle around trunk for each LED
+    theta = np.arctan2(y, x)
 
-# ===================================================
-# ANIMATION LOOP
-# ===================================================
-print("Rainbow Candy Cane Swirl Animation")
+    # ===================================================
+    # HELPER: HSV to RGB (0–255)
+    # ===================================================
+    def hsv_to_rgb(h, s, v):
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        return int(r * 255), int(g * 255), int(b * 255)
 
-frame_delay = 1.0 / FPS
-start_time = time.time()
+    # ===================================================
+    # ANIMATION LOOP
+    # ===================================================
 
-try:
-    while True:
+    frame_delay = 1.0 / FPS
+    start_time = time.time()
+
+    while time.time() - start_time < duration:
         t = time.time() - start_time
 
         # Rotating phase term
@@ -79,8 +60,3 @@ try:
         pixels.show()
 
         time.sleep(frame_delay)
-
-except KeyboardInterrupt:
-    pixels.fill((0,0,0))
-    pixels.show()
-    print("\nAnimation stopped.")
