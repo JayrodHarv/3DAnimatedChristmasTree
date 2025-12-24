@@ -42,7 +42,7 @@ try:
         duration = random.randint(MIN_DURATION * 3600, MAX_DURATION * 3600)
 
         print(f"Playing {anim.__name__} for {duration} minutes")
-        anim(pixels, coords, duration)
+        anim(coords, pixels, duration)
 
         # small blackout between animations
         pixels.fill((0,0,0))
