@@ -4,17 +4,17 @@ import math
 import numpy as np
 
 good_colors = [
-	(127,0,0),     # Red
-	(0,127,0),     # Blue
-	(0,0,127),     # Green
-	(127,127,0),   # Yellow
-	(63,0,127),    # Purple
-	(127,63,0),    # Orange
-	(127,127,127), # White
-	(127,0,127),   # Pink
-	(0,63,127),    # Navy Blue
-	(127,0,63),    # Magenta
-	(0,127,127)    # Lime Green
+	(255,0,0),     # Red
+	(0,255,0),     # Blue
+	(0,0,255),     # Green
+	(255,255,0),   # Yellow
+	(127,0,255),    # Purple
+	(255,127,0),    # Orange
+	(255,255,255), # White
+	(255,0,255),   # Pink
+	(0,127,255),    # Navy Blue
+	(255,0,127),    # Magenta
+	(0,255,255)    # Lime Green
 ]
 
 def get_random_good_color():
