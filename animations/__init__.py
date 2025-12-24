@@ -10,14 +10,38 @@ from .vertical_scan import run as vertical_scan
 # from xmaslights_spin import run as xmaslights_spin
 
 ANIMATIONS = [
-    breathing_tree,
-    enchantment_glint,
+    {
+        "name": "Breathing Tree",
+        "function": breathing_tree
+    },
+    {
+        "name": "Minecraft Enchantment Glint",
+        "function": enchantment_glint
+    },
     # fire,
-    rainbow_swirl,
-    random_direction_scan,
-    scrolling_text,
-    sparkle,
-    swirling_candy_cane,
-    vertical_scan,
+    {
+        "name": "Rainbow Swirl",
+        "function": rainbow_swirl
+    },
+    {
+        "name": "Random Direction Scan",
+        "function": random_direction_scan
+    },
+    {
+        "name": "Scrolling Text",
+        "function": scrolling_text
+    },
+    {
+        "name": "Sparkle",
+        "function": sparkle
+    },
+    {
+        "name": "Swirling Candycane",
+        "function": swirling_candy_cane
+    },
+    {
+        "name": "Vertial Scan",
+        "function": vertical_scan
+    },
     # xmaslights_spin
 ]

@@ -31,8 +31,9 @@ coords = my_utils.read_in_coords(COORDS_FILE)
 # ===================================================
 # SCHEDULER LOOP
 # ===================================================
-MIN_DURATION = 30   
-MAX_DURATION = 120
+MIN_DURATION = 30   # 30 seconds
+MAX_DURATION = 180  # 3 minutes
+
 
 print("Tree animation scheduler running...")
 
@@ -41,8 +42,8 @@ try:
         anim = random.choice(ANIMATIONS)
         duration = random.randint(MIN_DURATION, MAX_DURATION)
 
-        print(f"Playing {anim.__name__} for {duration} minutes")
-        anim(coords, pixels, duration)
+        print(f"Playing {anim['name']} for {duration} seconds")
+        anim['function'](coords, pixels, duration)
 
         # small blackout between animations
         pixels.fill((0,0,0))
