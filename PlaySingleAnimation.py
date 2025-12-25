@@ -33,7 +33,7 @@ try:
         print("Christmas Tree Animations:")
         i = 1
         for anim in ANIMATIONS:
-            print("\t" + i + ") " + anim['name'])
+            print("\t" + str(i) + ") " + anim['name'])
 
         try:
             number = int(input("Please select an animation to play by entering a number..."))
