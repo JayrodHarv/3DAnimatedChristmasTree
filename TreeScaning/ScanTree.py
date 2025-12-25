@@ -1,12 +1,13 @@
 import sys
 import christmas_lights_image_processing
+import coordinate_triangulation
 
 # First, use the autohotkey macro to take pictures of each light from 4 directions differing by 90 degrees.
 
 args = sys.argv[1:] # first argument is the name of script
 
 if (len(args) < 5):
-    print("Usage: python ScanTree.py <number of lights> <path to front facing pictures> <path to right facing pictures> <path to back facing pictures> <path to left facing pictures>")
+    print("Usage: python ScanTree.py <number of lights> <path to front facing pictures> <path to right facing pictures> <path to back facing pictures> <path to left facing pictures> <output file name>")
     sys.exit(1)
 
 NUM_LIGHTS = args[0]
@@ -14,11 +15,21 @@ FRONT_FACING_PATH = args[1]
 RIGHT_FACING_PATH = args[2]
 BACK_FACING_PATH = args[3]
 LEFT_FACING_PATH = args[4]
+OUTPUT_FILENAME = args[5]
 
 try:
     frontFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, FRONT_FACING_PATH)
     rightFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, RIGHT_FACING_PATH)
     backFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, BACK_FACING_PATH)
     leftFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, LEFT_FACING_PATH)
+
+    coords = coordinate_triangulation.triangulate_all(frontFacingCoords, rightFacingCoords, backFacingCoords, leftFacingCoords)
+
+    # TODO run coords through error correcting code
+
+    coordinate_triangulation.save_txt(coords, OUTPUT_FILENAME)
+
+    print(f"Saved {len(coords)} points to {OUTPUT_FILENAME}")
+    
 except:
     print("Something went wrong while processing images")

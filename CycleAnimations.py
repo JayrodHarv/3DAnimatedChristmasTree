@@ -1,6 +1,7 @@
 import random
 import board, neopixel
 import my_utils
+import time
 
 from animations import ANIMATIONS
 
@@ -32,8 +33,7 @@ coords = my_utils.read_in_coords(COORDS_FILE)
 MIN_DURATION = 30   # 30 seconds
 MAX_DURATION = 180  # 3 minutes
 
-
-print("Tree animation scheduler running...")
+print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
     while True:
@@ -46,6 +46,7 @@ try:
         # small blackout between animations
         pixels.fill((0,0,0))
         pixels.show()
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))
