@@ -81,9 +81,9 @@ def run(coords, pixels, duration = None):
         if brightness > 0.95:
             return [max_brightness, max_brightness, int((brightness-0.95)*max_brightness/0.05)]
         elif brightness > 0.85:
-            return [int((brightness-0.85)*max_brightness/0.1), max_brightness, 0]
+            return [max_brightness, int((brightness-0.85)*max_brightness/0.1), 0]
         else:
-            return [0, int(brightness*max_brightness/0.85), 0]
+            return [int(brightness*max_brightness/0.85), 0, 0]
 
     # Get 3D flame colour (unwrap 2D plane from around cone)
     def get_colour_3d(x, z, y):
@@ -102,8 +102,7 @@ def run(coords, pixels, duration = None):
         LED = 0
         while LED < len(coords):
             coord = coords[LED]
-            # Flip from GRB to RGB
-            pixels[LED] = get_colour_3d(coord[1], coord[0], coord[2])
+            pixels[LED] = get_colour_3d(coord[0], coord[1], coord[2])
             LED += 1
 
         # use the show() option as rarely as possible as it takes ages
