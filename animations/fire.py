@@ -33,7 +33,7 @@ def run(coords, pixels, duration = None):
     max_brightness = 50
 
     # how quickly the flames animate
-    speed = 0.1
+    speed = 0.6
 
     # size of negative-flame particles
     radius_sq = 0.1
