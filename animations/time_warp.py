@@ -24,7 +24,7 @@ def run(coords, pixels, duration = None):
 
         for i in range(len(coords)):
             # Time distortion factors
-            height_warp = 0.5 + z_norm[i]           # higher = faster
+            height_warp = 0.3 + z_norm[i]           # higher = faster
             radius_warp = 0.3 + r_norm[i] * 1.2     # outer = faster
 
             # Slow oscillation that modulates time itself
@@ -34,7 +34,7 @@ def run(coords, pixels, duration = None):
             t = elapsed * height_warp * radius_warp * warp_wave
 
             # Color based on warped time
-            hue = (t * 0.08 + z_norm[i]) % 1.0
+            hue = (t * 0.03 + z_norm[i]) % 1.0
             brightness = 0.6 + 0.4 * math.sin(t * 1.5)
 
             r, g, b = colorsys.hsv_to_rgb(hue, 1.0, brightness)
