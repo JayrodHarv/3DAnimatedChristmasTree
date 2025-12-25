@@ -2,7 +2,7 @@
 import time
 import math
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     # This is the code from my 
     
     # If you want to have user changable values, they need to be entered from the command line
@@ -56,7 +56,7 @@ def run(coords, pixels, duration):
     # yes, I just run which run is true
     start_time = time.time()
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         
         time.sleep(slow)
         

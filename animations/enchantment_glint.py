@@ -13,7 +13,7 @@ PURPLE = np.array([255, 0, 255], dtype=float)
 DARK = np.array([0, 0, 0], dtype=float)
 
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
     NUM_LEDS = len(coords)
 
@@ -35,7 +35,7 @@ def run(coords, pixels, duration):
     # MAIN ANIMATION LOOP
     # ===========================
     
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         # Advance plane offsets
         offsets += speeds
         offsets = np.where(offsets > extent, -extent, offsets)

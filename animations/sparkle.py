@@ -1,7 +1,7 @@
 import time
 import random
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
 
     # Keep per-pixel color state (starts black)
@@ -10,7 +10,7 @@ def run(coords, pixels, duration):
     FADE_FACTOR = 0.85      # how fast lights fade
     SPAWN_CHANCE = 0.05     # sparkle probability
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         for i in range(len(pixels)):
 
             # Spawn new sparkle

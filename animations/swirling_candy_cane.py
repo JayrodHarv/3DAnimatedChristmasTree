@@ -9,7 +9,7 @@ SPIRAL_TWIST = 4   # how tightly the spiral wraps around trunk
 COLOR_RED   = np.array([127, 0, 0], dtype=float)
 COLOR_WHITE = np.array([127, 127, 127], dtype=float)
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
     NUM_LEDS = len(coords)
 
@@ -29,7 +29,7 @@ def run(coords, pixels, duration):
     frame_delay = 1.0 / FPS
     theta = 0.0
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         # For each LED, compute color from its polar angle + height
         phase = angles + heights * 2 * np.pi * SPIRAL_TWIST + theta
         # stripe pattern alternating every STRIPE_WIDTH radians

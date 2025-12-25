@@ -5,12 +5,12 @@ min_y, max_y = -50, 50
 
 speed = 1
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
   start_time = time.time()
   num_pixels = len(coords)
 
   # main loop
-  while time.time() - start_time < duration:
+  while duration is None or time.time() - start_time < duration:
     turn_on_min, turn_on_max = -70, -60
     rand_color = my_utils.get_random_good_color()
     

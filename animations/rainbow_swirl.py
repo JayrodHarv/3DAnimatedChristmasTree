@@ -12,7 +12,7 @@ SATURATION = 1.0        # 0–1 color saturation
 VALUE = 1.0             # 0–1 brightness
 
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     NUM_LEDS = len(coords)
 
     coords -= np.mean(coords, axis=0)  # center tree
@@ -40,7 +40,7 @@ def run(coords, pixels, duration):
     frame_delay = 1.0 / FPS
     start_time = time.time()
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         t = time.time() - start_time
 
         # Rotating phase term

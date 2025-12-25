@@ -9,7 +9,7 @@ MIN_SCALE = 0.0       # fully shrunk (0 = invisible)
 MAX_SCALE = 1.0       # fully expanded
 CYCLE_TIME = 6.0      # seconds per shrink + expand cycle
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
     NUM_LEDS = len(coords)
 
@@ -31,7 +31,7 @@ def run(coords, pixels, duration):
     direction = 1.0
     color = np.array([random.randint(0,255), random.randint(0,255), random.randint(0,255)], dtype=float)
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         # compute current scale 0–1 (shrinking and expanding)
         t = (time.time() * (2*np.pi / CYCLE_TIME)) % (2*np.pi)
         # sin wave from 0→1→0 pattern

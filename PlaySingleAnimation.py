@@ -26,26 +26,32 @@ pixels = neopixel.NeoPixel(
 # ===================================================
 coords = my_utils.read_in_coords(COORDS_FILE)
 
-# ===================================================
-# SCHEDULER LOOP
-# ===================================================
-MIN_DURATION = 30   # 30 seconds
-MAX_DURATION = 180  # 3 minutes
-
-
 print("Tree animation scheduler running...")
 
 try:
     while True:
-        anim = random.choice(ANIMATIONS)
-        duration = random.randint(MIN_DURATION, MAX_DURATION)
+        print("Christmas Tree Animations:")
+        i = 1
+        for anim in ANIMATIONS:
+            print("\t" + i + ") " + anim['name'])
 
-        print(f"Playing {anim['name']} for {duration} seconds")
-        anim['function'](coords, pixels, duration)
+        try:
+            number = int(input("Please select an animation to play by entering a number..."))
 
-        # small blackout between animations
-        pixels.fill((0,0,0))
-        pixels.show()
+            if number - 1 < 0 or number - 1 > len(ANIMATIONS):
+                raise ValueError
+            
+            anim = ANIMATIONS[number - 1]
+
+            print(f"Playing {anim['name']}")
+            anim['function'](coords, pixels)
+
+            # small blackout between animations
+            pixels.fill((0,0,0))
+            pixels.show()
+
+        except ValueError:
+            print("You must enter a valid number. Please try again.")
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))

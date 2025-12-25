@@ -42,7 +42,7 @@ def make_letter_image(letter: str):
 # ===================================================
 # MAIN LOOP
 # ===================================================
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
     NUM_LEDS = len(coords)
 
@@ -65,7 +65,7 @@ def run(coords, pixels, duration):
     angles = (angles + np.pi) % (2 * np.pi)
 
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         img = letters[letter_index]
         color = LETTER_COLORS[letter_index % len(LETTER_COLORS)]
 

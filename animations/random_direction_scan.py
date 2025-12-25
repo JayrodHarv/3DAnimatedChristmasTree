@@ -5,12 +5,12 @@ min_y, max_y = -30, 30
 
 speed = 1.5
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
   start_time = time.time()
   num_pixels = len(coords)
 
   # main loop
-  while time.time() - start_time < duration:
+  while duration is None or time.time() - start_time < duration:
 
     # apply random rotation to tree
     rotated_coords = my_utils.randomly_rotate_tree(coords)

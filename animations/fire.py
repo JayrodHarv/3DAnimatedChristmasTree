@@ -9,7 +9,7 @@ import random
 # import scipy
 # import sys
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     # This is the code from my
 
     # NOTE THE LEDS ARE GRB COLOUR (NOT RGB)
@@ -99,7 +99,7 @@ def run(coords, pixels, duration):
     # yes, I just run which run is true
     start_time = time.time()
 
-    while time.time() - start_time < duration:
+    while duration is None or time.time() - start_time < duration:
         LED = 0
         while LED < len(coords):
             coord = coords[LED]
