@@ -83,7 +83,7 @@ def run(coords, pixels, duration = None):
         elif brightness > 0.85:
             return [int((brightness-0.85)*max_brightness/0.1), max_brightness, 0]
         else:
-            return [0, brightness*max_brightness//0.85, 0]
+            return [0, int(brightness*max_brightness/0.85), 0]
 
     # Get 3D flame colour (unwrap 2D plane from around cone)
     def get_colour_3d(x, z, y):
