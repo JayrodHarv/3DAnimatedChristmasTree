@@ -9,7 +9,7 @@ SPEED_RANGE = (0.5, 2)
 FPS = 60
 
 # Colors
-GOLD = np.array([0, 255, 255], dtype=float)
+PURPLE = np.array([255, 0, 255], dtype=float)
 DARK = np.array([0, 0, 0], dtype=float)
 
 
@@ -48,7 +48,7 @@ def run(coords, pixels, duration):
         brightness = np.clip(1.0 - (min_dist / half_thick), 0.0, 1.0)
 
         # Compute color per LED
-        colors = DARK + (GOLD - DARK) * brightness[:, None]
+        colors = DARK + (PURPLE - DARK) * brightness[:, None]
         colors = np.clip(colors, 0, 255).astype(np.uint8)
 
         # Update physical LEDs
