@@ -34,7 +34,7 @@ try:
         i = 1
         for anim in ANIMATIONS:
             print("\t" + str(i) + ") " + anim['name'])
-            i -= 1
+            i += 1
 
         try:
             number = int(input("Please select an animation to play by entering a number..."))
