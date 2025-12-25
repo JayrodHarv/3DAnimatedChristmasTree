@@ -1,34 +1,22 @@
-def xmaslight():
+# Here are the libraries I am currently using:
+import time
+import math
+import my_utils
+
+# You are welcome to add any of these:
+import random
+# import numpy
+# import scipy
+# import sys
+
+def run(coords, pixels, duration):
     # This is the code from my
 
     # NOTE THE LEDS ARE GRB COLOUR (NOT RGB)
 
-    # Here are the libraries I am currently using:
-    import time
-    import board
-    import neopixel
-    import re
-    import math
-    import my_utils
-
-    # You are welcome to add any of these:
-    import random
-    # import numpy
-    # import scipy
-    # import sys
-
     # If you want to have user changable values, they need to be entered from the command line
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
-
-    # IMPORT THE COORDINATES (please don't break this bit)
-
-    coords = my_utils.read_in_coords("tree_d_coords.txt")
-
-    # set up the pixels (AKA 'LEDs')
-    PIXEL_COUNT = len(coords)  # this should be 500
-
-    pixels = neopixel.NeoPixel(board.D18, PIXEL_COUNT, auto_write=False)
 
     # YOU CAN EDIT FROM HERE DOWN
 
@@ -109,8 +97,9 @@ def xmaslight():
             p.step(speed)
 
     # yes, I just run which run is true
-    run = 1
-    while run == 1:
+    start_time = time.time()
+
+    while time.time() - start_time < duration:
         LED = 0
         while LED < len(coords):
             coord = coords[LED]
@@ -123,9 +112,3 @@ def xmaslight():
 
         # now we get ready for the next cycle
         step_particles()
-
-    return 'DONE'
-
-
-# yes, I just put this at the bottom so it auto runs
-xmaslight()

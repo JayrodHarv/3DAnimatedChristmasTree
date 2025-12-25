@@ -8,9 +8,9 @@ def run(coords, pixels, duration):
         for i in range(len(pixels)):
             if random.random() < 0.05:
                 pixels[i] = (
-                    random.randint(100,255),
-                    random.randint(100,255),
-                    random.randint(100,255)
+                    random.randint(0,255),
+                    random.randint(0,255),
+                    random.randint(0,255)
                 )
             else:
                 pixels[i] = (0,0,0)
