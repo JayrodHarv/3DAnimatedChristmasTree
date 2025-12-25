@@ -53,16 +53,13 @@ def get_upright_coord(coord):
     return [coord[0], 1080 - coord[1]]
 
 def generateCoordinatesFromImages(numImages, folderPath):
-    tempstr = ""
+    coords = []
     for i in range(1, numImages + 1):
-        coords = get_brightest_point(i, folderPath)
-        # DO NOT FLIP COORDS MORON
-        # Flip y axis so that tree is upright
-        # coords = get_upright_coord(coords)
-        tempstr += f"{coords}\n"
+        coords.append(get_brightest_point(i, folderPath))
     # write coordinates to text file seperated by commas
-    with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
-        file.write(tempstr)
+    # with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
+    #     file.write(tempstr)
+    return coords
 
 # Format:
 # [[(fx1,fy1), (rx1,ry1), (bx1,by1), (lx1,ly1)], [light2], [light3], ...]
