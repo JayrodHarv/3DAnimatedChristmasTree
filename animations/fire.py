@@ -102,7 +102,8 @@ def run(coords, pixels, duration = None):
         LED = 0
         while LED < len(coords):
             coord = coords[LED]
-            pixels[LED] = get_colour_3d(coord[0], coord[1], coord[2])
+            # Flip from GRB to RGB
+            pixels[LED] = get_colour_3d(coord[1], coord[0], coord[2])
             LED += 1
 
         # use the show() option as rarely as possible as it takes ages
