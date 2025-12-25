@@ -7,6 +7,7 @@ from .scrolling_text import run as scrolling_text
 from .smooth_rgb_spectrum import run as smooth_rgb_spectrum
 from .sparkle import run as sparkle
 from .swirling_candy_cane import run as swirling_candy_cane
+from .time_warp import run as time_warp
 from .vertical_scan import run as vertical_scan
 from .xmaslights_spin import run as xmaslights_spin
 
@@ -46,6 +47,10 @@ ANIMATIONS = [
     {
         "name": "Swirling Candycane",
         "function": swirling_candy_cane
+    },
+    {
+        "name": "Time Warp",
+        "function": time_warp
     },
     {
         "name": "Vertical Scan",
