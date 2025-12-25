@@ -1,4 +1,3 @@
-import random
 import board, neopixel
 import my_utils
 

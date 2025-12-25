@@ -4,6 +4,7 @@ from .fire import run as fire
 from .rainbow_swirl import run as rainbow_swirl
 from .random_direction_scan import run as random_direction_scan
 from .scrolling_text import run as scrolling_text
+from .smooth_rgb_spectrum import run as smooth_rgb_spectrum
 from .sparkle import run as sparkle
 from .swirling_candy_cane import run as swirling_candy_cane
 from .vertical_scan import run as vertical_scan
@@ -33,6 +34,10 @@ ANIMATIONS = [
     {
         "name": "Scrolling Text",
         "function": scrolling_text
+    },
+    {
+        "name": "Smooth RGB Spectrum",
+        "function": smooth_rgb_spectrum
     },
     {
         "name": "Sparkle",
