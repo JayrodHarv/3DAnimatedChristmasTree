@@ -18,7 +18,7 @@ def run(coords, pixels, duration = None):
     turn_on_min, turn_on_max = -50, -30
     rand_color = my_utils.get_random_good_color()
 
-    while turn_on_min < max_y and time.time() - start_time < duration:
+    while duration is None or (turn_on_min < max_y and time.time() - start_time < duration):
       pixels.fill((0,0,0))
 
       turn_on_min += speed
