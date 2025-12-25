@@ -1,7 +1,6 @@
 # Here are the libraries I am currently using:
 import time
 import math
-import my_utils
 
 # You are welcome to add any of these:
 import random
@@ -80,11 +79,11 @@ def run(coords, pixels, duration = None):
         brightness = 1.0 - min(max(result-0.2, 0.0), 1.0)
 
         if brightness > 0.95:
-            return [max_brightness, max_brightness, (brightness-0.95)*max_brightness/0.05]
+            return [max_brightness, max_brightness, int((brightness-0.95)*max_brightness/0.05)]
         elif brightness > 0.85:
-            return [(brightness-0.85)*max_brightness/0.1, max_brightness, 0.0]
+            return [int((brightness-0.85)*max_brightness/0.1), max_brightness, 0]
         else:
-            return [0.0, brightness*max_brightness/0.85, 0.0]
+            return [0, brightness*max_brightness//0.85, 0]
 
     # Get 3D flame colour (unwrap 2D plane from around cone)
     def get_colour_3d(x, z, y):
