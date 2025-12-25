@@ -1,6 +1,4 @@
 import my_utils
-import board
-import neopixel
 import time
 
 min_y, max_y = -50, 50
@@ -23,7 +21,7 @@ def run(coords, pixels, duration):
       turn_on_max += speed
 
       for i in range(num_pixels):
-        if turn_on_min <= coords[i][1] <= turn_on_max:
+        if turn_on_min <= coords[i][2] <= turn_on_max:
           pixels[i] = rand_color
 
       pixels.show()
