@@ -85,32 +85,3 @@ def packageDirectionalCoordinateListsTogether():
     # Write to text file
     with open("All_Direction_Coords.txt", "w") as file:
         file.write(f"{result}")
-
-
-def extract_xyz_from_csv(path):
-    """
-    Reads a CSV with columns:
-    LightID,X,Y,Z,reproj_mean_px,reproj_0_px,reproj_90_px,reproj_180_px,reproj_270_px
-    and returns Nx3 array of [x,y,z].
-    """
-    data = np.loadtxt(path, delimiter=",", skiprows=1)
-    return data[:, 1:4].tolist()
-
-xyz = extract_xyz_from_csv("tree_3d_coordinates.csv")
-# print(xyz)
-result = ""
-for coord in xyz:
-    result += f"{coord}\n"
-with open("tree_d_coords.txt", "w") as file:
-    file.write(f"{result}")
-
-
-# packageDirectionalCoordinateListsTogether()
-
-# get_brightest_point(300, "C:/Users/jared/Pictures/Camera Roll/Left_Facing", True)
-# get_brightest_point(490, "C:/Users/jared/Pictures/Camera Roll/Front_Facing", True)
-
-# generateCoordinatesFromImages(550, "C:/Users/jared/Pictures/Camera Roll/Front_Facing")
-# generateCoordinatesFromImages(550, "C:/Users/jared/Pictures/Camera Roll/Right_Facing")
-# generateCoordinatesFromImages(550, "C:/Users/jared/Pictures/Camera Roll/Back_Facing")
-# generateCoordinatesFromImages(550, "C:/Users/jared/Pictures/Camera Roll/Left_Facing")
