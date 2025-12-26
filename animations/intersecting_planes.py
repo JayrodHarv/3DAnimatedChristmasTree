@@ -1,5 +1,6 @@
 import random
 import time
+import math
 
 # Tree boundaries for bouncing (from your scanned coordinates)
 TREE_X_MIN, TREE_X_MAX = -25, 25
@@ -7,9 +8,9 @@ TREE_Y_MIN, TREE_Y_MAX = -25, 25
 TREE_Z_MIN, TREE_Z_MAX = -50, 50   # z is height
 
 # Plane settings
-NUM_PLANES = 3
+NUM_PLANES = 5
 PLANE_SIZE = 20  # Approximate size of the plane
-SPEED = 1        # Movement speed per frame
+SPEED = 2        # Movement speed per frame
 
 # Time per frame
 FRAME_DELAY = 0.05
@@ -19,16 +20,33 @@ FRAME_DELAY = 0.05
 # -----------------------------
 class Plane:
     def __init__(self):
-        self.x = random.uniform(TREE_X_MIN, TREE_X_MAX)
-        self.y = random.uniform(TREE_Y_MIN, TREE_Y_MAX)
-        self.z = random.uniform(TREE_Z_MIN, TREE_Z_MAX)
-        self.dx = random.uniform(-SPEED, SPEED)
-        self.dy = random.uniform(-SPEED, SPEED)
-        self.dz = random.uniform(-SPEED, SPEED)
         self.color = [random.randint(0, 255) for _ in range(3)]
-    
+        # Spawn on a random edge
+        edge = random.choice(['x', 'y', 'z'])
+        if edge == 'x':
+            self.x = random.choice([TREE_X_MIN, TREE_X_MAX])
+            self.y = random.uniform(TREE_Y_MIN, TREE_Y_MAX)
+            self.z = random.uniform(TREE_Z_MIN, TREE_Z_MAX)
+        elif edge == 'y':
+            self.x = random.uniform(TREE_X_MIN, TREE_X_MAX)
+            self.y = random.choice([TREE_Y_MIN, TREE_Y_MAX])
+            self.z = random.uniform(TREE_Z_MIN, TREE_Z_MAX)
+        else:  # z-edge
+            self.x = random.uniform(TREE_X_MIN, TREE_X_MAX)
+            self.y = random.uniform(TREE_Y_MIN, TREE_Y_MAX)
+            self.z = random.choice([TREE_Z_MIN, TREE_Z_MAX])
+
+        # Random direction pointing into tree
+        self.dx = random.uniform(-1, 1)
+        self.dy = random.uniform(-1, 1)
+        self.dz = random.uniform(-1, 1)
+        # Normalize direction
+        mag = math.sqrt(self.dx**2 + self.dy**2 + self.dz**2)
+        self.dx = (self.dx / mag) * SPEED
+        self.dy = (self.dy / mag) * SPEED
+        self.dz = (self.dz / mag) * SPEED
+
     def move(self):
-        # Update position
         self.x += self.dx
         self.y += self.dy
         self.z += self.dz

@@ -1,11 +1,25 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-from utils import my_utils
+import ast
+# from utils import my_utils
 
 # --- Visualization ---
 
-coords = np.array(my_utils.read_in_coords("tree_d_coords.txt"))
+def read_in_coords(filename):
+    coords = []
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                coords.append(ast.literal_eval(line.strip()))
+    except FileNotFoundError:
+        print("File not found.")
+    except Exception as e:
+        print("An error has occured.")
+
+    return coords
+
+coords = np.array(read_in_coords("tree_d_coords.txt"))
 
 # Load coordinates (if you already have them saved)
 # data = np.array([r[1:] for r in results])  # skip LightID
