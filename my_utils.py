@@ -1,6 +1,5 @@
 import ast
 import random
-import math
 import numpy as np
 
 good_colors = [

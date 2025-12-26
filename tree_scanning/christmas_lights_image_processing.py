@@ -1,6 +1,5 @@
 import cv2
-import numpy as np
-import my_utils
+from .. import my_utils
 
 def load_image(light_num, folderPath):
     # Load the image
