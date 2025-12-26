@@ -1,4 +1,5 @@
 import cv2
+import sys
 from utils import my_utils
 
 def load_image(light_num, folderPath):
@@ -33,8 +34,8 @@ def get_brightest_point(light_num, folderPath, display=False):
     # You can also get the value of the brightest pixel
     brightest_pixel_value = max_val
 
-    print(f"Brightest pixel value: {brightest_pixel_value}")
-    print(f"Brightest pixel coordinates (x, y): {brightest_pixel_coordinates}")
+    # print(f"Brightest pixel value: {brightest_pixel_value}")
+    # print(f"Brightest pixel coordinates (x, y): {brightest_pixel_coordinates}")
 
     if display:
         # (Optional) Draw a circle around the brightest pixel for visualization
@@ -51,10 +52,21 @@ def get_upright_coord(coord):
     # y coordinate needs fliped (Image is 1920x1080)
     return [coord[0], 1080 - coord[1]]
 
-def generateCoordinatesFromImages(numImages, folderPath):
+def generateCoordinatesFromImages(numImages, folderPath, name):
     coords = []
-    for i in range(1, numImages + 1):
-        coords.append(get_brightest_point(i, folderPath))
+    for i in range(0, numImages):
+        coord = get_brightest_point(i + 1, folderPath)
+        coords.append(coord)
+
+        # Progress Bar
+        percent = int((i + 1) / numImages * 100)
+        bar = "#" * (percent // 2) + "-" * (50 - percent // 2)
+
+        sys.stdout.write(f"\rGathering 2D coordinates from {name} images: [{bar}] {percent}%")
+        sys.stdout.flush()
+
+    print(" Done!")
+
     # write coordinates to text file seperated by commas
     # with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
     #     file.write(tempstr)

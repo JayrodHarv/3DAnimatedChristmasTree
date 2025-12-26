@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 # =========================================
 # CONFIGURATION
@@ -87,7 +88,7 @@ def triangulate_point(pixel_sets):
         b += (I - np.outer(d, d)) @ o
 
     point = np.linalg.solve(A, b)
-    return point
+    return point.tolist()
 
 
 # =========================================
@@ -102,8 +103,9 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270):
     assert len(coords_0) == len(coords_90) == len(coords_180) == len(coords_270)
 
     points_3d = []
+    num_leds = len(coords_0)
 
-    for i in range(len(coords_0)):
+    for i in range(num_leds):
         pixels = [
             coords_0[i],
             coords_90[i],
@@ -113,7 +115,16 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270):
         p = triangulate_point(pixels)
         points_3d.append(p)
 
-    return np.array(points_3d)
+        # Progress Bar
+        percent = int((i + 1) / num_leds * 100)
+        bar = "#" * (percent // 2) + "-" * (50 - percent // 2)
+
+        sys.stdout.write(f"\rTriangulating: [{bar}] {percent}%")
+        sys.stdout.flush()
+
+    print(" Done!")
+
+    return points_3d
 
 
 # =========================================
