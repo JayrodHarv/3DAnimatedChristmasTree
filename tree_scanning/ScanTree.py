@@ -4,7 +4,7 @@ import sys
 
 args = sys.argv[1:] # first argument is the name of script
 
-if (len(args) < 2):
+if (len(args) < 1):
     print("Usage: python ScanTree.py <number of lights>")
     sys.exit(1)
 
