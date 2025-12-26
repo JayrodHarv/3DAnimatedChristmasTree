@@ -8,7 +8,10 @@ if (len(args) < 1):
     print("Usage: python ScanTree.py <number of lights>")
     sys.exit(1)
 
-NUM_LIGHTS = args[0]
+try:
+    NUM_LIGHTS = int(args[0])
+except:
+   print("Invalid number of lights. Please try again...")
 
 pixels = neopixel.NeoPixel(board.D18, NUM_LIGHTS, auto_write=False, pixel_order=neopixel.RGB)
 
