@@ -1,6 +1,7 @@
 from .breathing_tree import run as breathing_tree
 from .enchantment_glint import run as enchantment_glint
 from .fire import run as fire
+from .intersecting_planes import run as intersecting_planes
 from .rainbow_swirl import run as rainbow_swirl
 from .random_direction_scan import run as random_direction_scan
 from .random_rgb_all import run as random_rgb_all
@@ -25,6 +26,10 @@ ANIMATIONS = [
     {
         "name": "Fire",
         "function": fire
+    },
+    {
+        "name": "Intersecting Planes",
+        "function": intersecting_planes
     },
     {
         "name": "Rainbow Swirl",
