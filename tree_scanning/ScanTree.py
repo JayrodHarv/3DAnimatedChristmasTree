@@ -23,7 +23,7 @@ def main():
       pixels[i] = (255,255,255)
       pixels.show()
       print(f"showing pixel: {i}")
-      usr_in = input("increment to next pixel? (enter to continue):")
+      usr_in = input("increment to next pixel? (enter to continue, anything else to exit):")
 
       if usr_in != "":
         stop = True
