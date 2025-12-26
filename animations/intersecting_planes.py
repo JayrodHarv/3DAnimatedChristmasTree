@@ -8,7 +8,7 @@ TREE_Z_MIN, TREE_Z_MAX = -50, 50   # z is height
 
 # Plane settings
 NUM_PLANES = 3
-PLANE_SIZE = 100  # Approximate size of the plane
+PLANE_SIZE = 20  # Approximate size of the plane
 SPEED = 1        # Movement speed per frame
 
 # Time per frame
