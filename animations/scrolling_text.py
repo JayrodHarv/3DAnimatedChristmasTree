@@ -1,7 +1,6 @@
 import time
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-import my_utils
 
 TEXT = "MERRYCHRISTMAS!"
 FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
