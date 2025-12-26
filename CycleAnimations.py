@@ -1,6 +1,6 @@
 import random
 import board, neopixel
-import my_utils
+from utils import my_utils
 import time
 
 from animations import ANIMATIONS

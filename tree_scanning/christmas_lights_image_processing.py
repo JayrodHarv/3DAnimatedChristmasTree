@@ -1,5 +1,5 @@
 import cv2
-from .. import my_utils
+from utils import my_utils
 
 def load_image(light_num, folderPath):
     # Load the image

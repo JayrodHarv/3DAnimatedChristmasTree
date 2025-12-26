@@ -1,4 +1,4 @@
-import my_utils
+from utils import my_utils
 import time
 
 min_y, max_y = -30, 30

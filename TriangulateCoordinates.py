@@ -1,6 +1,5 @@
 import sys
-import christmas_lights_image_processing
-import coordinate_triangulation
+from tree_scanning import christmas_lights_image_processing, coordinate_triangulation
 
 # First, use the autohotkey macro to take pictures of each light from 4 directions differing by 90 degrees.
 
@@ -10,7 +9,10 @@ if (len(args) < 5):
     print("Usage: python ScanTree.py <number of lights> <path to front facing pictures> <path to right facing pictures> <path to back facing pictures> <path to left facing pictures> <output file name>")
     sys.exit(1)
 
-NUM_LIGHTS = args[0]
+try:
+    NUM_LIGHTS = int(args[0])
+except:
+    print("Invalid number of lights. Please try again...")
 FRONT_FACING_PATH = args[1]
 RIGHT_FACING_PATH = args[2]
 BACK_FACING_PATH = args[3]

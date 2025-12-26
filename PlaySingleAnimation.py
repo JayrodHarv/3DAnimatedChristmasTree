@@ -1,5 +1,5 @@
 import board, neopixel
-import my_utils
+from utils import my_utils
 
 from animations import ANIMATIONS
 

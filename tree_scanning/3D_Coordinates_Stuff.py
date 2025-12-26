@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 import math
-import my_utils
 
 # -----------------------------
 # 1. Known parameters
