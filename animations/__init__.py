@@ -3,8 +3,10 @@ from .enchantment_glint import run as enchantment_glint
 from .fire import run as fire
 from .rainbow_swirl import run as rainbow_swirl
 from .random_direction_scan import run as random_direction_scan
+from .random_rgb_all import run as random_rgb_all
 from .scrolling_text import run as scrolling_text
 from .smooth_rgb_spectrum import run as smooth_rgb_spectrum
+from .snake import run as snake
 from .sparkle import run as sparkle
 from .swirling_candy_cane import run as swirling_candy_cane
 from .time_warp import run as time_warp
@@ -33,12 +35,20 @@ ANIMATIONS = [
         "function": random_direction_scan
     },
     {
+        "name": "Random RGB All",
+        "function": random_rgb_all
+    },
+    {
         "name": "Scrolling Text",
         "function": scrolling_text
     },
     {
         "name": "Smooth RGB Spectrum",
         "function": smooth_rgb_spectrum
+    },
+    {
+        "name": "Snake",
+        "function": snake
     },
     {
         "name": "Sparkle",
