@@ -1,16 +1,15 @@
 import random
 import time
-import math
 
 # Tree boundaries for bouncing (from your scanned coordinates)
-TREE_X_MIN, TREE_X_MAX = -200, 200
-TREE_Y_MIN, TREE_Y_MAX = 0, 600
-TREE_Z_MIN, TREE_Z_MAX = -200, 200
+TREE_X_MIN, TREE_X_MAX = -50, 50
+TREE_Y_MIN, TREE_Y_MAX = -50, 50
+TREE_Z_MIN, TREE_Z_MAX = 0, 100   # z is height
 
 # Plane settings
 NUM_PLANES = 3
-PLANE_SIZE = 50  # Approximate size of the plane
-SPEED = 5        # Movement speed per frame
+PLANE_SIZE = 10  # Approximate size of the plane
+SPEED = 1        # Movement speed per frame
 
 # Time per frame
 FRAME_DELAY = 0.05
@@ -45,9 +44,6 @@ class Plane:
 # -----------------------------
 # HELPER FUNCTIONS
 # -----------------------------
-def distance(p1, p2):
-    return math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
-
 def average_color(c1, c2):
     return [(a+b)//2 for a,b in zip(c1,c2)]
 
@@ -71,13 +67,13 @@ def run(coords, pixels, duration = None):
             plane.move()
 
         # Update LEDs
-        for i, coord in enumerate(coords):
+        for i in range(coords):
             led_color = [0, 0, 0]
             for plane in planes:
                 # If LED is within plane's influence
-                if (abs(coord[0] - plane.x) < PLANE_SIZE and
-                    abs(coord[1] - plane.y) < PLANE_SIZE and
-                    abs(coord[2] - plane.z) < PLANE_SIZE):
+                if (abs(coords[i][0] - plane.x) < PLANE_SIZE and
+                    abs(coords[i][1] - plane.y) < PLANE_SIZE and
+                    abs(coords[i][2] - plane.z) < PLANE_SIZE):
                     # Blend color
                     led_color = average_color(led_color, plane.color)
             pixels[i] = tuple(led_color)
