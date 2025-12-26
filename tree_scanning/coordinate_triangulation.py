@@ -5,8 +5,8 @@ import sys
 # CONFIGURATION
 # =========================================
 
-IMAGE_WIDTH = 1080
-IMAGE_HEIGHT = 920
+IMAGE_WIDTH = 1920
+IMAGE_HEIGHT = 1080
 
 CAMERA_DISTANCE = 75.0   # inches (or cm, units stay consistent)
 FOCAL_LENGTH = 1200.0    # pixels (approx, adjust if needed)
@@ -134,7 +134,7 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270):
 def save_txt(points, filename):
     with open(filename, "w") as f:
         for p in points:
-            f.write(f"{p}\n")
+            f.write(f"{[p[0], p[2], p[1]]}\n")
 
 
 # =========================================
