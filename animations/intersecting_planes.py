@@ -67,14 +67,13 @@ def run(coords, pixels, duration = None):
             plane.move()
 
         # Update LEDs
-        for i in range(coords):
+        for i, coord in enumerate(coords):
             led_color = [0, 0, 0]
             for plane in planes:
-                # If LED is within plane's influence
-                if (abs(coords[i][0] - plane.x) < PLANE_SIZE and
-                    abs(coords[i][1] - plane.y) < PLANE_SIZE and
-                    abs(coords[i][2] - plane.z) < PLANE_SIZE):
-                    # Blend color
+                # Check if LED is within plane's influence
+                if (abs(coord[0] - plane.x) < PLANE_SIZE and
+                    abs(coord[1] - plane.y) < PLANE_SIZE and
+                    abs(coord[2] - plane.z) < PLANE_SIZE):
                     led_color = average_color(led_color, plane.color)
             pixels[i] = tuple(led_color)
 
