@@ -2,9 +2,9 @@ import random
 import time
 
 # Tree boundaries for bouncing (from your scanned coordinates)
-TREE_X_MIN, TREE_X_MAX = -50, 50
-TREE_Y_MIN, TREE_Y_MAX = -50, 50
-TREE_Z_MIN, TREE_Z_MAX = 0, 100   # z is height
+TREE_X_MIN, TREE_X_MAX = -25, 25
+TREE_Y_MIN, TREE_Y_MAX = -25, 25
+TREE_Z_MIN, TREE_Z_MAX = -50, 50   # z is height
 
 # Plane settings
 NUM_PLANES = 3
