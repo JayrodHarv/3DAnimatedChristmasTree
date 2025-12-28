@@ -19,7 +19,7 @@ def read_in_coords(filename):
 
     return coords
 
-coords = np.array(read_in_coords("tree_d_coords.txt"))
+coords = np.array(read_in_coords("corrected_3D_coords.txt"))
 
 # Load coordinates (if you already have them saved)
 # data = np.array([r[1:] for r in results])  # skip LightID
