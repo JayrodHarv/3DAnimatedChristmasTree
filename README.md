@@ -10,4 +10,6 @@ Utilizing the power of a lot of crappy python code, I was able to hook up 550 in
 
 ## Youtube Video
 # This video describes the process I went through to make it all work
-<iframe width="560" height="315" src="https://www.youtube.com/embed/L4ZAIFt4BIo?si=Uh8I_3CPsJ9JUhCl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Watch the video](https://img.youtube.com/vi/L4ZAIFt4BIo/maxresdefault.jpg)](https://youtu.be/L4ZAIFt4BIo)
+
+### [3D Animated Christmas Tree](https://youtu.be/L4ZAIFt4BIo)
