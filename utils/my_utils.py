@@ -66,6 +66,18 @@ def normalize_tree_coords(coords):
 
     return normalized
 
+def flip_rightway(filename):
+    coords = read_in_coords(filename)
+    for coord in coords:
+        coord[1], coord[2] = coord[2], coord[1]
+    
+    # write to file
+    result = ""
+    for coord in coords:
+        result += f"{coord}\n"
+    with open("tree_d_coords.txt", "w") as file:
+        file.write(f"{result}")
+
 def rotate_coordinates_around_average(coordinates, angle_degrees):
     """
     Rotates a list of 2D coordinates around their average point.

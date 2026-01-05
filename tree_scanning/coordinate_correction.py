@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import math
-import my_utils
+from utils import my_utils
 
 def create_3D_graph(correct):
     # --- Visualization ---
@@ -65,6 +65,6 @@ def main():
     coords = find_incorrect_coords(coords)
     create_3D_graph(coords)
 
-    my_utils.write_coords_to_file(coords.tolist(), "corrected_3D_coords")
+    my_utils.save_coordinates(coords.tolist(), "corrected_3D_coords")
 
 main()
