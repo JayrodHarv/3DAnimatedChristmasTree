@@ -5,6 +5,7 @@ from .intersecting_planes import run as intersecting_planes
 from .rainbow_swirl import run as rainbow_swirl
 from .random_direction_scan import run as random_direction_scan
 from .random_rgb_all import run as random_rgb_all
+from .rgb_spheres import run as rgb_spheres
 from .scrolling_text import run as scrolling_text
 from .smooth_rgb_spectrum import run as smooth_rgb_spectrum
 from .snake import run as snake
@@ -42,6 +43,10 @@ ANIMATIONS = [
     {
         "name": "Random RGB All",
         "function": random_rgb_all
+    },
+    {
+        "name": "RGB Spheres",
+        "function": rgb_spheres
     },
     {
         "name": "Scrolling Text",
