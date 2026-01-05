@@ -4,10 +4,6 @@ import random
 from utils import my_utils
 
 def run(coords, pixels, duration = None):
-
-    # NORMALIZE COORDS
-    coords = my_utils.normalize_tree_coords(coords)
-
     start_time = time.time()
     last_frame_time = start_time
 
