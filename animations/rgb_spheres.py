@@ -13,9 +13,9 @@ def run(coords, pixels, duration = None):
 
     max_radius = max(distances)
 
-    expansion_speed = max_radius / 80.0
+    expansion_speed = max_radius / 100.0
     spawn_interval = 3  # seconds between new spheres
-    frame_delay = 0.03
+    frame_delay = 0
 
     spheres = []  # each = {"radius": float, "color": (r,g,b)}
     last_spawn = 0
