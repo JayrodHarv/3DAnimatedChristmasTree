@@ -2,12 +2,11 @@ import time
 import math
 import random
 from utils import my_utils
-from tree_scanning import coordinate_triangulation
 
 def run(coords, pixels, duration = None):
 
     # NORMALIZE COORDS
-    coords = coordinate_triangulation.normalize_tree_coords(coords)
+    coords = my_utils.normalize_tree_coords(coords)
 
     start_time = time.time()
     last_frame_time = start_time
