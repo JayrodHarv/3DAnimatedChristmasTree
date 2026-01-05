@@ -11,8 +11,6 @@ IMAGE_HEIGHT = 1080
 CAMERA_DISTANCE = 75.0   # inches (or cm, units stay consistent)
 FOCAL_LENGTH = 1200.0    # pixels (approx, adjust if needed)
 
-OUTPUT_FILE = "tree_coords_3d.txt"
-
 # Image center (important)
 CX = IMAGE_WIDTH / 2
 CY = IMAGE_HEIGHT / 2
@@ -126,31 +124,31 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270):
 
     return points_3d
 
+def normalize_tree_coords(coords):
+    """
+    Normalize tree coordinates so that:
+    - X=0, Y=0 is the trunk center
+    - Z=0 is the vertical midpoint of the tree
+    """
 
-# =========================================
-# SAVE OUTPUT
-# =========================================
+    # SWAP Y AND Z
+    xs = [p[0] for p in coords]
+    ys = [p[2] for p in coords]
+    zs = [p[1] for p in coords]
 
-def save_txt(points, filename):
-    with open(filename, "w") as f:
-        for p in points:
-            f.write(f"{[p[0], p[2], p[1]]}\n")
+    center_x = sum(xs) / len(xs)
+    center_y = sum(ys) / len(ys)
 
+    min_z = min(zs)
+    max_z = max(zs)
+    center_z = (min_z + max_z) / 2
 
-# =========================================
-# EXAMPLE USAGE
-# =========================================
+    normalized = []
+    for x, y, z in coords:
+        normalized.append((
+            x - center_x,
+            y - center_y,
+            z - center_z
+        ))
 
-if __name__ == "__main__":
-
-    # Replace these with your real data
-    coords_0   = [(500, 400)] * 550
-    coords_90  = [(520, 410)] * 550
-    coords_180 = [(510, 420)] * 550
-    coords_270 = [(490, 415)] * 550
-
-    points_3d = triangulate_all(coords_0, coords_90, coords_180, coords_270)
-
-    save_txt(points_3d, OUTPUT_FILE)
-
-    print(f"Saved {len(points_3d)} points to {OUTPUT_FILE}")
+    return normalized

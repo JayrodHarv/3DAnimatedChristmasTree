@@ -1,5 +1,6 @@
 import sys
 from tree_scanning import christmas_lights_image_processing, coordinate_triangulation
+from utils import my_utils
 
 # First, use the autohotkey macro to take pictures of each light from 4 directions differing by 90 degrees.
 
@@ -20,8 +21,6 @@ BACK_FACING_PATH = args[3]
 LEFT_FACING_PATH = args[4]
 OUTPUT_FILENAME = args[5]
 
-# try:
-
 frontFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, FRONT_FACING_PATH, "front facing")
 rightFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, RIGHT_FACING_PATH, "right facing")
 backFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(NUM_LIGHTS, BACK_FACING_PATH, "back facing")
@@ -31,9 +30,8 @@ coords = coordinate_triangulation.triangulate_all(frontFacingCoords, rightFacing
 
 # TODO run coords through error correcting code
 
-coordinate_triangulation.save_txt(coords, OUTPUT_FILENAME)
+coords = coordinate_triangulation.normalize_tree_coords(coords)
+
+my_utils.save_coordinates(coords, OUTPUT_FILENAME)
 
 print(f"Saved {len(coords)} points to {OUTPUT_FILENAME}")
-    
-# except:
-#     print("Something went wrong while processing images")

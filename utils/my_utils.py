@@ -32,6 +32,11 @@ def read_in_coords(filename):
 
     return coords
 
+def save_coordinates(points, filename):
+    with open(filename, "w") as f:
+        for p in points:
+            f.write(f"{[p[0], p[1], p[2]]}\n")
+
 def rotate_coordinates_around_average(coordinates, angle_degrees):
     """
     Rotates a list of 2D coordinates around their average point.
