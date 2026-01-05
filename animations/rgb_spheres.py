@@ -1,6 +1,7 @@
 import time
 import math
 import random
+from utils import my_utils
 
 def run(coords, pixels, duration = None):
     start_time = time.time()
@@ -28,11 +29,7 @@ def run(coords, pixels, duration = None):
         if now - last_spawn >= spawn_interval:
             spheres.append({
                 "radius": 0.0,
-                "color": (
-                    random.randint(60, 255),
-                    random.randint(60, 255),
-                    random.randint(60, 255),
-                )
+                "color": my_utils.get_random_good_color()
             })
             last_spawn = now
 
