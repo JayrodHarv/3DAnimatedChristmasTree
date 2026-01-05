@@ -48,17 +48,17 @@ def run(coords, pixels, duration = None):
 
         # Update pixels
         for i, dist in enumerate(distances):
-            closest = None
-            best_delta = float("inf")
+            pixel_color = None
 
-            for s in spheres:
-                delta = abs(dist - s["radius"])
-                if delta < best_delta:
-                    best_delta = delta
-                    closest = s
+            # iterate newest spheres first
+            for s in reversed(spheres):
+                if dist <= s["radius"]:
+                    pixel_color = s["color"]
+                    break
 
-            if closest:
-                pixels[i] = closest["color"]
+            if pixel_color:
+                pixels[i] = pixel_color
+
 
         pixels.show()
         time.sleep(frame_delay)
