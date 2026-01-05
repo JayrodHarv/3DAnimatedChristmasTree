@@ -37,6 +37,35 @@ def save_coordinates(points, filename):
         for p in points:
             f.write(f"{[p[0], p[1], p[2]]}\n")
 
+def normalize_tree_coords(coords):
+    """
+    Normalize tree coordinates so that:
+    - X=0, Y=0 is the trunk center
+    - Z=0 is the vertical midpoint of the tree
+    """
+
+    # SWAP Y AND Z
+    xs = [p[0] for p in coords]
+    ys = [p[1] for p in coords]
+    zs = [p[2] for p in coords]
+
+    center_x = sum(xs) / len(xs)
+    center_y = sum(ys) / len(ys)
+
+    min_z = min(zs)
+    max_z = max(zs)
+    center_z = (min_z + max_z) / 2
+
+    normalized = []
+    for x, y, z in coords:
+        normalized.append((
+            x - center_x,
+            y - center_y,
+            z - center_z
+        ))
+
+    return normalized
+
 def rotate_coordinates_around_average(coordinates, angle_degrees):
     """
     Rotates a list of 2D coordinates around their average point.
