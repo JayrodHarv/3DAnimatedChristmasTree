@@ -8,7 +8,7 @@ from animations import ANIMATIONS
 
 args = sys.argv[1:] # first argument is the name of script
 
-COORDS_FILE = "corrected_3D_coords.txt" # set coords file as this by default
+COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
 
 if (len(args) == 1):
     COORDS_FILE = args[0] # overiddes default coords file if provided
