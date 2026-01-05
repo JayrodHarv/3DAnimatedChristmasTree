@@ -1,4 +1,4 @@
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
 	# This is the code from my 
 	
 	#NOTE THE LEDS ARE GRB COLOUR (NOT RGB)
