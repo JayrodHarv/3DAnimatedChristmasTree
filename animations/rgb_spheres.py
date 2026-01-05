@@ -4,24 +4,25 @@ import random
 
 def run(coords, pixels, duration = None):
     start_time = time.time()
+    last_frame_time = start_time
 
-    # Precompute distance of each pixel from center
     distances = [
         math.sqrt(x*x + y*y + z*z)
         for x, y, z in coords
     ]
-
     max_radius = max(distances)
 
-    expansion_speed = max_radius / 100.0
-    spawn_interval = 3  # seconds between new spheres
-    frame_delay = 0
+    expansion_speed = max_radius / 6.0   # units per second
+    spawn_interval = 3                 # seconds
+    frame_delay = 0.03
 
-    spheres = []  # each = {"radius": float, "color": (r,g,b)}
-    last_spawn = 0
+    spheres = []
+    last_spawn = start_time
 
     while duration is None or time.time() - start_time < duration:
         now = time.time()
+        dt = now - last_frame_time
+        last_frame_time = now
 
         # Spawn new sphere
         if now - last_spawn >= spawn_interval:
@@ -35,11 +36,11 @@ def run(coords, pixels, duration = None):
             })
             last_spawn = now
 
-        # Grow all spheres
+        # Grow spheres using elapsed time
         for s in spheres:
-            s["radius"] += expansion_speed
+            s["radius"] += expansion_speed * dt
 
-        # Remove spheres that are well past the tree
+        # Cull old spheres
         spheres = [
             s for s in spheres
             if s["radius"] <= max_radius * 1.2
@@ -47,17 +48,17 @@ def run(coords, pixels, duration = None):
 
         # Update pixels
         for i, dist in enumerate(distances):
-            pixel_color = None
-            closest_delta = float("inf")
+            closest = None
+            best_delta = float("inf")
 
             for s in spheres:
                 delta = abs(dist - s["radius"])
-                if delta < closest_delta:
-                    closest_delta = delta
-                    pixel_color = s["color"]
+                if delta < best_delta:
+                    best_delta = delta
+                    closest = s
 
-            if pixel_color:
-                pixels[i] = pixel_color
+            if closest:
+                pixels[i] = closest["color"]
 
         pixels.show()
         time.sleep(frame_delay)
