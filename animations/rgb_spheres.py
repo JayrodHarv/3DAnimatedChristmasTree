@@ -7,7 +7,7 @@ from tree_scanning import coordinate_triangulation
 def run(coords, pixels, duration = None):
 
     # NORMALIZE COORDS
-    coords = coordinate_triangulation.normalize_tree_coords()
+    coords = coordinate_triangulation.normalize_tree_coords(coords)
 
     start_time = time.time()
     last_frame_time = start_time
