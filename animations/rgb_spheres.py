@@ -1,108 +1,36 @@
-def run(coords, pixels, duration = None):
-	# This is the code from my 
-	
-	#NOTE THE LEDS ARE GRB COLOUR (NOT RGB)
-	
-	# Here are the libraries I am currently using:
-	import time
-	import re
-	import math
-	import random
-	
-	# You are welcome to add any of these:
-	# import numpy
-	# import scipy
-	# import sys
-	
-	# If you want to have user changable values, they need to be entered from the command line
-	# so import sys sys and use sys.argv[0] etc
-	# some_value = int(sys.argv[0])
-	
-	# IMPORT THE COORDINATES (please don't break this bit)
-	
-	#set up the pixels (AKA 'LEDs')
-	PIXEL_COUNT = len(coords) # this should be 500
-	
-	# YOU CAN EDIT FROM HERE DOWN
+import time
+import math
+import random
 
-	# Calculates the distance of 2 vectors
-	def vdist(v1: list, v2: list):
-		if len(v1) != len(v2):
-			return -1
+def run(coords, pixels, duration):
+    start_time = time.time()
 
-		result = 0
-		for i in range(len(v1)):
-			result += (v1[i] - v2[i]) ** 2
-		return math.sqrt(result)
+    # Compute tree bounds once
+    max_radius = 0
+    for x, y, z in coords:
+        r = math.sqrt(x*x + y*y + z*z)
+        max_radius = max(max_radius, r)
 
-	# Find coordinate that maximizes the distance for a given sez of other coords
-	def find_furthest(points: list):
-		max_dist = 0
-		cur_pnt = points[0]
-		for coord in coords:
-			dist = math.inf
-			for p in points:
-				p_dist = vdist(p, coord)
-				if p_dist < dist:
-					dist = p_dist
+    expansion_speed = max_radius / 60.0  # frames to fill tree
+    frame_delay = 0.03
 
-			if (dist > max_dist):
-				max_dist = dist
-				cur_pnt = coord
-		return cur_pnt
+    while duration is None or time.time() - start_time < duration:
+        # New sphere
+        radius = 0.0
+        color = (
+            random.randint(50, 255),
+            random.randint(50, 255),
+            random.randint(50, 255),
+        )
 
+        while radius <= max_radius:
+            pixels.fill((0, 0, 0))
 
-	# init sphere origins.
-	# First sphere's origin is furthest from the coordinate system's origin
-	# Second sphere's origin is the LED with the greatest distance from the first sphere's origin
-	# Third sphere's origin is the LED where the distance for both other spheres is maximized.
-	sphere_origins = []
-	sphere_origins.append(find_furthest([[0, 0, 0]]))
-	sphere_origins.append(find_furthest(sphere_origins))
-	sphere_origins.append(find_furthest(sphere_origins))
+            for i, (x, y, z) in enumerate(coords):
+                dist = math.sqrt(x*x + y*y + z*z)
+                if dist <= radius:
+                    pixels[i] = color
 
-	# calculate maximum distance of any LED for each sphere's origin.
-	# Used to determine the max radius each sphere will ever receive
-	max_dists = [0, 0, 0]
-	for coord in coords:
-		for i in range(3):
-			dist = vdist(coord, sphere_origins[i])
-			if max_dists[i] < dist:
-				max_dists[i] = dist
-
-	# The rate in which each sphere enlargens. When negative, the sphere is currently shrinking.
-	increment_rates = [0, 0, 0]
-	# The radius of each sphere. Initial value is randomized
-	radii = [0, 0, 0]
-
-	# set initial increment rates and radii 
-	for i in range(3):
-		# Frames per cycle for current sphere
-		frames = i * 40 + 120
-		increment_rates[i] = max_dists[i] / frames
-
-		# Random start radius 
-		radii[i] = random.random() * frames * increment_rates[i]
-
-	start_time = time.time()
-
-    # infinitly many frames. Wohoo.
-	while duration is None or time.time() - start_time < duration:
-		for i in range(PIXEL_COUNT):
-
-			# calculate color for current pixel. Each rgb (grb) color value is 255 * dist / max_dist
-			color = [0, 0, 0]
-			for s in range(3):
-				dist = abs(vdist(sphere_origins[s], coords[i]) - radii[s])
-				color[s] = int(255 * (1 - dist / max_dists[s]) ** 3)
-
-			pixels[i] = color
-		pixels.show()
-		# calculate radii for next iteration.
-		for s in range(3):
-			# Switch from enlarging to shrinking and vice versa, as needed
-			new_radius = radii[s] + increment_rates[s]
-			if new_radius >= max_dists[s] or new_radius <= 0:
-				increment_rates[s] = -increment_rates[s]
-
-			radii[s] += increment_rates[s]
+            pixels.show()
+            radius += expansion_speed
+            time.sleep(frame_delay)
