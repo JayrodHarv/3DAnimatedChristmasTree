@@ -133,8 +133,8 @@ def normalize_tree_coords(coords):
 
     # SWAP Y AND Z
     xs = [p[0] for p in coords]
-    ys = [p[2] for p in coords]
-    zs = [p[1] for p in coords]
+    ys = [p[1] for p in coords]
+    zs = [p[2] for p in coords]
 
     center_x = sum(xs) / len(xs)
     center_y = sum(ys) / len(ys)
