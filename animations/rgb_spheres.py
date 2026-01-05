@@ -2,7 +2,7 @@ import time
 import math
 import random
 
-def run(coords, pixels, duration):
+def run(coords, pixels, duration = None):
     start_time = time.time()
 
     # Compute tree bounds once
