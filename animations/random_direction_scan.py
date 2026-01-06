@@ -20,7 +20,7 @@ def run(coords, pixels, duration = None):
     # apply random rotation to tree
     rotated_coords = my_utils.randomly_rotate_tree(coords)
 
-    turn_on_min, turn_on_max = -50, -30
+    turn_on_min, turn_on_max = -50, -40
     # rand_color = my_utils.get_random_good_color()
 
     # Make sure that index doesn't go out of bounds of color list
