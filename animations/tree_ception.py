@@ -13,16 +13,14 @@ def run(coords, pixels, duration = None):
 
     # Tree geometry
     zs = [z for _, _, z in coords]
-    z_min = min(zs)
-    z_max = max(zs)
-    height = z_max - z_min
+    z_min = min(zs) # ~ -40
+    z_max = max(zs) # ~ +40
+    height = abs(z_max) - abs(z_min)
 
-    # max_radius = max(
-    #     math.sqrt(x*x + y*y)
-    #     for x, y, _ in coords
-    # )
-
-    max_radius = 40
+    max_radius = max(
+        math.sqrt(x*x + y*y)
+        for x, y, _ in coords
+    )
 
     radial = [math.sqrt(x*x + y*y) for x, y, _ in coords]
     z_vals = zs
