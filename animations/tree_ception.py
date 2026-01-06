@@ -27,8 +27,8 @@ def run(coords, pixels, duration = None):
     z_vals = zs
 
     # Animation parameters
-    growth_speed = 0.6       # growth per second (0→1)
-    spawn_interval = 3
+    growth_speed = 0.5       # growth per second (0→1)
+    spawn_interval = 2.5
     frame_delay = 0.01
 
     cones = []   # each: {"g": float, "color": (r,g,b)}
