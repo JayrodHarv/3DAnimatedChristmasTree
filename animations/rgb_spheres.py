@@ -1,6 +1,6 @@
 import time
 import math
-from utils import my_utils, color_manager
+from utils import color_manager
 
 def run(coords, pixels, duration = None):
     start_time = time.time()

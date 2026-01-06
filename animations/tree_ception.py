@@ -11,27 +11,26 @@ def run(coords, pixels, duration = None):
     cm.generate_pleasant_colors()
     cm.shuffle()
 
-    # Precompute geometry
+    # Tree geometry
     zs = [z for _, _, z in coords]
-    z_top = max(zs)
-    z_bottom = min(zs)
-    height = z_top - z_bottom
+    z_min = min(zs)
+    z_max = max(zs)
+    height = z_max - z_min
 
-    # Max radius of tree (base)
     max_radius = max(
         math.sqrt(x*x + y*y)
         for x, y, _ in coords
     )
 
-    # Precompute per-pixel values
-    radial_dist = [math.sqrt(x*x + y*y) for x, y, _ in coords]
-    z_values = [z for _, _, z in coords]
+    radial = [math.sqrt(x*x + y*y) for x, y, _ in coords]
+    z_vals = zs
 
-    expansion_speed = height / 6.0   # units per second
-    spawn_interval = 0.7
+    # Animation parameters
+    growth_speed = 0.6       # growth per second (0→1)
+    spawn_interval = 3
     frame_delay = 0.03
 
-    cones = []   # each: {"z": float, "color": (r,g,b)}
+    cones = []   # each: {"g": float, "color": (r,g,b)}
     last_spawn = start_time
 
     while duration is None or time.time() - start_time < duration:
@@ -39,40 +38,33 @@ def run(coords, pixels, duration = None):
         dt = now - last_frame_time
         last_frame_time = now
 
-        # Spawn new cone at the top
+        # Spawn new cone
         if now - last_spawn >= spawn_interval:
             cones.append({
-                "z": z_top,
+                "g": 0.0,
                 "color": cm.next_color()
             })
             last_spawn = now
 
-        # Move cones downward
+        # Grow cones
         for c in cones:
-            c["z"] -= expansion_speed * dt
+            c["g"] += growth_speed * dt
 
-        # Remove cones below the tree
-        cones = [
-            c for c in cones
-            if c["z"] >= z_bottom
-        ]
+        # Remove cones that exceed full size
+        cones = [c for c in cones if c["g"] <= 1.2]
 
         # Render
         for i in range(len(coords)):
             pixel_color = None
 
-            # Newest cones win
-            for c in reversed(cones):
-                z = z_values[i]
+            for c in reversed(cones):  # newest wins
+                z = z_vals[i]
+                frac_height = (z - z_min) / height
+                full_r = max_radius * (1 - frac_height)
 
-                if z <= c["z"]:
-                    # Compute cone radius at this height
-                    frac = (c["z"] - z) / height
-                    cone_r = max_radius * frac
-
-                    if radial_dist[i] <= cone_r:
-                        pixel_color = c["color"]
-                        break
+                if radial[i] <= full_r * c["g"]:
+                    pixel_color = c["color"]
+                    break
 
             if pixel_color:
                 pixels[i] = pixel_color
