@@ -56,6 +56,7 @@ coords, pixels = runtime.setup_tree(
 # ===================================================
 
 def play_animation(anim, pixels, coords, duration):
+    pixels.fill((0,0,0))
     print(f"Playing {anim['name']} for {duration} seconds")
     anim['function'](coords, pixels, duration)
 
