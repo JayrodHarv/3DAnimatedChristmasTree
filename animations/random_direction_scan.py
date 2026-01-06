@@ -1,6 +1,6 @@
 from utils import my_utils
 import time
-from utils import ColorManager
+from utils import color_manager
 
 min_y, max_y = -30, 30
 
@@ -10,7 +10,7 @@ def run(coords, pixels, duration = None):
   start_time = time.time()
   num_pixels = len(coords)
 
-  cm = ColorManager()
+  cm = color_manager.ColorManager()
   cm.generate_pleasant_colors()
 
   # main loop
