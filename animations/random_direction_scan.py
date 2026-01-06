@@ -21,8 +21,9 @@ def run(coords, pixels, duration = None):
 
     turn_on_min, turn_on_max = -50, -30
     # rand_color = my_utils.get_random_good_color()
-    color = colors[i % len(colors)]
-    i += 1
+    color = colors[i]
+    # Make sure that index doesn't go out of bounds of color list
+    i = 0 if i >= len(colors) else i + 1
 
     while turn_on_min < max_y and (duration is None or time.time() - start_time < duration):
       pixels.fill((0,0,0))
