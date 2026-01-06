@@ -11,6 +11,7 @@ from .smooth_rgb_spectrum import run as smooth_rgb_spectrum
 from .snake import run as snake
 from .sparkle import run as sparkle
 from .swirling_candy_cane import run as swirling_candy_cane
+from .tetrahedron import run as tetrahedron
 from .time_warp import run as time_warp
 from .vertical_scan import run as vertical_scan
 from .xmaslights_spin import run as xmaslights_spin
@@ -67,6 +68,10 @@ ANIMATIONS = [
     {
         "name": "Swirling Candycane",
         "function": swirling_candy_cane
+    },
+    {
+        "name": "Tetrahedron",
+        "function": tetrahedron
     },
     {
         "name": "Time Warp",
