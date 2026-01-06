@@ -15,7 +15,7 @@ def run(coords, pixels, duration = None):
     zs = [z for _, _, z in coords]
     z_min = min(zs) # ~ -40
     z_max = max(zs) # ~ +40
-    acc_for_error = 20
+    acc_for_error = 25
     height = abs(z_max) + abs(z_min) + acc_for_error
 
     max_radius = max(
@@ -29,7 +29,7 @@ def run(coords, pixels, duration = None):
     # Animation parameters
     growth_speed = 0.6       # growth per second (0→1)
     spawn_interval = 3
-    frame_delay = 0.03
+    frame_delay = 0.01
 
     cones = []   # each: {"g": float, "color": (r,g,b)}
     last_spawn = start_time
