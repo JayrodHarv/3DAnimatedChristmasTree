@@ -64,8 +64,8 @@ MIN_DURATION = 30   # 30 seconds
 MAX_DURATION = 180  # 3 minutes
 
 def play_animation(anim, pixels, coords, duration):
-    print(f"Playing {anim.name}")
-    anim.run(coords, pixels, duration)
+    print(f"Playing {anim['name']}")
+    anim['function'](coords, pixels, duration)
 
 print("Tree animation scheduler running. Press ctrl+c to stop...")
 
