@@ -1,11 +1,12 @@
 import ast
 import random
+import colorsys
 import numpy as np
 
 good_colors = [
 	(255,0,0),     # Red
-	(0,255,0),     # Blue
-	(0,0,255),     # Green
+	(0,255,0),     # Green
+	(0,0,255),     # Blue
 	(255,255,0),   # Yellow
 	(127,0,255),    # Purple
 	(255,127,0),    # Orange
@@ -18,6 +19,18 @@ good_colors = [
 
 def get_random_good_color():
     return good_colors[random.randint(0,len(good_colors)-1)]
+
+def generate_pleasant_colors(n=12, saturation=0.75, value=1):
+    colors = []
+    for i in range(n):
+        h = i / n
+        r, g, b = colorsys.hsv_to_rgb(h, saturation, value)
+        colors.append((
+            int(r * 255),
+            int(g * 255),
+            int(b * 255)
+        ))
+    return colors
 
 def read_in_coords(filename):
     coords = []
