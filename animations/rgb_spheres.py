@@ -1,14 +1,14 @@
 import time
 import math
-import random
-from utils import my_utils
+from utils import my_utils, color_manager
 
 def run(coords, pixels, duration = None):
     start_time = time.time()
     last_frame_time = start_time
 
-    colors = my_utils.generate_pleasant_colors() # Get list of pleasant colors
-    random.shuffle(colors) # Shuffle list of colors
+    cm = color_manager.ColorManager()
+    cm.generate_pleasant_colors()
+    cm.shuffle()
 
     distances = [
         math.sqrt(x*x + y*y + z*z)
@@ -23,20 +23,16 @@ def run(coords, pixels, duration = None):
     spheres = []
     last_spawn = start_time
 
-    i = 0
     while duration is None or time.time() - start_time < duration:
         now = time.time()
         dt = now - last_frame_time
         last_frame_time = now
 
-        # Make sure that index doesn't go out of bounds of color list
-        i = 0 if i > len(colors) - 1 else i + 1
-
         # Spawn new sphere
         if now - last_spawn >= spawn_interval:
             spheres.append({
                 "radius": 0.0,
-                "color": colors[i]
+                "color": cm.next_color()
             })
             last_spawn = now
 
