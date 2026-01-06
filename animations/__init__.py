@@ -13,6 +13,7 @@ from .sparkle import run as sparkle
 from .swirling_candy_cane import run as swirling_candy_cane
 # from .tetrahedron import run as tetrahedron
 from .time_warp import run as time_warp
+from .tree_ception import run as tree_ception
 from .vertical_scan import run as vertical_scan
 from .xmaslights_spin import run as xmaslights_spin
 
@@ -76,6 +77,10 @@ ANIMATIONS = [
     {
         "name": "Time Warp",
         "function": time_warp
+    },
+    {
+        "name": "Tree-ception",
+        "function": tree_ception
     },
     {
         "name": "Vertical Scan",
