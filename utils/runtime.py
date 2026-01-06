@@ -17,7 +17,8 @@ def setup_tree(
         board.D18,
         num_pixels,
         brightness=brightness,
-        auto_write=auto_write
+        auto_write=auto_write,
+        pixel_order=neopixel.RGB
     )
 
     pixels.fill((0, 0, 0))
