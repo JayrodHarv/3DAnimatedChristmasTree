@@ -1,6 +1,6 @@
 import board
 import neopixel
-from my_utils import normalize_tree_coords, read_in_coords
+from utils import my_utils
 
 def setup_tree(
     coords_file,
@@ -9,7 +9,7 @@ def setup_tree(
     auto_write=False
 ):
     # Load + normalize coordinates
-    coords = read_in_coords(coords_file)
+    coords = my_utils.read_in_coords(coords_file)
     # coords = normalize_tree_coords(coords)
 
     # Initialize NeoPixels
