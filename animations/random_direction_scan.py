@@ -14,7 +14,8 @@ def run(coords, pixels, duration = None):
   i = 0
   while duration is None or time.time() - start_time < duration:
 
-    colors = random.shuffle(my_utils.generate_pleasant_colors())
+    colors = my_utils.generate_pleasant_colors() # Get list of pleasant colors
+    random.shuffle(colors) # Shuffle list of colors
 
     # apply random rotation to tree
     rotated_coords = my_utils.randomly_rotate_tree(coords)
