@@ -25,8 +25,7 @@ args = parse_args()
 # LED SETUP
 # ===================================================
 coords, pixels = runtime.setup_tree(
-    coords_file=args.coords,
-    num_pixels=550
+    coords_file=args.coords
 )
 
 print("Tree animation scheduler running...")

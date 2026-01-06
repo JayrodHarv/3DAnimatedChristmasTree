@@ -4,7 +4,6 @@ from utils import my_utils
 
 def setup_tree(
     coords_file,
-    num_pixels,
     brightness=0.5,
     auto_write=False
 ):
@@ -15,7 +14,7 @@ def setup_tree(
     # Initialize NeoPixels
     pixels = neopixel.NeoPixel(
         board.D18,
-        num_pixels,
+        len(coords),
         brightness=brightness,
         auto_write=auto_write,
         pixel_order=neopixel.RGB
