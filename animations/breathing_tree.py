@@ -33,7 +33,7 @@ def run(coords, pixels, duration = None):
     cm.generate_pleasant_colors()
     cm.shuffle()
 
-    color = cm.next_color()
+    color = np.array(cm.next_color(), dtype=float)
     while duration is None or time.time() - start_time < duration:
         # compute current scale 0–1 (shrinking and expanding)
         t = (time.time() * (2*np.pi / CYCLE_TIME)) % (2*np.pi)
@@ -43,7 +43,7 @@ def run(coords, pixels, duration = None):
         # when starting new expansion, pick new color
         # (detect near zero crossing of sin)
         if np.sin(t - np.pi/2) < -0.999:
-            color = cm.next_color()
+            color = np.array(cm.next_color(), dtype=float)
 
         # compute cone radius at each height for current scale
         # full tree radius profile = (1 - z_norm) * max_radius
