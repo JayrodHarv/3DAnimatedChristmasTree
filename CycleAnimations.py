@@ -25,7 +25,7 @@ def parse_args():
 
     parser.add_argument(
         "--order",
-        choices=["sequential", "random", "shuffle"],
+        choices=["in-order", "shuffle"],
         default="random",
         help="Animation play order"
     )
@@ -71,7 +71,7 @@ print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
     while True:
-        if args.order in ("random", "shuffle"):
+        if args.order == "shuffle":
             random.shuffle(animations)
 
         for anim in animations:
