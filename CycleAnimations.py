@@ -17,17 +17,24 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--coords",
-        nargs="?",
-        default="normalized_tree_d_coords.txt",
-        help="Path to coordinate file"
-    )
-
-    parser.add_argument(
         "--order",
         choices=["in-order", "shuffle"],
         default="random",
         help="Animation play order"
+    )
+
+    parser.add_argument(
+        "--duration",
+        type=int,
+        default="60",
+        help="Duration that each animation plays for"
+    )
+
+    parser.add_argument(
+        "--coords",
+        nargs="?",
+        default="normalized_tree_d_coords.txt",
+        help="Path to coordinate file"
     )
 
     return parser.parse_args()
@@ -60,8 +67,6 @@ coords = my_utils.read_in_coords(COORDS_FILE)
 # ===================================================
 # SCHEDULER LOOP
 # ===================================================
-MIN_DURATION = 30   # 30 seconds
-MAX_DURATION = 180  # 3 minutes
 
 def play_animation(anim, pixels, coords, duration):
     print(f"Playing {anim['name']}")
@@ -75,8 +80,7 @@ try:
             random.shuffle(animations)
 
         for anim in animations:
-            duration = random.randint(MIN_DURATION, MAX_DURATION)
-            play_animation(anim, pixels, coords, duration)
+            play_animation(anim, pixels, coords, args.duration)
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))
