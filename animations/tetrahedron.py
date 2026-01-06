@@ -75,7 +75,7 @@ def run(coords, pixels, duration = None):
     outsideColor = [0, 31, 77] # dark purple
 
     # Scale of the tetrahedron
-    scale = 400
+    scale = 15
 
     # Offset of the tetrahedron. (0, 0, 0) will make it centered on the origin
     # Note that the tetrahedron does not rotate about its own center, but uses the various axes
