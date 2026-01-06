@@ -20,7 +20,7 @@ good_colors = [
 def get_random_good_color():
     return good_colors[random.randint(0,len(good_colors)-1)]
 
-def generate_pleasant_colors(n=12, saturation=0.75, value=1):
+def generate_pleasant_colors(n=12, saturation=1, value=1):
     colors = []
     for i in range(n):
         h = i / n
