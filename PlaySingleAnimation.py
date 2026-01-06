@@ -1,36 +1,33 @@
-import sys
-import board, neopixel
-from utils import my_utils
+import argparse
+from utils import runtime
 
 from animations import ANIMATIONS
 
-args = sys.argv[1:] # first argument is the name of script
+DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
 
-COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="3D Christmas Tree Animation Scheduler"
+    )
 
-if (len(args) == 1):
-    COORDS_FILE = args[0] # overiddes default coords file if provided
+    parser.add_argument(
+        "--coords",
+        nargs="?",
+        default=DEFAULT_COORDS_FILE,
+        help="Path to coordinate file"
+    )
+
+    return parser.parse_args()
+
+args = parse_args()
 
 # ===================================================
 # LED SETUP
 # ===================================================
-NUM_LEDS = 550
-PIXEL_PIN = board.D18
-ORDER = neopixel.RGB
-BRIGHTNESS = 0.5
-
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN,
-    NUM_LEDS,
-    brightness=BRIGHTNESS,
-    auto_write=False,
-    pixel_order=ORDER
+coords, pixels = runtime.setup_tree(
+    coords_file=args.coords,
+    num_pixels=550
 )
-
-# ===================================================
-# LOAD COORDINATES
-# ===================================================
-coords = my_utils.read_in_coords(COORDS_FILE)
 
 print("Tree animation scheduler running...")
 

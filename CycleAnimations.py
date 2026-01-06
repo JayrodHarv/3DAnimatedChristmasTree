@@ -1,15 +1,15 @@
-import sys
 import random
-import board, neopixel
 from utils import my_utils
-import time
+from utils import runtime
 import argparse
 
 from animations import ANIMATIONS
 
-COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+DEFAULT_ORDER = "shuffle" # Random order by default
 
-ORDER = "random" # Random order by default
+DEFAULT_DURATION = "60" # 1 minute duration by default
+
+DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -19,21 +19,21 @@ def parse_args():
     parser.add_argument(
         "--order",
         choices=["in-order", "shuffle"],
-        default="random",
+        default=DEFAULT_ORDER,
         help="Animation play order"
     )
 
     parser.add_argument(
         "--duration",
         type=int,
-        default="60",
+        default=DEFAULT_DURATION,
         help="Duration that each animation plays for"
     )
 
     parser.add_argument(
         "--coords",
         nargs="?",
-        default="normalized_tree_d_coords.txt",
+        default=DEFAULT_COORDS_FILE,
         help="Path to coordinate file"
     )
 
@@ -46,23 +46,10 @@ animations = ANIMATIONS[:]  # copy list
 # ===================================================
 # LED SETUP
 # ===================================================
-NUM_LEDS = 550
-PIXEL_PIN = board.D18
-ORDER = neopixel.RGB
-BRIGHTNESS = 0.5
-
-pixels = neopixel.NeoPixel(
-    PIXEL_PIN,
-    NUM_LEDS,
-    brightness=BRIGHTNESS,
-    auto_write=False,
-    pixel_order=ORDER
+coords, pixels = runtime.setup_tree(
+    coords_file=args.coords,
+    num_pixels=550
 )
-
-# ===================================================
-# LOAD COORDINATES
-# ===================================================
-coords = my_utils.read_in_coords(COORDS_FILE)
 
 # ===================================================
 # SCHEDULER LOOP
