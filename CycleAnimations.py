@@ -69,7 +69,7 @@ coords = my_utils.read_in_coords(COORDS_FILE)
 # ===================================================
 
 def play_animation(anim, pixels, coords, duration):
-    print(f"Playing {anim['name']}")
+    print(f"Playing {anim['name']} for {duration} seconds")
     anim['function'](coords, pixels, duration)
 
 print("Tree animation scheduler running. Press ctrl+c to stop...")
