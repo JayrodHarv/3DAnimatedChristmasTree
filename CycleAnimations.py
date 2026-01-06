@@ -3,15 +3,38 @@ import random
 import board, neopixel
 from utils import my_utils
 import time
+import argparse
 
 from animations import ANIMATIONS
 
-args = sys.argv[1:] # first argument is the name of script
-
 COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
 
-if (len(args) == 1):
-    COORDS_FILE = args[0] # overiddes default coords file if provided
+ORDER = "random" # Random order by default
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="3D Christmas Tree Animation Scheduler"
+    )
+
+    parser.add_argument(
+        "--coords",
+        nargs="?",
+        default="normalized_tree_d_coords.txt",
+        help="Path to coordinate file"
+    )
+
+    parser.add_argument(
+        "--order",
+        choices=["sequential", "random", "shuffle"],
+        default="random",
+        help="Animation play order"
+    )
+
+    return parser.parse_args()
+
+args = parse_args()
+
+animations = ANIMATIONS[:]  # copy list
 
 # ===================================================
 # LED SETUP
@@ -40,20 +63,20 @@ coords = my_utils.read_in_coords(COORDS_FILE)
 MIN_DURATION = 30   # 30 seconds
 MAX_DURATION = 180  # 3 minutes
 
+def play_animation(anim, pixels, coords, duration):
+    print(f"Playing {anim.name}")
+    anim.run(coords, pixels, duration)
+
 print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
     while True:
-        anim = random.choice(ANIMATIONS)
-        duration = random.randint(MIN_DURATION, MAX_DURATION)
+        if args.order in ("random", "shuffle"):
+            random.shuffle(animations)
 
-        print(f"Playing {anim['name']} for {duration} seconds")
-        anim['function'](coords, pixels, duration)
-
-        # small blackout between animations
-        pixels.fill((0,0,0))
-        pixels.show()
-        time.sleep(0.5)
+        for anim in animations:
+            duration = random.randint(MIN_DURATION, MAX_DURATION)
+            play_animation(anim, pixels, coords, duration)
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))
