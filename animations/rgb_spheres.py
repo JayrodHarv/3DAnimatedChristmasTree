@@ -7,6 +7,9 @@ def run(coords, pixels, duration = None):
     start_time = time.time()
     last_frame_time = start_time
 
+    colors = my_utils.generate_pleasant_colors() # Get list of pleasant colors
+    random.shuffle(colors) # Shuffle list of colors
+
     distances = [
         math.sqrt(x*x + y*y + z*z)
         for x, y, z in coords
@@ -20,16 +23,20 @@ def run(coords, pixels, duration = None):
     spheres = []
     last_spawn = start_time
 
+    i = 0
     while duration is None or time.time() - start_time < duration:
         now = time.time()
         dt = now - last_frame_time
         last_frame_time = now
 
+        # Make sure that index doesn't go out of bounds of color list
+        i = 0 if i > len(colors) - 1 else i + 1
+
         # Spawn new sphere
         if now - last_spawn >= spawn_interval:
             spheres.append({
                 "radius": 0.0,
-                "color": my_utils.get_random_good_color()
+                "color": colors[i]
             })
             last_spawn = now
 
@@ -44,7 +51,7 @@ def run(coords, pixels, duration = None):
         ]
 
         # Update pixels
-        for i, dist in enumerate(distances):
+        for j, dist in enumerate(distances):
             pixel_color = None
 
             # iterate newest spheres first
@@ -54,7 +61,7 @@ def run(coords, pixels, duration = None):
                     break
 
             if pixel_color:
-                pixels[i] = pixel_color
+                pixels[j] = pixel_color
 
 
         pixels.show()

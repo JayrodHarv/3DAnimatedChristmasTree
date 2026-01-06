@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import random
+from utils import my_utils
 
 FPS = 60
 
@@ -27,10 +28,12 @@ def run(coords, pixels, duration = None):
     # ===================================================
 
     frame_delay = 1.0 / FPS
-    phase = 0.0
-    direction = 1.0
-    color = np.array([random.randint(0,255), random.randint(0,255), random.randint(0,255)], dtype=float)
 
+    colors = my_utils.generate_pleasant_colors() # Get list of pleasant colors
+    random.shuffle(colors) # Shuffle list of colors
+
+    i = 0
+    color = colors[i]
     while duration is None or time.time() - start_time < duration:
         # compute current scale 0–1 (shrinking and expanding)
         t = (time.time() * (2*np.pi / CYCLE_TIME)) % (2*np.pi)
@@ -40,9 +43,9 @@ def run(coords, pixels, duration = None):
         # when starting new expansion, pick new color
         # (detect near zero crossing of sin)
         if np.sin(t - np.pi/2) < -0.999:
-            color = np.array([random.randint(0,255),
-                            random.randint(0,255),
-                            random.randint(0,255)], dtype=float)
+            # Make sure that index doesn't go out of bounds of color list
+            i = 0 if i > len(colors) - 1 else i + 1
+            color = colors[i]
 
         # compute cone radius at each height for current scale
         # full tree radius profile = (1 - z_norm) * max_radius
