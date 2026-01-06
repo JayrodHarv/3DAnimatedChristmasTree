@@ -15,7 +15,7 @@ def run(coords, pixels, duration = None):
     zs = [z for _, _, z in coords]
     z_min = min(zs) # ~ -40
     z_max = max(zs) # ~ +40
-    height = abs(z_max) - abs(z_min)
+    height = abs(z_max) + abs(z_min)
 
     max_radius = max(
         math.sqrt(x*x + y*y)
