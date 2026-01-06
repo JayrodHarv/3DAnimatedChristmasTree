@@ -86,9 +86,9 @@ def run(coords, pixels, duration = None):
 
     # The change of the angle per update in DEGREES
     # Rotations apply in the order X -> Y -> Z because I'm bad at quaternions
-    xAngleChange = 5
-    yAngleChange = 10
-    zAngleChange = 15
+    xAngleChange = 1
+    yAngleChange = 1
+    zAngleChange = 1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     #
