@@ -24,7 +24,7 @@ def run(coords, pixels, duration = None):
     # rand_color = my_utils.get_random_good_color()
 
     # Make sure that index doesn't go out of bounds of color list
-    i = 0 if i >= len(colors) - 1 else i + 1
+    i = 0 if i > len(colors) - 1 else i + 1
 
     color = colors[i]
 
