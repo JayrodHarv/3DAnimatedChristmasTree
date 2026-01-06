@@ -1,6 +1,5 @@
 import time
 import math
-import random
 from utils import color_manager
 
 def run(coords, pixels, duration = None):
@@ -32,7 +31,7 @@ def run(coords, pixels, duration = None):
     frame_delay = 0.01
 
     cones = []   # each: {"g": float, "color": (r,g,b)}
-    last_spawn = start_time
+    last_spawn = 0
 
     while duration is None or time.time() - start_time < duration:
         now = time.time()
