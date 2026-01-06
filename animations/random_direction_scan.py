@@ -1,6 +1,5 @@
-from utils import my_utils
+from utils import my_utils, color_manager
 import time
-from utils import color_manager
 
 min_y, max_y = -30, 30
 
@@ -12,6 +11,7 @@ def run(coords, pixels, duration = None):
 
   cm = color_manager.ColorManager()
   cm.generate_pleasant_colors()
+  cm.shuffle()
 
   # main loop
   while duration is None or time.time() - start_time < duration:
@@ -20,7 +20,6 @@ def run(coords, pixels, duration = None):
     rotated_coords = my_utils.randomly_rotate_tree(coords)
 
     turn_on_min, turn_on_max = -50, -40
-    # rand_color = my_utils.get_random_good_color()
 
     color = cm.next_color()
 

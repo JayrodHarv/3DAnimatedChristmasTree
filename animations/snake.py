@@ -1,6 +1,6 @@
 import time
 import random
-from utils import my_utils
+from utils import my_utils, color_manager
 
 HOLD_TIME = 0.0005
 
@@ -8,16 +8,14 @@ def run(coords, pixels, duration = None):
   start_time = time.time()
   num_pixels = len(coords)
 
-  colors = my_utils.generate_pleasant_colors() # Get list of pleasant colors
-  random.shuffle(colors) # Shuffle list of colors
-
-  ci = 0
+  cm = color_manager.ColorManager()
+  cm.generate_pleasant_colors()
+  cm.shuffle()
+  
   while duration is None or time.time() - start_time < duration:
 
-    # Make sure that index doesn't go out of bounds of color list
-    ci = 0 if ci > len(colors) - 1 else ci + 1
+    color = cm.next_color()
 
-    color = colors[ci]
     for i in range(num_pixels):
       pixels[i] = color
       pixels.show()

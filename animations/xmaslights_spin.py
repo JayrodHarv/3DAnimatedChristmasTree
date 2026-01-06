@@ -1,8 +1,14 @@
 # Here are the libraries I am currently using:
 import time
 import math
+from utils import color_manager
 
 def run(coords, pixels, duration = None):
+
+    cm = color_manager.ColorManager()
+    cm.generate_pleasant_colors()
+    cm.shuffle()
+
     # This is the code from my 
     
     # If you want to have user changable values, they need to be entered from the command line
@@ -38,8 +44,8 @@ def run(coords, pixels, duration = None):
     
     # the two colours in GRB order
     # if you are turning a lot of them on at once, keep their brightness down please
-    colourA = [0,50,50] # purple
-    colourB = [50,50,0] # yellow
+    colourA = cm.next_color()
+    colourB = cm.next_color()
     
     
     # INITIALISE SOME VALUES
