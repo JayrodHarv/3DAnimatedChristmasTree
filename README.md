@@ -19,9 +19,9 @@ First off, in order to use my code, you will have had to build your own tree. If
 
 Once you have the tree built, you need to scan it. This is done by setting up a camera at a fixed position so that it contains all the lights in its frame. You then need to set up AutoHotKey and use my scan_tree.ahk macro in tandem with the ScanTree.py to take pictures of each light from 4 different directions which are all 90 degrees apart. Once you have done this, use the TriangulateCoordinates.py script and pass it the necessary arguements to have it output the coordinates to a text file.
 
-Once you have the text file, try running any animation by running "sudo python PlaySingleAnimation.py" that requires the coordinates and see if it looks right. If it looks completely wrong, go through each step again. If only a handfull of lights appear to be incorrect, use the coordinate_correction.py script to correct those light coordinates.
+Once you have the text file, try running any animation by running `sudo python PlaySingleAnimation.py` that requires the coordinates and see if it looks right. If it looks completely wrong, go through each step again. If only a handfull of lights appear to be incorrect, use the coordinate_correction.py script to correct those light coordinates.
 
 ### How to use once tree is built and scanned
-Enter command "sudo python CycleAnimations.py" to cycle through every animation. By default, the ordering is shuffled and the duration of each animation is 60 seconds (1 minute). Enter command "sudo python CycleAnimations.py --help" for information on how to change these parameters
+Enter command `sudo python CycleAnimations.py` to cycle through every animation. By default, the ordering is shuffled and the duration of each animation is 60 seconds (1 minute). Enter command `sudo python CycleAnimations.py --help` for information on how to change these parameters
 
-Enter command "sudo python PlaySingleAnimation.py" to select an animation from the list to play indefinitely.
+Enter command `sudo python PlaySingleAnimation.py` to select an animation from the list to play indefinitely.
