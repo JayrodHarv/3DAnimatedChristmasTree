@@ -16,8 +16,7 @@ class Animation:
         self.min_x, self.max_x = min(xs), max(xs)
         self.min_y, self.max_y = min(ys), max(ys)
         self.min_z, self.max_z = min(zs), max(zs)
-
-        self.height = self.max_z - self.min_z
+        
         self.radius = max(
             max(abs(self.min_x), abs(self.max_x)),
             max(abs(self.min_y), abs(self.max_y))

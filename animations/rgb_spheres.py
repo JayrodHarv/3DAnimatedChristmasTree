@@ -68,7 +68,7 @@ class RGBSpheresAnimation(Animation):
 
     def setup(self):
         # center height for spawning spheres
-        self.center_z = self.height / 2.0
+        self.center_z = self.max_z / 2.0
 
         # distances measured from the tree center so culling and max radius are correct
         self.distances = [
@@ -98,7 +98,7 @@ class RGBSpheresAnimation(Animation):
                 "radius": 0.0,
                 "color": self.color_manager.next_color(),
                 # spawn vertically at middle of tree
-                "center_z": self.height / 2.0
+                "center_z": self.max_z / 2.0
             })
             self.last_spawn = self.time_accumulator
 
