@@ -5,6 +5,7 @@ from .random_rgb_all import RandomRGBAllAnimation
 from .sparkle import SparkleAnimation
 from .snake import SnakeAnimation
 from .smooth_rgb_spectrum import SmoothRGBSpectrumAnimation
+from .breathing_tree import BreathingTreeAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -13,5 +14,6 @@ ANIMATIONS = [
     RandomRGBAllAnimation,
     SparkleAnimation,
     SnakeAnimation,
-    SmoothRGBSpectrumAnimation
+    SmoothRGBSpectrumAnimation,
+    BreathingTreeAnimation
 ]
