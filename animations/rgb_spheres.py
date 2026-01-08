@@ -67,8 +67,12 @@ class RGBSpheresAnimation(Animation):
     name = "RGB Spheres"
 
     def setup(self):
+        # center height for spawning spheres
+        self.center_z = self.height / 2.0
+
+        # distances measured from the tree center so culling and max radius are correct
         self.distances = [
-            math.sqrt(x*x + y*y + z*z)
+            math.sqrt(x*x + y*y + (z - self.center_z)**2)
             for x, y, z in self.coords
         ]
         self.max_radius = max(self.distances)
@@ -88,11 +92,13 @@ class RGBSpheresAnimation(Animation):
     def update(self, dt):
         self.time_accumulator += dt
 
-        # Spawn new sphere
+        # Spawn new sphere at center height of the tree
         if self.time_accumulator - self.last_spawn >= self.spawn_interval:
             self.spheres.append({
                 "radius": 0.0,
-                "color": self.color_manager.next_color()
+                "color": self.color_manager.next_color(),
+                # spawn vertically at middle of tree
+                "center_z": self.height / 2.0
             })
             self.last_spawn = self.time_accumulator
 
@@ -106,12 +112,13 @@ class RGBSpheresAnimation(Animation):
             if s["radius"] <= self.max_radius * 1.2
         ]
 
-        # Update pixels
-        for j, dist in enumerate(self.distances):
+        # Update pixels — compute distance from each pixel to the sphere center
+        for j, (x, y, z) in enumerate(self.coords):
             pixel_color = None
 
             # iterate newest spheres first
             for s in reversed(self.spheres):
+                dist = math.sqrt(x*x + y*y + (z - s["center_z"])**2)
                 if dist <= s["radius"]:
                     pixel_color = s["color"]
                     break
