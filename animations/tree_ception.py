@@ -48,7 +48,7 @@ class TreeCeptionAnimation(Animation):
             pixel_color = None
 
             # fraction up the tree (0 at bottom -> 1 at top)
-            frac_height = (z - self.min_z) / (self.height if self.height != 0 else 1)
+            frac_height = (z - self.min_z) / (self.max_z if self.max_z != 0 else 1)
             frac_height = max(0.0, min(1.0, frac_height))
 
             # cone radius at this height when fully grown
