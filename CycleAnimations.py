@@ -68,6 +68,7 @@ try:
 
         for AnimClass in animations:
             anim = AnimClass(coords, pixels)
+            print(f"Playing {anim.name} for {args.duration} seconds")
             anim.run(duration=args.duration, fps=30)
 
 except KeyboardInterrupt:

@@ -36,8 +36,6 @@ class Animation:
         self.setup()
         start = last = time.time()
 
-        print(f"Playing animation: {self.name}")
-
         while duration is None or time.time() - start < duration:
             now = time.time()
             dt = now - last
