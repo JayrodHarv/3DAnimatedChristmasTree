@@ -31,12 +31,12 @@ class BreathingTreeAnimation(Animation):
             self.color = np.array(self.cm.next_color(), dtype=float)
 
         z_vals = np.array([p[2] for p in self.coords])
-        z_min, z_max = np.min(z_vals), np.max(z_vals) + 200 # Account for errors at top
+        z_min, z_max = np.min(z_vals), np.max(z_vals) + 300 # Account for errors at top
         z_norm = (z_vals - z_min) / (z_max - z_min)   # 0–1 vertical height
 
         radii = np.sqrt(np.array([p[0] for p in self.coords])**2 +
                         np.array([p[1] for p in self.coords])**2)
-        max_radius = np.max(radii) + 50  # Account for errors at outer edge
+        max_radius = np.max(radii) + 100  # Account for errors at outer edge
 
         # compute cone radius at each height for current scale
         # full tree radius profile = (1 - z_norm) * max_radius
