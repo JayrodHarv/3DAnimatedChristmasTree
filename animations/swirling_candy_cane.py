@@ -2,6 +2,9 @@ import time
 import numpy as np
 from animations.animation import Animation
 
+STRIPE_WIDTH = 7    # angular size of red/white bands (radians)
+SPIRAL_TWIST = 4   # how tightly the spiral wraps around trunk
+
 class SwirlingCandyCaneAnimation(Animation):
     name = "Swirling Candy Cane"
 
