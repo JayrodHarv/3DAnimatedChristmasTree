@@ -1,4 +1,3 @@
-import time
 import numpy as np
 from utils import color_manager
 from animations.animation import Animation
@@ -7,7 +6,9 @@ class BreathingTreeAnimation(Animation):
     name = "Breathing Tree"
 
     def setup(self):
-        self.start_time = time.time()
+        # use accumulated dt instead of wall clock time
+        self.time_accumulator = 0.0
+
         self.cm = color_manager.ColorManager()
         self.cm.generate_pleasant_colors()
         self.cm.shuffle()
@@ -15,7 +16,9 @@ class BreathingTreeAnimation(Animation):
         self.cycle_time = 6.0  # seconds per shrink + expand cycle
 
     def update(self, dt):
-        elapsed = time.time() - self.start_time
+        # accumulate delta-time passed in by the runner
+        self.time_accumulator += dt
+        elapsed = self.time_accumulator
 
         # compute current scale 0–1 (shrinking and expanding)
         t = (elapsed * (2*np.pi / self.cycle_time)) % (2*np.pi)
@@ -28,7 +31,7 @@ class BreathingTreeAnimation(Animation):
             self.color = np.array(self.cm.next_color(), dtype=float)
 
         z_vals = np.array([p[2] for p in self.coords])
-        z_min, z_max = np.min(z_vals), np.max(z_vals) + 20
+        z_min, z_max = np.min(z_vals), np.max(z_vals) + 100
         z_norm = (z_vals - z_min) / (z_max - z_min)   # 0–1 vertical height
 
         radii = np.sqrt(np.array([p[0] for p in self.coords])**2 +
