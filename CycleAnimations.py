@@ -66,8 +66,9 @@ try:
         if args.order == "shuffle":
             random.shuffle(animations)
 
-        for anim in animations:
-            play_animation(anim, pixels, coords, args.duration)
+        for AnimClass in animations:
+            anim = AnimClass(coords, pixels)
+            anim.run(duration=args.duration, fps=30)
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))

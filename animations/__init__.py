@@ -17,77 +17,8 @@ from .tree_ception import run as tree_ception
 from .vertical_scan import run as vertical_scan
 from .xmaslights_spin import run as xmaslights_spin
 
+from vertical_scan import VerticalScanAnimation
+
 ANIMATIONS = [
-    {
-        "name": "Breathing Tree",
-        "function": breathing_tree
-    },
-    {
-        "name": "Minecraft Enchantment Glint",
-        "function": enchantment_glint
-    },
-    {
-        "name": "Fire",
-        "function": fire
-    },
-    {
-        "name": "Intersecting Planes",
-        "function": intersecting_planes
-    },
-    {
-        "name": "Rainbow Swirl",
-        "function": rainbow_swirl
-    },
-    {
-        "name": "Random Direction Scan",
-        "function": random_direction_scan
-    },
-    {
-        "name": "Random RGB All",
-        "function": random_rgb_all
-    },
-    {
-        "name": "RGB Spheres",
-        "function": rgb_spheres
-    },
-    {
-        "name": "Scrolling Text",
-        "function": scrolling_text
-    },
-    {
-        "name": "Smooth RGB Spectrum",
-        "function": smooth_rgb_spectrum
-    },
-    {
-        "name": "Snake",
-        "function": snake
-    },
-    {
-        "name": "Sparkle",
-        "function": sparkle
-    },
-    {
-        "name": "Swirling Candycane",
-        "function": swirling_candy_cane
-    },
-    # {
-    #     "name": "Tetrahedron",
-    #     "function": tetrahedron
-    # },
-    {
-        "name": "Time Warp",
-        "function": time_warp
-    },
-    {
-        "name": "Tree-ception",
-        "function": tree_ception
-    },
-    {
-        "name": "Vertical Scan",
-        "function": vertical_scan
-    },
-    {
-        "name": "Xmas Lights Spin",
-        "function": xmaslights_spin
-    }
+    VerticalScanAnimation
 ]

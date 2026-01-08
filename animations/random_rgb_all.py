@@ -1,5 +1,4 @@
 import time
-import random
 from utils import color_manager
 
 HOLD_TIME = 3
