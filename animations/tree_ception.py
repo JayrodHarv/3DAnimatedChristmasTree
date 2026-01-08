@@ -11,7 +11,7 @@ class TreeCeptionAnimation(Animation):
         self.z_vals = [z for _, _, z in self.coords]
         # allow extra padding so cones can grow beyond the measured tree radius
         # (increase factor to ensure fully-grown cones can reach every LED)
-        self.max_radius = max(self.radial) * 1.25 + 10
+        self.max_radius = max(self.radial) * 1.75 + 10
 
         # cone growth speed (g units per second, where g goes 0→1)
         self.growth_speed = 0.5
