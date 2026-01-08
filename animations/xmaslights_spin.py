@@ -21,11 +21,21 @@ class XmasLightsSpinAnimation(Animation):
         self.colourA = self.color_manager.next_color()
         self.colourB = self.color_manager.next_color()
 
+        # center point of the tree (use mean of points for robust center)
+        xs = [p[0] for p in self.coords]
+        ys = [p[1] for p in self.coords]
+        zs = [p[2] for p in self.coords]
+        self.center_x = sum(xs) / len(xs) if xs else 0.0
+        self.center_y = sum(ys) / len(ys) if ys else 0.0
+        self.center_z = sum(zs) / len(zs) if zs else 0.0
+
+        # which axis to spin around: 'z' is vertical (default)
+        self.spin_axis = 'z'
+
     def update(self, dt):
         # advance rotation
-        self.angle += self.rotation_speed * dt
-        if self.angle > 2 * math.pi:
-            self.angle -= 2 * math.pi
+        # advance rotation (wrap using modulus)
+        self.angle = (self.angle + self.rotation_speed * dt) % (2 * math.pi)
 
         # update colors only every color_change_interval seconds to avoid rapid flashing
         self.time_accumulator += dt
@@ -34,17 +44,17 @@ class XmasLightsSpinAnimation(Animation):
             self.colourB = self.color_manager.next_color()
             self.time_accumulator = 0.0
 
-        # make the rotating plane pass through the center of the tree
-        center_x = (self.min_x + self.max_x) / 2.0
-        center_y = (self.min_y + self.max_y) / 2.0
+        # make the rotating plane pass through the center of the tree (rotate about Z by default)
         c = math.cos(self.angle)
         s = math.sin(self.angle)
 
         for i, (x, y, z) in enumerate(self.coords):
-            dx = x - center_x
-            dy = y - center_y
-            # dot product with unit normal defines which side of the plane the point is on
-            if c * dx + s * dy >= 0:
+            dx = x - self.center_x
+            dy = y - self.center_y
+
+            # For rotation about Z axis: plane normal = (cos(angle), sin(angle), 0)
+            # Points with dot >= 0 are on one side, < 0 on the other
+            if (c * dx + s * dy) >= 0:
                 self.pixels[i] = self.colourA
             else:
                 self.pixels[i] = self.colourB
