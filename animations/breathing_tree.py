@@ -36,7 +36,7 @@ class BreathingTreeAnimation(Animation):
 
         radii = np.sqrt(np.array([p[0] for p in self.coords])**2 +
                         np.array([p[1] for p in self.coords])**2)
-        max_radius = np.max(radii) + 5
+        max_radius = np.max(radii) + 50  # Account for errors at outer edge
 
         # compute cone radius at each height for current scale
         # full tree radius profile = (1 - z_norm) * max_radius
