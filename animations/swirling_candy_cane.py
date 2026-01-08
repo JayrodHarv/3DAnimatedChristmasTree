@@ -1,9 +1,6 @@
 import numpy as np
 from animations.animation import Animation
 
-STRIPE_WIDTH = 7    # angular size of red/white bands (radians)
-SPIRAL_TWIST = 4   # how tightly the spiral wraps around trunk
-
 class SwirlingCandyCaneAnimation(Animation):
     name = "Swirling Candy Cane"
 
@@ -25,7 +22,11 @@ class SwirlingCandyCaneAnimation(Animation):
 
         # rotation speed in radians per second (change this to adjust swirl speed)
         self.rotation_speed = 4.0
-        
+
+        self.stripe_width = 7
+
+        self.stripe_twist = 4
+
     def update(self, dt):
         # accumulate delta time provided by runner
         self.time_accumulator += dt
@@ -34,8 +35,8 @@ class SwirlingCandyCaneAnimation(Animation):
         phase = self.time_accumulator * self.rotation_speed
 
         # Compute stripe pattern for each LED
-        swirl_value = (self.theta + 2 * np.pi * SPIRAL_TWIST * self.z_norm + phase)
-        stripe = ((swirl_value // STRIPE_WIDTH) % 2).astype(int)
+        swirl_value = (self.theta + 2 * np.pi * self.stripe_twist * self.z_norm + phase)
+        stripe = ((swirl_value // self.stripe_width) % 2).astype(int)
 
         # Update LEDs
         for i in range(self.num_pixels):
