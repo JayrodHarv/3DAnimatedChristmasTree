@@ -16,9 +16,9 @@ class TimeWarpAnimation(Animation):
 
         for j, (x, y, z) in enumerate(self.coords):
             # Normalize coordinates
-            z_norm = (z - self.min_z) / (self.height if self.height != 0 else 1)
+            z_norm = (z - self.min_z) / (self.max_z if self.max_z != 0 else 1)
             radius = math.sqrt(x**2 + y**2)
-            r_norm = radius / (self.max_radius if self.max_radius != 0 else 1)
+            r_norm = radius / (self.radius if self.radius != 0 else 1)
 
             # Time distortion factors
             height_warp = 0.3 + z_norm           # higher = faster
