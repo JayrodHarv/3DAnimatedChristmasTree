@@ -7,6 +7,8 @@ from .snake import SnakeAnimation
 from .smooth_rgb_spectrum import SmoothRGBSpectrumAnimation
 from .breathing_tree import BreathingTreeAnimation
 from .rainbow_swirl import RainbowSwirlAnimation
+from .swirling_candy_cane import SwirlingCandyCaneAnimation
+from .tree_ception import TreeCeptionAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -17,5 +19,7 @@ ANIMATIONS = [
     SnakeAnimation,
     SmoothRGBSpectrumAnimation,
     BreathingTreeAnimation,
-    RainbowSwirlAnimation
+    RainbowSwirlAnimation,
+    SwirlingCandyCaneAnimation,
+    TreeCeptionAnimation
 ]
