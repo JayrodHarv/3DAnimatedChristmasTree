@@ -1,6 +1,7 @@
 # Here are the libraries I am currently using:
 import time
 import math
+from animations.animation import Animation
 from utils import color_manager
 
 def run(coords, pixels, duration = None):
@@ -109,3 +110,29 @@ def run(coords, pixels, duration = None):
             direction = 1
         if c >= max_alt-buffer:
             direction = -1
+
+class XmasLightsSpinAnimation(Animation):
+    name = "Xmas Lights Spin"
+
+    def setup(self):
+        self.rotation_speed = 0.1
+        self.angle = 0.0
+        self.color_manager = color_manager.ColorManager()
+        self.color_manager.generate_pleasant_colors()
+        self.color_manager.shuffle()
+
+    def update(self, dt):
+        # Implement the spinning animation logic here
+        self.angle += self.rotation_speed * dt
+        if self.angle > 2 * math.pi:
+            self.angle -= 2 * math.pi
+        min_alt = min(z for x, y, z in self.coords)
+        max_alt = max(z for x, y, z in self.coords)
+        
+        colourA = self.color_manager.next_color()
+        colourB = self.color_manager.next_color()
+        for i, (x, y, z) in enumerate(self.coords):
+            if math.tan(self.angle) * y <= z + 10:
+                self.pixels[i] = colourA
+            else:
+                self.pixels[i] = colourB

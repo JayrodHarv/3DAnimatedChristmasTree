@@ -9,6 +9,9 @@ from .breathing_tree import BreathingTreeAnimation
 from .rainbow_swirl import RainbowSwirlAnimation
 from .swirling_candy_cane import SwirlingCandyCaneAnimation
 from .tree_ception import TreeCeptionAnimation
+from .time_warp import TimeWarpAnimation
+from .scrolling_text import ScrollingTextAnimation
+from .xmaslights_spin import XmasLightsSpinAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -21,5 +24,8 @@ ANIMATIONS = [
     BreathingTreeAnimation,
     RainbowSwirlAnimation,
     SwirlingCandyCaneAnimation,
-    TreeCeptionAnimation
+    TreeCeptionAnimation,
+    TimeWarpAnimation,
+    ScrollingTextAnimation,
+    XmasLightsSpinAnimation,
 ]
