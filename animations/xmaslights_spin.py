@@ -1,115 +1,6 @@
-# Here are the libraries I am currently using:
-import time
 import math
 from animations.animation import Animation
 from utils import color_manager
-
-def run(coords, pixels, duration = None):
-
-    cm = color_manager.ColorManager()
-    cm.generate_pleasant_colors()
-    cm.shuffle()
-
-    # This is the code from my 
-    
-    # If you want to have user changable values, they need to be entered from the command line
-    # so import sys sys and use sys.argv[0] etc
-    # some_value = int(sys.argv[0])
-    
-    # YOU CAN EDIT FROM HERE DOWN
-    
-    # I get a list of the heights which is not overly useful here other than to set the max and min altitudes
-    heights = []
-    for i in coords:
-        heights.append(i[2])
-    
-    min_alt = min(heights)
-    max_alt = max(heights)
-    
-    # VARIOUS SETTINGS
-    
-    # how much the rotation points moves each time
-    dinc = 1
-    
-    # a buffer so it does not hit to extreme top or bottom of the tree
-    buffer = 20
-    
-    # pause between cycles (normally zero as it is already quite slow)
-    slow = 0
-    
-    # startin angle (in radians)
-    angle = 0
-    
-    # how much the angle changes per cycle
-    inc = 0.1
-    
-    # the two colours in GRB order
-    # if you are turning a lot of them on at once, keep their brightness down please
-    colourA = cm.next_color()
-    colourB = cm.next_color()
-    
-    
-    # INITIALISE SOME VALUES
-    
-    swap01 = 0
-    swap02 = 0
-    
-    # direct it move in
-    direction = -1
-    
-    # the starting point on the vertical axis
-    c = 10
-    
-    # yes, I just run which run is true
-    start_time = time.time()
-
-    while duration is None or time.time() - start_time < duration:
-        
-        time.sleep(slow)
-        
-        LED = 0
-        while LED < len(coords):
-            if math.tan(angle)*coords[LED][1] <= coords[LED][2]+c:
-                pixels[LED] = colourA
-            else:
-                pixels[LED] = colourB
-            LED += 1
-        
-        # use the show() option as rarely as possible as it takes ages
-        # do not use show() each time you change a LED but rather wait until you have changed them all
-        pixels.show()
-        
-        # now we get ready for the next cycle
-        
-        angle += inc
-        if angle > 2*math.pi:
-            angle -= 2*math.pi
-            swap01 = 0
-            swap02 = 0
-        
-        # this is all to keep track of which colour is 'on top'
-        
-        if angle >= 0.5*math.pi:
-            if swap01 == 0:
-                colour_hold = [i for i in colourA]
-                colourA =[i for i in colourB]
-                colourB = [i for i in colour_hold]
-                swap01 = 1
-                
-        if angle >= 1.5*math.pi:
-            if swap02 == 0:
-                colour_hold = [i for i in colourA]
-                colourA =[i for i in colourB]
-                colourB = [i for i in colour_hold]
-                swap02 = 1
-        
-        # and we move the rotation point
-        # c += direction*dinc
-        
-        if c <= min_alt+buffer:
-            direction = 1
-        if c >= max_alt-buffer:
-            direction = -1
 
 class XmasLightsSpinAnimation(Animation):
     name = "Xmas Lights Spin"
@@ -122,17 +13,15 @@ class XmasLightsSpinAnimation(Animation):
         self.color_manager.shuffle()
 
     def update(self, dt):
-        # Implement the spinning animation logic here
         self.angle += self.rotation_speed * dt
         if self.angle > 2 * math.pi:
             self.angle -= 2 * math.pi
-        min_alt = min(z for x, y, z in self.coords)
-        max_alt = max(z for x, y, z in self.coords)
-        
+
         colourA = self.color_manager.next_color()
         colourB = self.color_manager.next_color()
+
         for i, (x, y, z) in enumerate(self.coords):
-            if math.tan(self.angle) * y <= z + 10:
+            if math.tan(self.angle) * y <= z:
                 self.pixels[i] = colourA
             else:
                 self.pixels[i] = colourB
