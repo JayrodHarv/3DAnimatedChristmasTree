@@ -4,7 +4,7 @@ from matplotlib.widgets import Button
 from utils import my_utils
 import argparse
 
-DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+DEFAULT_COORDS_FILE = "bottom_normalized_tree_d_coords_mm.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -67,9 +67,9 @@ def plot_coords(coords, bad_indices, title):
     set_equal_3d_axes(ax, coords)
 
     ax.set_title(title)
-    ax.set_xlabel("X (inches)")
-    ax.set_ylabel("Y (inches)")
-    ax.set_zlabel("Z (inches)")
+    ax.set_xlabel("X (mm)")
+    ax.set_ylabel("Y (mm)")
+    ax.set_zlabel("Z (mm)")
     plt.draw()
 
 def set_equal_3d_axes(ax, coords):
