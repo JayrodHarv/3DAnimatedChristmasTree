@@ -6,6 +6,7 @@ from .sparkle import SparkleAnimation
 from .snake import SnakeAnimation
 from .smooth_rgb_spectrum import SmoothRGBSpectrumAnimation
 from .breathing_tree import BreathingTreeAnimation
+from .rainbow_swirl import RainbowSwirlAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -15,5 +16,6 @@ ANIMATIONS = [
     SparkleAnimation,
     SnakeAnimation,
     SmoothRGBSpectrumAnimation,
-    BreathingTreeAnimation
+    BreathingTreeAnimation,
+    RainbowSwirlAnimation
 ]
