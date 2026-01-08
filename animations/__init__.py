@@ -17,7 +17,7 @@ from .tree_ception import run as tree_ception
 from .vertical_scan import run as vertical_scan
 from .xmaslights_spin import run as xmaslights_spin
 
-from vertical_scan import VerticalScanAnimation
+from .vertical_scan import VerticalScanAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation
