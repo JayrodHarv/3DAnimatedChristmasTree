@@ -31,7 +31,7 @@ class BreathingTreeAnimation(Animation):
             self.color = np.array(self.cm.next_color(), dtype=float)
 
         z_vals = np.array([p[2] for p in self.coords])
-        z_min, z_max = np.min(z_vals), np.max(z_vals) + 100
+        z_min, z_max = np.min(z_vals), np.max(z_vals) + 200 # Account for errors at top
         z_norm = (z_vals - z_min) / (z_max - z_min)   # 0–1 vertical height
 
         radii = np.sqrt(np.array([p[0] for p in self.coords])**2 +
