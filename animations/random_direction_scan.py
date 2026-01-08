@@ -1,40 +1,6 @@
 from utils import my_utils, color_manager
 from animations.animation import Animation
 
-# min_y, max_y = -30, 30
-
-# speed = 1.5
-
-# def run(coords, pixels, duration = None):
-#   start_time = time.time()
-#   num_pixels = len(coords)
-
-#   cm = color_manager.ColorManager()
-#   cm.generate_pleasant_colors()
-#   cm.shuffle()
-
-#   # main loop
-#   while duration is None or time.time() - start_time < duration:
-
-#     # apply random rotation to tree
-#     rotated_coords = my_utils.randomly_rotate_tree(coords)
-
-#     turn_on_min, turn_on_max = -50, -40
-
-#     color = cm.next_color()
-
-#     while turn_on_min < max_y and (duration is None or time.time() - start_time < duration):
-#       pixels.fill((0,0,0))
-
-#       turn_on_min += speed
-#       turn_on_max += speed
-
-#       for i in range(num_pixels):
-#         if turn_on_min <= rotated_coords[i][1] <= turn_on_max:
-#           pixels[i] = color
-          
-#       pixels.show()
-
 class RandomDirectionScanAnimation(Animation):
   name = "Random Direction Scan"
 
