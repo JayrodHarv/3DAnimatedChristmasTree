@@ -9,8 +9,9 @@ class TreeCeptionAnimation(Animation):
         # precompute per-pixel radial distances and z values for cone rendering
         self.radial = [math.sqrt(x*x + y*y) for x, y, z in self.coords]
         self.z_vals = [z for _, _, z in self.coords]
-        # allow a little padding so cones can grow slightly beyond tree radius
-        self.max_radius = max(self.radial) + 100
+        # allow extra padding so cones can grow beyond the measured tree radius
+        # (increase factor to ensure fully-grown cones can reach every LED)
+        self.max_radius = max(self.radial) * 1.25 + 10
 
         # cone growth speed (g units per second, where g goes 0→1)
         self.growth_speed = 0.5
@@ -48,7 +49,7 @@ class TreeCeptionAnimation(Animation):
             pixel_color = None
 
             # fraction up the tree (0 at bottom -> 1 at top)
-            frac_height = (z - self.min_z) / (self.max_z if self.max_z != 0 else 1)
+            frac_height = z / self.max_z
             frac_height = max(0.0, min(1.0, frac_height))
 
             # cone radius at this height when fully grown
