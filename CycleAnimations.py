@@ -54,11 +54,6 @@ coords, pixels = runtime.setup_tree(
 # SCHEDULER LOOP
 # ===================================================
 
-def play_animation(anim, pixels, coords, duration):
-    pixels.fill((0,0,0))
-    print(f"Playing {anim['name']} for {duration} seconds")
-    anim['function'](coords, pixels, duration)
-
 print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:

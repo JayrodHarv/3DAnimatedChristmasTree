@@ -35,7 +35,7 @@ try:
         print("Christmas Tree Animations:")
         i = 1
         for anim in ANIMATIONS:
-            print("\t" + str(i) + ") " + anim['name'])
+            print("\t" + str(i) + ") " + anim.name)
             i += 1
 
         try:
@@ -44,10 +44,13 @@ try:
             if number - 1 < 0 or number - 1 > len(ANIMATIONS):
                 raise ValueError
             
-            anim = ANIMATIONS[number - 1]
+            AnimClass = ANIMATIONS[number - 1]
 
-            print(f"Playing {anim['name']}")
-            anim['function'](coords, pixels)
+            anim = AnimClass(coords, pixels)
+
+            print(f"Playing {anim.name}")
+
+            anim.run(duration=None, fps=30)
 
             # small blackout between animations
             pixels.fill((0,0,0))
