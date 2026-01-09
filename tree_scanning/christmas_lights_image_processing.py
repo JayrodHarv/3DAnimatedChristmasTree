@@ -1,60 +1,81 @@
 import cv2
 import sys
-from utils import my_utils
 
 def load_image(light_num, folderPath):
     # Load the image
     return cv2.imread(f'{folderPath}/({light_num}).jpg')
-    # return cv2.imread("C:/Users/jared/Pictures/Camera Roll/WIN_20251012_15_29_10_Pro.jpg")
 
 def get_brightest_point(light_num, folderPath, display=False):
 
     image = load_image(light_num, folderPath)
+    if image is None:
+        raise FileNotFoundError(f"Image for light {light_num} not found in {folderPath}")
 
-    # Crop Image
-    y_start = 0   # Starting y-coordinate (top)
-    y_end = 1080   # Ending y-coordinate (bottom)
-    x_start = 600 # Starting x-coordinate (left)
-    x_end = 1920 - 600  # Ending x-coordinate (right)
+    height, width = image.shape[:2]
+
+    # Compute horizontal crop using the same relative padding as before (600/1920)
+    rel_pad = 600 / 1920
+    pad_x = int(round(width * rel_pad))
+
+    x_start = pad_x
+    x_end = width - pad_x
+    y_start = 0
+    y_end = height
+
+    # Ensure we don't create invalid slices
+    x_start = max(0, min(x_start, width - 1))
+    x_end = max(x_start + 1, min(x_end, width))
+    y_start = max(0, min(y_start, height - 1))
+    y_end = max(y_start + 1, min(y_end, height))
 
     cropped_image = image[y_start:y_end, x_start:x_end]
 
     # Convert the image to grayscale for easier processing
     gray_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
 
-    # (Optional) Apply a Gaussian blur to reduce noise, which can affect the brightest pixel detection
-    blurred_image = cv2.GaussianBlur(gray_image, (41, 41), 0)
+    # Scale blur kernel with image size for consistent behavior on different resolutions
+    # Kernel size must be positive and odd
+    base_kernel = 41
+    scale = max(1.0, height / 1080)
+    k = int(round(base_kernel * scale))
+    if k % 2 == 0:
+        k += 1
+
+    blurred_image = cv2.GaussianBlur(gray_image, (k, k), 0)
 
     # Find the minimum and maximum pixel values and their locations
-    (min_val, max_val, min_loc, max_loc) = cv2.minMaxLoc(blurred_image) # Use blurred_image for more robust detection
+    (min_val, max_val, min_loc, max_loc) = cv2.minMaxLoc(blurred_image)
 
-    # max_loc will contain the (x, y) coordinates of the brightest pixel
-    brightest_pixel_coordinates = max_loc
-
-    # You can also get the value of the brightest pixel
-    brightest_pixel_value = max_val
-
-    # print(f"Brightest pixel value: {brightest_pixel_value}")
-    # print(f"Brightest pixel coordinates (x, y): {brightest_pixel_coordinates}")
+    # max_loc is relative to the cropped image; convert to full-image coordinates
+    brightest_pixel_coordinates = (max_loc[0] + x_start, max_loc[1] + y_start)
 
     if display:
-        # (Optional) Draw a circle around the brightest pixel for visualization
-        cv2.circle(cropped_image, brightest_pixel_coordinates, 20, (0, 0, 255), 2) # Red circle with radius 20
-
-        # Display the image with the brightest pixel marked
+        # Draw a circle on the cropped image for visualization
+        cv2.circle(cropped_image, max_loc, max(2, k // 8), (0, 0, 255), 2)
         cv2.imshow('Image with Brightest Pixel', cropped_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
     return brightest_pixel_coordinates
 
-def get_upright_coord(coord):
-    # y coordinate needs fliped (Image is 1920x1080)
-    return [coord[0], 1080 - coord[1]]
+def get_upright_coord(coord, image_height=None):
+    """Return coordinates with flipped Y axis (image origin at top-left -> origin at bottom-left).
 
-def generateCoordinatesFromImages(numImages, folderPath, name):
+    If image_height is None, we assume 1080 for backwards compatibility, but it's
+    recommended to pass the actual image height.
+    """
+    if image_height is None:
+        image_height = 1080
+
+    return [coord[0], image_height - coord[1]]
+
+def generateCoordinatesFromImages(numImages, folderPath, name, display=False):
+    """Gather 2D coordinates for images in a folder, returning upright coordinates
+    (with origin at bottom-left). This works for any image dimensions.
+    """
     coords = []
     for i in range(0, numImages):
+        # Request image size along with coordinate so we can flip Y correctly
         coord = get_brightest_point(i + 1, folderPath)
         coords.append(coord)
 
@@ -67,32 +88,17 @@ def generateCoordinatesFromImages(numImages, folderPath, name):
 
     print(" Done!")
 
-    # write coordinates to text file seperated by commas
-    # with open(f"{folderPath.rsplit('/', 1)[-1]}_Coords.txt", "w") as file:
-    #     file.write(tempstr)
+    if display:
+        # Display coordinates using matplotlib
+        import matplotlib.pyplot as plt
+        xs = [c[0] for c in coords]
+        ys = [c[1] for c in coords]
+        plt.scatter(xs, ys)
+        plt.title(f"2D Coordinates from {name} Images")
+        plt.xlabel("X (pixels)")
+        plt.ylabel("Y (pixels)")
+        # flip Y axis for display
+        plt.ylim(plt.ylim()[::-1])
+        plt.show()
+
     return coords
-
-# Format:
-# [[(fx1,fy1), (rx1,ry1), (bx1,by1), (lx1,ly1)], [light2], [light3], ...]
-# fx = Front x value, fy = Front y value, b = Back, r = Right, l = Left
-def packageDirectionalCoordinateListsTogether():
-    # Read in coordinates
-    frontCoords = my_utils.read_in_coords("3D Tree Coords/Front_Facing_Coords.txt")
-    rightCoords = my_utils.read_in_coords("3D Tree Coords/Right_Facing_Coords.txt")
-    backCoords = my_utils.read_in_coords("3D Tree Coords/Back_Facing_Coords.txt")
-    leftCoords = my_utils.read_in_coords("3D Tree Coords/Left_Facing_Coords.txt")
-
-    # resulting string to write to file
-    result = []
-
-    for i in range(550):
-        coordsForSingleLight = []
-        coordsForSingleLight.append(frontCoords[i])
-        coordsForSingleLight.append(rightCoords[i])
-        coordsForSingleLight.append(backCoords[i])
-        coordsForSingleLight.append(leftCoords[i])
-        result.append(coordsForSingleLight)
-    
-    # Write to text file
-    with open("All_Direction_Coords.txt", "w") as file:
-        file.write(f"{result}")

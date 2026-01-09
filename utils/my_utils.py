@@ -54,7 +54,7 @@ def normalize_tree_coords(coords):
     """
     Normalize tree coordinates so that:
     - X=0, Y=0 is the trunk center
-    - Z=0 is the vertical midpoint of the tree
+    - Z=0 is the bottom of the tree
     """
 
     xs = [p[0] for p in coords]

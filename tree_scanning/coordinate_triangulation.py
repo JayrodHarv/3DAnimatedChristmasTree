@@ -8,7 +8,7 @@ import sys
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1080
 
-CAMERA_DISTANCE = 75.0   # inches (or cm, units stay consistent)
+CAMERA_DISTANCE = 1905.0   # millimeters (was 75 inches)
 FOCAL_LENGTH = 1200.0    # pixels (approx, adjust if needed)
 
 # Image center (important)
@@ -20,20 +20,34 @@ CY = IMAGE_HEIGHT / 2
 # ROTATION MATRICES
 # =========================================
 
-def rotation_y(theta):
+def rotation_x(theta):
+    """Rotation matrix about X axis."""
     c, s = np.cos(theta), np.sin(theta)
     return np.array([
-        [ c, 0, s],
-        [ 0, 1, 0],
-        [-s, 0, c]
+        [1, 0, 0],
+        [0, c, -s],
+        [0, s, c]
     ])
 
 
+def rotation_z(theta):
+    """Rotation matrix about Z axis."""
+    c, s = np.cos(theta), np.sin(theta)
+    return np.array([
+        [c, -s, 0],
+        [s,  c, 0],
+        [0,  0, 1]
+    ])
+
+
+# We want Z to be the "up" (height) axis. The camera's local Y is the image up
+# direction, so pre-rotate camera coords by +90deg around X to map camera Y -> world Z.
+# Then rotate around world Z to get the four 90-degree views around the tree.
 ROTATIONS = [
-    rotation_y(0),
-    rotation_y(np.pi / 2),
-    rotation_y(np.pi),
-    rotation_y(3 * np.pi / 2),
+    rotation_z(0) @ rotation_x(np.pi / 2),
+    rotation_z(np.pi / 2) @ rotation_x(np.pi / 2),
+    rotation_z(np.pi) @ rotation_x(np.pi / 2),
+    rotation_z(3 * np.pi / 2) @ rotation_x(np.pi / 2),
 ]
 
 
@@ -93,9 +107,12 @@ def triangulate_point(pixel_sets):
 # MAIN PIPELINE
 # =========================================
 
-def triangulate_all(coords_0, coords_90, coords_180, coords_270):
+def triangulate_all(coords_0, coords_90, coords_180, coords_270, display=False):
     """
     Each coords_* is a list of (u,v) pairs
+
+    Args:
+        display: if True, show progress bar while triangulating; otherwise run quietly.
     """
 
     assert len(coords_0) == len(coords_90) == len(coords_180) == len(coords_270)
@@ -121,5 +138,21 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270):
         sys.stdout.flush()
 
     print(" Done!")
+
+    if display:
+        # Show 3D graph using matplotlib
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        xs = [p[0] for p in points_3d]
+        ys = [p[1] for p in points_3d]
+        zs = [p[2] for p in points_3d]
+        ax.scatter(xs, ys, zs)
+        ax.set_title("Triangulated 3D Coordinates")
+        ax.set_xlabel("X (mm)")
+        ax.set_ylabel("Y (mm)")
+        ax.set_zlabel("Z (mm)")
+        plt.show()
 
     return points_3d

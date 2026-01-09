@@ -37,7 +37,7 @@ working_coords = list(original_coords)
 preview_coords = None
 incorrect_coords = []
 
-def find_incorrect_points(coords, max_distance = 5):
+def find_incorrect_points(coords, max_distance_mm = 127):
     incorrect = set() # set so can't contain two of same point
 
     for i in range(len(coords) - 1):
@@ -45,7 +45,7 @@ def find_incorrect_points(coords, max_distance = 5):
         p2 = np.array(coords[i + 1])
 
         # Add points to incorrect points if they are too far apart
-        if np.linalg.norm(p2 - p1) > max_distance:
+        if np.linalg.norm(p2 - p1) > max_distance_mm:
             incorrect.add(i)
             incorrect.add(i + 1)
     
