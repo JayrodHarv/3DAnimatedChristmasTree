@@ -14,6 +14,7 @@ from .scrolling_text import ScrollingTextAnimation
 from .xmaslights_spin import XmasLightsSpinAnimation
 from .enchantment_glint import EnchantmentGlintAnimation
 from .fire import FireAnimation
+from .intersecting_planes import IntersectingPlanesAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -32,4 +33,5 @@ ANIMATIONS = [
     XmasLightsSpinAnimation,
     EnchantmentGlintAnimation,
     FireAnimation,
+    IntersectingPlanesAnimation,
 ]
