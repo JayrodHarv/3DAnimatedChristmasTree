@@ -8,9 +8,9 @@ class SparkleAnimation(Animation):
     def setup(self):
         # Per-second constants (frame-rate independent)
         # fade_factor_per_sec: multiply color by this every 1 second (0 -> instant off, 1 -> no fade)
-        self.fade_factor_per_sec = 0.85
+        self.fade_factor_per_sec = 0.25
         # spawn_rate_per_sec: expected number of spawns per pixel per second (small numbers)
-        self.spawn_rate_per_sec = 0.05
+        self.spawn_rate_per_sec = 0.1
 
         # Pre-allocate color state per pixel
         self.colors = [(0, 0, 0)] * self.num_pixels
