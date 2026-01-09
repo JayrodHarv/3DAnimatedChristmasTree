@@ -7,7 +7,7 @@ class XmasLightsSpinAnimation(Animation):
 
     def setup(self):
         self.angle = 0.0
-        self.rotation_speed = math.pi / 2  # radians per second
+        self.rotation_speed = math.pi  # radians per second
 
         self.color_manager = color_manager.ColorManager()
         self.color_manager.generate_pleasant_colors()
