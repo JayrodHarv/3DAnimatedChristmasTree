@@ -17,6 +17,12 @@ def parse_args():
     )
 
     parser.add_argument(
+        "camera_distance_mm",
+        type=float,
+        help="Distance from camera to center of tree in millimeters"
+    )
+
+    parser.add_argument(
         "front_facing_path",
         type=str,
         help="Path to front facing pictures"
@@ -72,7 +78,7 @@ rightFacingCoords = christmas_lights_image_processing.generateCoordinatesFromIma
 backFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(args.num_lights, args.back_facing_path, "back facing", display=args.display)
 leftFacingCoords = christmas_lights_image_processing.generateCoordinatesFromImages(args.num_lights, args.left_facing_path, "left facing", display=args.display)
 
-coords = coordinate_triangulation.triangulate_all(frontFacingCoords, rightFacingCoords, backFacingCoords, leftFacingCoords, display=args.display)
+coords = coordinate_triangulation.triangulate_all(frontFacingCoords, rightFacingCoords, backFacingCoords, leftFacingCoords, args.camera_distance_mm, display=args.display)
 
 # TODO run coords through error correcting code
 

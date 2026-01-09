@@ -8,7 +8,7 @@ import sys
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1080
 
-CAMERA_DISTANCE = 1905.0   # millimeters (was 75 inches)
+# CAMERA_DISTANCE = 1905.0   # millimeters (was 75 inches)
 FOCAL_LENGTH = 1200.0    # pixels (approx, adjust if needed)
 
 # Image center (important)
@@ -72,7 +72,7 @@ def pixel_to_ray(u, v):
 # TRIANGULATION
 # =========================================
 
-def triangulate_point(pixel_sets):
+def triangulate_point(pixel_sets, camera_distance_mm):
     """
     pixel_sets: [(u0,v0), (u90,v90), (u180,v180), (u270,v270)]
     """
@@ -84,7 +84,7 @@ def triangulate_point(pixel_sets):
         ray = pixel_to_ray(u, v)
         ray = R @ ray
 
-        origin = R @ np.array([0, 0, -CAMERA_DISTANCE])
+        origin = R @ np.array([0, 0, -camera_distance_mm])
 
         origins.append(origin)
         directions.append(ray)
@@ -107,7 +107,7 @@ def triangulate_point(pixel_sets):
 # MAIN PIPELINE
 # =========================================
 
-def triangulate_all(coords_0, coords_90, coords_180, coords_270, display=False):
+def triangulate_all(coords_0, coords_90, coords_180, coords_270, camera_distance_mm, display=False):
     """
     Each coords_* is a list of (u,v) pairs
 
@@ -127,7 +127,7 @@ def triangulate_all(coords_0, coords_90, coords_180, coords_270, display=False):
             coords_180[i],
             coords_270[i]
         ]
-        p = triangulate_point(pixels)
+        p = triangulate_point(pixels, camera_distance_mm)
         points_3d.append(p)
 
         # Progress Bar
