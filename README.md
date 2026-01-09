@@ -14,6 +14,9 @@ Utilizing the power of a lot of crappy python code, I was able to hook up 550 in
 
 ### [3D Animated Christmas Tree](https://youtu.be/L4ZAIFt4BIo)
 
+## External Python Libraries Used (Must be installed to use this program)
+board, neopixel, argparse, numpy, matplotlib, cv2, tkinter
+
 ## User Guide
 First off, in order to use my code, you will have had to build your own tree. If you wish to do so, take the above video as a guide for how to do it. The video doesn't cover most of the wiring, but just know that I used pin 12 (GPIO 18) for the data wire and pin 6 (Ground) for the gound wire connections to the lights from the Raspberry Pi.
 
@@ -25,3 +28,6 @@ Once you have the text file, try running any animation by running `sudo python P
 Enter command `sudo python CycleAnimations.py` to cycle through every animation. By default, the ordering is shuffled and the duration of each animation is 60 seconds (1 minute). Enter command `sudo python CycleAnimations.py --help` for information on how to change these parameters
 
 Enter command `sudo python PlaySingleAnimation.py` to select an animation from the list to play indefinitely.
+
+### How to simulate the tree
+Run the TreeVisualizer script to simulate the tree and the animations I have created for it. For the coordinates, use either the tree_d_coords.txt or the test_coords.txt files and you should be able to have a virtual version of my tree play the animations.
