@@ -84,6 +84,34 @@ coords = coordinate_triangulation.triangulate_all(frontFacingCoords, rightFacing
 
 coords = my_utils.normalize_tree_coords(coords)
 
+if args.display:
+        # Show 3D graph using matplotlib with equal axis scaling so tree doesn't look smushed
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        xs = [p[0] for p in coords]
+        ys = [p[1] for p in coords]
+        zs = [p[2] for p in coords]
+        ax.scatter(xs, ys, zs)
+        ax.set_title("Triangulated 3D Coordinates")
+        ax.set_xlabel("X (mm)")
+        ax.set_ylabel("Y (mm)")
+        ax.set_zlabel("Z (mm)")
+        # Make x, y, z axes have equal scale and be centered
+        x_min, x_max = min(xs), max(xs)
+        y_min, y_max = min(ys), max(ys)
+        z_min, z_max = min(zs), max(zs)
+        x_mid = (x_max + x_min) / 2.0
+        y_mid = (y_max + y_min) / 2.0
+        z_mid = (z_max + z_min) / 2.0
+        max_range = max(x_max - x_min, y_max - y_min, z_max - z_min)
+        half = max_range / 2.0
+        ax.set_xlim(x_mid - half, x_mid + half)
+        ax.set_ylim(y_mid - half, y_mid + half)
+        ax.set_zlim(z_mid - half, z_mid + half)
+        plt.show()
+
 my_utils.save_coordinates(coords, args.output_filename)
 
 print(f"Saved {len(coords)} points to {args.output_filename}")
