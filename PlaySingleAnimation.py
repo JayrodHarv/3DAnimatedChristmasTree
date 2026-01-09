@@ -17,6 +17,13 @@ def parse_args():
         help="Path to coordinate file"
     )
 
+    parser.add_argument(
+        "--speed",
+        type=float,
+        default=1.0,
+        help="Speed multiplier for animations"
+    )
+
     return parser.parse_args()
 
 args = parse_args()
@@ -50,7 +57,7 @@ try:
 
             print(f"Playing {anim.name}")
 
-            anim.run(duration=None, fps=30)
+            anim.run(duration=None, fps=30, speed=args.speed)
 
             # small blackout between animations
             pixels.fill((0,0,0))
