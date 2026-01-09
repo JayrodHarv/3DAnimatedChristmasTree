@@ -12,7 +12,7 @@ class SnakeAnimation(Animation):
     self.current_index = 0
 
   def update(self, dt):
-    speed = 0.05  # seconds per pixel
+    speed = 0.005  # seconds per pixel
 
     while self.time_elapsed >= speed:
       self.time_elapsed -= speed
