@@ -13,7 +13,7 @@ class EnchantmentGlintAnimation(Animation):
     def setup(self):
         # Configuration: allow two simultaneous glint planes
         self.num_planes = 2
-        self.base_color = (160, 64, 255)  # purple
+        self.base_color = (127,0,255)  # purple
 
         # Maintain a list of active planes
         self.planes = []
