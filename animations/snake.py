@@ -13,12 +13,23 @@ class SnakeAnimation(Animation):
     self.time_accumulator = 0
 
   def update(self, dt):
-    # Set current pixel to color
-    self.pixels[self.current_index] = self.current_color
+    self.time_accumulator += dt
 
-    # Move to next pixel
-    self.current_index += 1
+    speed = 0.1  # seconds per pixel
 
-    if self.current_index >= self.num_pixels:
-      self.current_index = 0
-      self.current_color = self.color_manager.next_color()
+    while self.time_accumulator >= speed:
+      self.time_accumulator -= speed
+
+      # Set current pixel to current color
+      self.pixels[self.current_index] = self.current_color
+
+      # Move to next pixel
+      self.current_index += 1
+
+      if self.current_index >= self.num_pixels:
+        # Reset to start
+        self.current_index = 0
+        self.current_color = self.color_manager.next_color()
+        # Clear pixels for new snake
+        for i in range(self.num_pixels):
+          self.pixels[i] = (0, 0, 0)
