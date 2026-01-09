@@ -4,7 +4,7 @@ from matplotlib.widgets import Button
 from utils import my_utils
 import argparse
 
-DEFAULT_COORDS_FILE = "bottom_normalized_tree_d_coords_mm.txt" # set coords file as this by default
+DEFAULT_COORDS_FILE = "tree_d_coords.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
