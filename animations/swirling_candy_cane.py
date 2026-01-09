@@ -17,9 +17,6 @@ class SwirlingCandyCaneAnimation(Animation):
         # Compute angle around trunk for each LED
         self.theta = np.arctan2(self.y, self.x)
 
-        # use accumulated dt instead of wall clock time
-        self.time_accumulator = 0.0
-
         # rotation speed in radians per second (change this to adjust swirl speed)
         self.rotation_speed = 4.0
 
@@ -28,11 +25,8 @@ class SwirlingCandyCaneAnimation(Animation):
         self.stripe_twist = 4
 
     def update(self, dt):
-        # accumulate delta time provided by runner
-        self.time_accumulator += dt
-
         # Rotating phase term (uses configurable rotation_speed)
-        phase = self.time_accumulator * self.rotation_speed
+        phase = self.time_elapsed * self.rotation_speed
 
         # Compute stripe pattern for each LED
         swirl_value = (self.theta + 2 * np.pi * self.stripe_twist * self.z_norm + phase)

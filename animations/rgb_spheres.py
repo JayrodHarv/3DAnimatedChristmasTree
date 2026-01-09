@@ -21,7 +21,6 @@ class RGBSpheresAnimation(Animation):
 
         self.spheres = []
         self.last_spawn = 0
-        self.time_accumulator = 0
         self.frame_delay = 0.03
 
         self.color_manager = color_manager.ColorManager()
@@ -29,17 +28,15 @@ class RGBSpheresAnimation(Animation):
         self.color_manager.shuffle()
 
     def update(self, dt):
-        self.time_accumulator += dt
-
         # Spawn new sphere at center height of the tree
-        if self.time_accumulator - self.last_spawn >= self.spawn_interval:
+        if self.time_elapsed - self.last_spawn >= self.spawn_interval:
             self.spheres.append({
                 "radius": 0.0,
                 "color": self.color_manager.next_color(),
                 # spawn vertically at middle of tree
                 "center_z": self.max_z / 2.0
             })
-            self.last_spawn = self.time_accumulator
+            self.last_spawn = self.time_elapsed
 
         # Grow spheres using elapsed time
         for s in self.spheres:

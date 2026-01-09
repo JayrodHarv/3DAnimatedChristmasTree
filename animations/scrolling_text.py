@@ -9,7 +9,7 @@ FONT_SIZE = 80
 IMG_WIDTH = 200
 IMG_HEIGHT = 100
 
-ROTATE_SPEED = -0.05         # negative = rotate right→left
+ROTATE_SPEED = -0.1         # negative = rotate right→left
 FACE_WIDTH = 2 * np.pi            # angular width of visible face
 EDGE_FADE = 0.1             # fade near edges
 PAUSE_BETWEEN_LETTERS = 0.0  # seconds to hold between rotations

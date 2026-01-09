@@ -10,15 +10,12 @@ class SnakeAnimation(Animation):
     self.color_manager.shuffle()
     self.current_color = self.color_manager.next_color()
     self.current_index = 0
-    self.time_accumulator = 0
 
   def update(self, dt):
-    self.time_accumulator += dt
+    speed = 0.05  # seconds per pixel
 
-    speed = 0.1  # seconds per pixel
-
-    while self.time_accumulator >= speed:
-      self.time_accumulator -= speed
+    while self.time_elapsed >= speed:
+      self.time_elapsed -= speed
 
       # Set current pixel to current color
       self.pixels[self.current_index] = self.current_color

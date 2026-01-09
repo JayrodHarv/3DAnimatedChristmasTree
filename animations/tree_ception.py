@@ -19,7 +19,6 @@ class TreeCeptionAnimation(Animation):
 
         self.cones = []  # each: {"g": float, "color": (r,g,b)}
         self.last_spawn = 0
-        self.time_accumulator = 0
         self.frame_delay = 0.03
 
         self.color_manager = color_manager.ColorManager()
@@ -27,15 +26,13 @@ class TreeCeptionAnimation(Animation):
         self.color_manager.shuffle()
 
     def update(self, dt):
-        self.time_accumulator += dt
-
         # Spawn new cone (growth scalar g starts at 0)
-        if self.time_accumulator - self.last_spawn >= self.spawn_interval:
+        if self.time_elapsed - self.last_spawn >= self.spawn_interval:
             self.cones.append({
                 "g": 0.0,
                 "color": self.color_manager.next_color()
             })
-            self.last_spawn = self.time_accumulator
+            self.last_spawn = self.time_elapsed
 
         # Grow cones using elapsed time
         for c in self.cones:

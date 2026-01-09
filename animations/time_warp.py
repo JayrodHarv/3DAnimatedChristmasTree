@@ -6,13 +6,9 @@ class TimeWarpAnimation(Animation):
     name = "Time Warp"
 
     def setup(self):
-        # use accumulated dt instead of wall clock time
-        self.time_accumulator = 0.0
+        pass
 
     def update(self, dt):
-        # accumulate delta time provided by runner
-        self.time_accumulator += dt
-        elapsed = self.time_accumulator
 
         for j, (x, y, z) in enumerate(self.coords):
             # Normalize coordinates
@@ -25,10 +21,10 @@ class TimeWarpAnimation(Animation):
             radius_warp = 0.3 + r_norm * 1.2     # outer = faster
 
             # Slow oscillation that modulates time itself
-            warp_wave = 0.5 + 0.5 * math.sin(elapsed * 0.6 + z_norm * 6)
+            warp_wave = 0.5 + 0.5 * math.sin(self.time_elapsed * 0.6 + z_norm * 6)
 
             # Final effective time
-            t = elapsed * height_warp * radius_warp * warp_wave
+            t = self.time_elapsed * height_warp * radius_warp * warp_wave
 
             # Color based on warped time
             hue = (t * 0.03 + z_norm) % 1.0

@@ -6,9 +6,6 @@ class BreathingTreeAnimation(Animation):
     name = "Breathing Tree"
 
     def setup(self):
-        # use accumulated dt instead of wall clock time
-        self.time_accumulator = 0.0
-
         self.cm = color_manager.ColorManager()
         self.cm.generate_pleasant_colors()
         self.cm.shuffle()
@@ -16,12 +13,8 @@ class BreathingTreeAnimation(Animation):
         self.cycle_time = 6.0  # seconds per shrink + expand cycle
 
     def update(self, dt):
-        # accumulate delta-time passed in by the runner
-        self.time_accumulator += dt
-        elapsed = self.time_accumulator
-
         # compute current scale 0–1 (shrinking and expanding)
-        t = (elapsed * (2*np.pi / self.cycle_time)) % (2*np.pi)
+        t = (self.time_elapsed * (2*np.pi / self.cycle_time)) % (2*np.pi)
         # sin wave from 0→1→0 pattern
         scale = (np.sin(t - np.pi/2) + 1) / 2   # smooth in/out between 0–1
 

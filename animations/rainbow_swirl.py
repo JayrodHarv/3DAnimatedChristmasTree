@@ -18,15 +18,9 @@ class RainbowSwirlAnimation(Animation):
         # Compute angle around trunk for each LED
         self.theta = np.arctan2(self.y, self.x)
 
-        # use accumulated dt instead of wall clock time
-        self.time_accumulator = 0.0
-
     def update(self, dt):
-        # accumulate delta time provided by runner
-        self.time_accumulator += dt
-
         # Rotating phase term (ROTATION_SPEED = 2)
-        phase = self.time_accumulator * 2.0
+        phase = self.time_elapsed * 2.0
 
         # Compute rainbow hue for each LED
         swirl_value = (self.theta + 2 * np.pi * 0.5 * self.z_norm + phase) / (2 * np.pi)  # SPIRAL_TURNS

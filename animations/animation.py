@@ -9,6 +9,9 @@ class Animation:
         self.pixels = pixels
         self.num_pixels = len(pixels)
 
+        # Timing stuff
+        self.time_elapsed = 0
+
         # ---- Tree bounds (computed once) ----
         xs = [p[0] for p in coords]
         ys = [p[1] for p in coords]
@@ -41,7 +44,11 @@ class Animation:
             dt = now - last
             last = now
 
-            self.update(dt * speed)
+            scaled_dt = dt * speed
+
+            self.time_elapsed += scaled_dt
+
+            self.update(scaled_dt)
             self.draw()
 
             time.sleep(max(0, 1 / fps))
