@@ -4,7 +4,7 @@ from matplotlib.widgets import Button
 from utils import my_utils
 import argparse
 
-DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+DEFAULT_COORDS_FILE = "bottom_normalized_tree_d_coords_mm.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -37,7 +37,7 @@ working_coords = list(original_coords)
 preview_coords = None
 incorrect_coords = []
 
-def find_incorrect_points(coords, max_distance = 5):
+def find_incorrect_points(coords, max_distance_mm = 127):
     incorrect = set() # set so can't contain two of same point
 
     for i in range(len(coords) - 1):
@@ -45,7 +45,7 @@ def find_incorrect_points(coords, max_distance = 5):
         p2 = np.array(coords[i + 1])
 
         # Add points to incorrect points if they are too far apart
-        if np.linalg.norm(p2 - p1) > max_distance:
+        if np.linalg.norm(p2 - p1) > max_distance_mm:
             incorrect.add(i)
             incorrect.add(i + 1)
     
@@ -67,9 +67,9 @@ def plot_coords(coords, bad_indices, title):
     set_equal_3d_axes(ax, coords)
 
     ax.set_title(title)
-    ax.set_xlabel("X (inches)")
-    ax.set_ylabel("Y (inches)")
-    ax.set_zlabel("Z (inches)")
+    ax.set_xlabel("X (mm)")
+    ax.set_ylabel("Y (mm)")
+    ax.set_zlabel("Z (mm)")
     plt.draw()
 
 def set_equal_3d_axes(ax, coords):

@@ -9,7 +9,7 @@ DEFAULT_ORDER = "shuffle" # Random order by default
 
 DEFAULT_DURATION = "60" # 1 minute duration by default
 
-DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+DEFAULT_COORDS_FILE = "bottom_normalized_tree_d_coords_mm.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -27,7 +27,21 @@ def parse_args():
         "--duration",
         type=int,
         default=DEFAULT_DURATION,
-        help="Duration that each animation plays for"
+        help="Duration that each animation plays for in seconds"
+    )
+
+    parser.add_argument(
+        "--speed",
+        type=float,
+        default=1.0,
+        help="Speed multiplier for animations"
+    )
+
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=30,
+        help="Frames per second for animations"
     )
 
     parser.add_argument(
@@ -54,11 +68,6 @@ coords, pixels = runtime.setup_tree(
 # SCHEDULER LOOP
 # ===================================================
 
-def play_animation(anim, pixels, coords, duration):
-    pixels.fill((0,0,0))
-    print(f"Playing {anim['name']} for {duration} seconds")
-    anim['function'](coords, pixels, duration)
-
 print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
@@ -66,8 +75,11 @@ try:
         if args.order == "shuffle":
             random.shuffle(animations)
 
-        for anim in animations:
-            play_animation(anim, pixels, coords, args.duration)
+        for AnimClass in animations:
+            anim = AnimClass(coords, pixels)
+            print(f"Playing {anim.name} for {args.duration} seconds")
+            anim.run(duration=args.duration, fps=args.fps, speed=args.speed)
+            pixels.fill((0,0,0))
 
 except KeyboardInterrupt:
     pixels.fill((0,0,0))

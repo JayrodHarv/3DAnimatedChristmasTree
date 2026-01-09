@@ -3,7 +3,7 @@ from utils import runtime
 
 from animations import ANIMATIONS
 
-DEFAULT_COORDS_FILE = "normalized_tree_d_coords.txt" # set coords file as this by default
+DEFAULT_COORDS_FILE = "bottom_normalized_tree_d_coords_mm.txt" # set coords file as this by default
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -15,6 +15,20 @@ def parse_args():
         nargs="?",
         default=DEFAULT_COORDS_FILE,
         help="Path to coordinate file"
+    )
+
+    parser.add_argument(
+        "--speed",
+        type=float,
+        default=1.0,
+        help="Speed multiplier for animations"
+    )
+
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=30,
+        help="Frames per second for animations"
     )
 
     return parser.parse_args()
@@ -35,7 +49,7 @@ try:
         print("Christmas Tree Animations:")
         i = 1
         for anim in ANIMATIONS:
-            print("\t" + str(i) + ") " + anim['name'])
+            print("\t" + str(i) + ") " + anim.name)
             i += 1
 
         try:
@@ -44,10 +58,13 @@ try:
             if number - 1 < 0 or number - 1 > len(ANIMATIONS):
                 raise ValueError
             
-            anim = ANIMATIONS[number - 1]
+            AnimClass = ANIMATIONS[number - 1]
 
-            print(f"Playing {anim['name']}")
-            anim['function'](coords, pixels)
+            anim = AnimClass(coords, pixels)
+
+            print(f"Playing {anim.name}")
+
+            anim.run(duration=None, fps=args.fps, speed=args.speed)
 
             # small blackout between animations
             pixels.fill((0,0,0))

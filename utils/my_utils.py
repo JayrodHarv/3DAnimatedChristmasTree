@@ -54,30 +54,48 @@ def normalize_tree_coords(coords):
     """
     Normalize tree coordinates so that:
     - X=0, Y=0 is the trunk center
-    - Z=0 is the vertical midpoint of the tree
+    - Z=0 is the bottom of the tree
     """
 
-    # SWAP Y AND Z
     xs = [p[0] for p in coords]
     ys = [p[1] for p in coords]
     zs = [p[2] for p in coords]
 
-    center_x = sum(xs) / len(xs)
-    center_y = sum(ys) / len(ys)
+    # Bottom of tree
+    z_min = min(zs)
 
-    min_z = min(zs)
-    max_z = max(zs)
-    center_z = (min_z + max_z) / 2
+    # Horizontal trunk center (centroid)
+    x_center = sum(xs) / len(xs)
+    y_center = sum(ys) / len(ys)
 
     normalized = []
     for x, y, z in coords:
         normalized.append((
-            x - center_x,
-            y - center_y,
-            z - center_z
+            x - x_center,
+            y - y_center,
+            z - z_min
         ))
 
     return normalized
+
+def inches_to_mm_rounded(coords):
+    """
+    Convert a list of 3D coordinates from inches to millimeters
+    and round to the nearest millimeter.
+
+    coords: iterable of (x, y, z) in inches
+    returns: list of (x, y, z) in millimeters (ints)
+    """
+    INCH_TO_MM = 25.4
+
+    return [
+        (
+            round(x * INCH_TO_MM),
+            round(y * INCH_TO_MM),
+            round(z * INCH_TO_MM),
+        )
+        for x, y, z in coords
+    ]
 
 def flip_rightway(filename):
     coords = read_in_coords(filename)

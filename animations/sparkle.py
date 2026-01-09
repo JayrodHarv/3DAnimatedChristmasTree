@@ -1,35 +1,49 @@
-import time
+from animations.animation import Animation
 import random
+import math
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
+class SparkleAnimation(Animation):
+    name = "Sparkle"
 
-    # Keep per-pixel color state (starts black)
-    colors = [(0, 0, 0)] * len(pixels)
+    def setup(self):
+        # Per-second constants (frame-rate independent)
+        # fade_factor_per_sec: multiply color by this every 1 second (0 -> instant off, 1 -> no fade)
+        self.fade_factor_per_sec = 0.25
+        # spawn_rate_per_sec: expected number of spawns per pixel per second (small numbers)
+        self.spawn_rate_per_sec = 0.3
 
-    FADE_FACTOR = 0.85      # how fast lights fade
-    SPAWN_CHANCE = 0.05     # sparkle probability
+        # Pre-allocate color state per pixel
+        self.colors = [(0, 0, 0)] * self.num_pixels
 
-    while duration is None or time.time() - start_time < duration:
-        for i in range(len(pixels)):
+    def update(self, dt):
+        """Update colors using time delta `dt` (in seconds).
 
-            # Spawn new sparkle
-            if random.random() < SPAWN_CHANCE:
-                colors[i] = (
+        This method is frame-rate independent: `dt` can be scaled by the
+        Animation.run speed parameter to slow or speed up the effect.
+        """
+        if dt <= 0:
+            return
+
+        # Convert per-second constants into per-update values
+        fade_multiplier = self.fade_factor_per_sec ** dt
+        # Spawn modeled as Poisson process: probability at least one spawn in interval dt
+        spawn_prob = 1.0 - math.exp(-self.spawn_rate_per_sec * dt)
+
+        for i in range(self.num_pixels):
+            # Spawn new sparkle (probability adjusted by dt)
+            if random.random() < spawn_prob:
+                self.colors[i] = (
                     random.randint(0, 255),
                     random.randint(0, 255),
                     random.randint(0, 255)
                 )
             else:
-                # Fade existing color
-                r, g, b = colors[i]
-                colors[i] = (
-                    int(r * FADE_FACTOR),
-                    int(g * FADE_FACTOR),
-                    int(b * FADE_FACTOR)
+                # Fade existing color using continuous-time multiplier
+                r, g, b = self.colors[i]
+                self.colors[i] = (
+                    int(r * fade_multiplier),
+                    int(g * fade_multiplier),
+                    int(b * fade_multiplier)
                 )
 
-            pixels[i] = colors[i]
-
-        pixels.show()
-        time.sleep(0.05)
+            self.pixels[i] = self.colors[i]

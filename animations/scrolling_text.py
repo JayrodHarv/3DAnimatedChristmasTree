@@ -1,6 +1,6 @@
-import time
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from animations.animation import Animation
 
 TEXT = "MERRYCHRISTMAS!"
 FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -8,9 +8,8 @@ FONT_SIZE = 80
 
 IMG_WIDTH = 200
 IMG_HEIGHT = 100
-FPS = 60
 
-ROTATE_SPEED = -0.05         # negative = rotate right→left
+ROTATE_SPEED = -0.5         # negative = rotate right→left
 FACE_WIDTH = 2 * np.pi            # angular width of visible face
 EDGE_FADE = 0.1             # fade near edges
 PAUSE_BETWEEN_LETTERS = 0.0  # seconds to hold between rotations
@@ -38,45 +37,46 @@ def make_letter_image(letter: str):
     draw.text(((IMG_WIDTH - w) / 2, (IMG_HEIGHT - h) / 2), letter, fill=255, font=font)
     return np.array(img) / 255.0
 
-# ===================================================
-# MAIN LOOP
-# ===================================================
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    NUM_LEDS = len(coords)
+class ScrollingTextAnimation(Animation):
+    name = "Scrolling Text"
 
-    coords -= np.mean(coords, axis=0)
+    def setup(self):
+        self.NUM_LEDS = self.num_pixels
 
-    frame_delay = 1.0 / FPS
-    angle = 0.0
-    letter_index = 0
+        self.coords -= np.mean(self.coords, axis=0)
 
-    letters = [make_letter_image(ch) for ch in TEXT]
+        # rotation speed in radians per second — preserve previous per-frame behavior
+        # previous code used ROTATE_SPEED per frame at FPS frames/sec, so scale to per-second
+        self.rotation_speed = ROTATE_SPEED
+        # pause timer (seconds) between letters
+        self.pause_remaining = 0.0
 
-    # ===================================================
-    # NORMALIZE GEOMETRY
-    # ===================================================
-    z_vals = coords[:, 2]
-    z_min, z_max = np.min(z_vals), np.max(z_vals)
-    z_norm = (z_vals - z_min) / (z_max - z_min)
-    radius = np.max(np.linalg.norm(coords[:, :2], axis=1))
-    angles = np.arctan2(coords[:, 1], coords[:, 0])  # radians around Z
-    angles = (angles + np.pi) % (2 * np.pi)
+        self.angle = 0.0
+        self.letter_index = 0
 
+        self.letters = [make_letter_image(ch) for ch in TEXT]
 
-    while duration is None or time.time() - start_time < duration:
-        img = letters[letter_index]
-        color = LETTER_COLORS[letter_index % len(LETTER_COLORS)]
+        # NORMALIZE GEOMETRY
+        z_vals = self.coords[:, 2]
+        z_min, z_max = np.min(z_vals), np.max(z_vals)
+        self.z_norm = (z_vals - z_min) / (z_max - z_min)
+        self.radius = np.max(np.linalg.norm(self.coords[:, :2], axis=1))
+        self.angles = np.arctan2(self.coords[:, 1], self.coords[:, 0])  # radians around Z
+        self.angles = (self.angles + np.pi) % (2 * np.pi)
 
-        pixels_buf = np.zeros((NUM_LEDS, 3), dtype=float)
+    def update(self, dt):
+        img = self.letters[self.letter_index]
+        color = LETTER_COLORS[self.letter_index % len(LETTER_COLORS)]
+
+        pixels_buf = np.zeros((self.NUM_LEDS, 3), dtype=float)
 
         # Render one letter only
-        delta = (angles - angle + np.pi) % (2 * np.pi) - np.pi
+        delta = (self.angles - self.angle + np.pi) % (2 * np.pi) - np.pi
         mask = np.abs(delta) < FACE_WIDTH / 2
 
         # 2D mapping for projection
         u = (delta / (FACE_WIDTH / 2)) * 0.5 + 0.5  # horizontal coordinate
-        v = z_norm                                 # vertical coordinate
+        v = self.z_norm                                 # vertical coordinate
 
         x_idx = np.clip((u * (IMG_WIDTH - 1)).astype(int), 0, IMG_WIDTH - 1)
         y_idx = np.clip(((1 - v) * (IMG_HEIGHT - 1)).astype(int), 0, IMG_HEIGHT - 1)
@@ -88,22 +88,20 @@ def run(coords, pixels, duration = None):
         if EDGE_FADE > 0:
             edge_fade = 1 - np.clip((np.abs(delta) - (FACE_WIDTH/2 - EDGE_FADE)) / EDGE_FADE, 0, 1)
             brightness *= edge_fade
-
         pixels_buf += (color - BG_COLOR) * brightness[:, None]
-
         # Display
         pixels_buf = np.clip(pixels_buf, 0, 255).astype(np.uint8)
-        for i in range(NUM_LEDS):
-            pixels[i] = tuple(pixels_buf[i])
-        pixels.show()
+        for i in range(self.NUM_LEDS):
+            self.pixels[i] = tuple(pixels_buf[i])
+        # handle pause between letters using dt
+        if self.pause_remaining > 0.0:
+            self.pause_remaining = max(0.0, self.pause_remaining - dt)
+        else:
+            # advance rotation using per-second rotation speed
+            self.angle += self.rotation_speed * dt
 
-        # advance rotation
-        angle += ROTATE_SPEED
-
-        # when one full rotation finishes, move to next letter
-        if abs(angle) >= 2 * np.pi:
-            angle = 0.0
-            letter_index = (letter_index + 1) % len(letters)
-            time.sleep(PAUSE_BETWEEN_LETTERS)
-
-        time.sleep(frame_delay)
+            # when one full rotation finishes, move to next letter and start pause
+            if abs(self.angle) >= 2 * np.pi:
+                self.angle = 0.0
+                self.letter_index = (self.letter_index + 1) % len(self.letters)
+                self.pause_remaining = PAUSE_BETWEEN_LETTERS

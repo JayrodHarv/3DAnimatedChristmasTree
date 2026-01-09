@@ -1,59 +1,105 @@
-import time
-import numpy as np
+import math
+import random
+
+import math
+import random
+
+from animations.animation import Animation
 
 
-# Plane animation parameters
-NUM_PLANES = 2
-THICKNESS = 8.0     # controls how wide the plane’s glow is
-SPEED_RANGE = (0.5, 2)
-FPS = 60
+class EnchantmentGlintAnimation(Animation):
+    name = "Minecraft Enchantment Glint"
 
-# Colors
-PURPLE = np.array([255, 0, 255], dtype=float)
-DARK = np.array([0, 0, 0], dtype=float)
+    def setup(self):
+        # Configuration: allow two simultaneous glint planes
+        self.num_planes = 2
+        self.base_color = (127,0,255)  # purple
 
+        # Maintain a list of active planes
+        self.planes = []
+        for _ in range(self.num_planes):
+            self.planes.append(self._spawn_plane(initial=True))
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    NUM_LEDS = len(coords)
+    def _spawn_plane(self, initial=False):
+        # Random unit normal
+        nx = random.gauss(0, 1)
+        ny = random.gauss(0, 1)
+        nz = random.gauss(0, 1)
+        norm = math.sqrt(nx*nx + ny*ny + nz*nz)
+        if norm == 0:
+            nx, ny, nz = 0.0, 0.0, 1.0
+            norm = 1.0
+        normal = (nx / norm, ny / norm, nz / norm)
 
-    coords -= np.mean(coords, axis=0)  # center tree
+        # Projections onto normal
+        projs = [normal[0]*x + normal[1]*y + normal[2]*z for x, y, z in self.coords]
+        min_p = min(projs)
+        max_p = max(projs)
+        proj_range = max_p - min_p if max_p > min_p else 1.0
 
-    extent = np.max(np.ptp(coords, axis=0)) / 2
+        # Thickness and speed
+        thickness = proj_range / 6.0
+        crossing_seconds = random.uniform(2.0, 5.0)
+        speed = (proj_range + thickness * 2.0) / crossing_seconds
+        if random.choice([True, False]):
+            speed *= -1.0
 
-    # Generate random planes
-    rng = np.random.default_rng()
-    normals = rng.normal(size=(NUM_PLANES, 3))
-    normals /= np.linalg.norm(normals, axis=1)[:, None]
-    speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
-    offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
+        pad = 0.1 * proj_range
+        if initial:
+            offset = random.uniform(min_p - pad, max_p + pad)
+        else:
+            # spawn outside on side opposite movement so it moves through the tree
+            if speed > 0:
+                offset = min_p - thickness - pad
+            else:
+                offset = max_p + thickness + pad
 
-    half_thick = THICKNESS / 2.0
-    frame_delay = 1.0 / FPS
+        return {
+            "normal": normal,
+            "projs": projs,
+            "min": min_p,
+            "max": max_p,
+            "range": proj_range,
+            "thickness": thickness,
+            "speed": speed,
+            "offset": offset,
+            "color": self.base_color
+        }
 
-    # ===========================
-    # MAIN ANIMATION LOOP
-    # ===========================
-    
-    while duration is None or time.time() - start_time < duration:
-        # Advance plane offsets
-        offsets += speeds
-        offsets = np.where(offsets > extent, -extent, offsets)
+    def update(self, dt):
+        if dt <= 0:
+            return
 
-        # Compute signed distance of each LED to all planes
-        distances = coords @ normals.T + offsets
-        min_dist = np.min(np.abs(distances), axis=1)
+        # Move planes and respawn with new random direction when they exit bounds
+        for i, p in enumerate(self.planes):
+            p["offset"] += p["speed"] * dt
 
-        # Brightness 0–1
-        brightness = np.clip(1.0 - (min_dist / half_thick), 0.0, 1.0)
+            wrap_pad = p["range"] * 0.1
+            if p["offset"] > p["max"] + p["thickness"] + wrap_pad or p["offset"] < p["min"] - p["thickness"] - wrap_pad:
+                # respawn this plane with a new random direction and speed
+                self.planes[i] = self._spawn_plane(initial=False)
 
-        # Compute color per LED
-        colors = DARK + (PURPLE - DARK) * brightness[:, None]
-        colors = np.clip(colors, 0, 255).astype(np.uint8)
+        # Render: additive blending where planes overlap
+        for j, (x, y, z) in enumerate(self.coords):
+            r_acc = 0.0
+            g_acc = 0.0
+            b_acc = 0.0
 
-        # Update physical LEDs
-        for i in range(NUM_LEDS):
-            pixels[i] = tuple(colors[i])
-        pixels.show()
+            for p in self.planes:
+                proj = p["projs"][j]
+                d = proj - p["offset"]
 
-        time.sleep(frame_delay)
+                half_thick = max(1e-6, p["thickness"] / 2.0)
+                t = abs(d) / half_thick
+                if t <= 1.0:
+                    falloff = 1.0 - (t * t)
+                    pr, pg, pb = p["color"]
+                    r_acc += pr * falloff
+                    g_acc += pg * falloff
+                    b_acc += pb * falloff
+
+            r = int(max(0, min(255, r_acc)))
+            g = int(max(0, min(255, g_acc)))
+            b = int(max(0, min(255, b_acc)))
+
+            self.pixels[j] = (r, g, b)

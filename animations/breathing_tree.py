@@ -1,49 +1,35 @@
-import time
 import numpy as np
-import random
-from utils import my_utils, color_manager
+from utils import color_manager
+from animations.animation import Animation
 
-FPS = 60
+class BreathingTreeAnimation(Animation):
+    name = "Breathing Tree"
 
-# cone shape parameters
-MIN_SCALE = 0.0       # fully shrunk (0 = invisible)
-MAX_SCALE = 1.0       # fully expanded
-CYCLE_TIME = 6.0      # seconds per shrink + expand cycle
+    def setup(self):
+        self.cm = color_manager.ColorManager()
+        self.cm.generate_pleasant_colors()
+        self.cm.shuffle()
+        self.color = np.array(self.cm.next_color(), dtype=float)
+        self.cycle_time = 6.0  # seconds per shrink + expand cycle
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    NUM_LEDS = len(coords)
-
-    coords -= np.mean(coords, axis=0)  # center the tree
-
-    z_vals = coords[:, 2]
-    z_min, z_max = np.min(z_vals), np.max(z_vals) + 20
-    z_norm = (z_vals - z_min) / (z_max - z_min)   # 0–1 vertical height
-
-    radii = np.sqrt(coords[:, 0]**2 + coords[:, 1]**2)
-    max_radius = np.max(radii) + 5
-
-    # ===================================================
-    # ANIMATION LOOP
-    # ===================================================
-
-    frame_delay = 1.0 / FPS
-
-    cm = color_manager.ColorManager()
-    cm.generate_pleasant_colors()
-    cm.shuffle()
-
-    color = np.array(cm.next_color(), dtype=float)
-    while duration is None or time.time() - start_time < duration:
+    def update(self, dt):
         # compute current scale 0–1 (shrinking and expanding)
-        t = (time.time() * (2*np.pi / CYCLE_TIME)) % (2*np.pi)
+        t = (self.time_elapsed * (2*np.pi / self.cycle_time)) % (2*np.pi)
         # sin wave from 0→1→0 pattern
         scale = (np.sin(t - np.pi/2) + 1) / 2   # smooth in/out between 0–1
 
         # when starting new expansion, pick new color
         # (detect near zero crossing of sin)
         if np.sin(t - np.pi/2) < -0.999:
-            color = np.array(cm.next_color(), dtype=float)
+            self.color = np.array(self.cm.next_color(), dtype=float)
+
+        z_vals = np.array([p[2] for p in self.coords])
+        z_min, z_max = np.min(z_vals), np.max(z_vals) + 300 # Account for errors at top
+        z_norm = (z_vals - z_min) / (z_max - z_min)   # 0–1 vertical height
+
+        radii = np.sqrt(np.array([p[0] for p in self.coords])**2 +
+                        np.array([p[1] for p in self.coords])**2)
+        max_radius = np.max(radii) + 100  # Account for errors at outer edge
 
         # compute cone radius at each height for current scale
         # full tree radius profile = (1 - z_norm) * max_radius
@@ -58,12 +44,9 @@ def run(coords, pixels, duration = None):
         brightness = inside_mask * boundary_dist
 
         # create RGB output
-        colors = color[None, :] * brightness[:, None]
+        colors = self.color[None, :] * brightness[:, None]
         colors = np.clip(colors, 0, 255).astype(np.uint8)
 
         # update LEDs
-        for i in range(NUM_LEDS):
-            pixels[i] = tuple(colors[i])
-        pixels.show()
-
-        time.sleep(frame_delay)
+        for i in range(self.num_pixels):
+            self.pixels[i] = tuple(colors[i])

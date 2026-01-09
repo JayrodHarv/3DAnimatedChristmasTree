@@ -1,48 +1,40 @@
-import time
 import numpy as np
+from animations.animation import Animation
 
-FPS = 60
-SPIN_SPEED = 0.5     # radians per frame
-STRIPE_WIDTH = 7    # angular size of red/white bands (radians)
-SPIRAL_TWIST = 4   # how tightly the spiral wraps around trunk
+class SwirlingCandyCaneAnimation(Animation):
+    name = "Swirling Candy Cane"
 
-COLOR_RED   = np.array([127, 0, 0], dtype=float)
-COLOR_WHITE = np.array([127, 127, 127], dtype=float)
+    def setup(self):
+        # Precompute normalized height and angle for each LED
+        self.x = np.array([p[0] for p in self.coords])
+        self.y = np.array([p[1] for p in self.coords])
+        self.z = np.array([p[2] for p in self.coords])
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    NUM_LEDS = len(coords)
+        # Normalize vertical axis (z = height)
+        z_min, z_max = self.z.min(), self.z.max()
+        self.z_norm = (self.z - z_min) / (z_max - z_min)
 
-    # Center and normalize
-    coords -= np.mean(coords, axis=0)
-    max_height = np.max(coords[:, 2]) - np.min(coords[:, 2])
-    radius = np.max(np.linalg.norm(coords[:, [0,1]], axis=1))
+        # Compute angle around trunk for each LED
+        self.theta = np.arctan2(self.y, self.x)
 
-    # Compute polar coordinates around Y-axis (treat Y as vertical)
-    angles = np.arctan2(coords[:, 1], coords[:, 0])
-    heights = (coords[:, 2] - np.min(coords[:, 2])) / max_height  # 0–1 normalized
+        # rotation speed in radians per second (change this to adjust swirl speed)
+        self.rotation_speed = 4.0
 
-    # =========================================================
-    # ANIMATION LOOP
-    # =========================================================
-    
-    frame_delay = 1.0 / FPS
-    theta = 0.0
+        self.stripe_width = 7
 
-    while duration is None or time.time() - start_time < duration:
-        # For each LED, compute color from its polar angle + height
-        phase = angles + heights * 2 * np.pi * SPIRAL_TWIST + theta
-        # stripe pattern alternating every STRIPE_WIDTH radians
-        stripe = ((phase // STRIPE_WIDTH) % 2).astype(int)
+        self.stripe_twist = 4
 
-        colors = np.where(stripe[:, None] == 0, COLOR_RED, COLOR_WHITE)
-        colors = np.clip(colors, 0, 255).astype(np.uint8)
+    def update(self, dt):
+        # Rotating phase term (uses configurable rotation_speed)
+        phase = self.time_elapsed * self.rotation_speed
 
-        # send to LEDs
-        for i in range(NUM_LEDS):
-            pixels[i] = tuple(colors[i])
-        pixels.show()
+        # Compute stripe pattern for each LED
+        swirl_value = (self.theta + 2 * np.pi * self.stripe_twist * self.z_norm + phase)
+        stripe = ((swirl_value // self.stripe_width) % 2).astype(int)
 
-        # spin
-        theta += SPIN_SPEED
-        time.sleep(frame_delay)
+        # Update LEDs
+        for i in range(self.num_pixels):
+            if stripe[i] == 0:
+                self.pixels[i] = (255, 0, 0)   # Red
+            else:
+                self.pixels[i] = (255, 255, 255) # White

@@ -1,73 +1,62 @@
-import time
 import math
 from utils import color_manager
+from animations.animation import Animation
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    last_frame_time = start_time
+class TreeCeptionAnimation(Animation):
+    name = "Tree-ception"
 
-    cm = color_manager.ColorManager()
-    cm.generate_pleasant_colors()
-    cm.shuffle()
+    def setup(self):
+        # precompute per-pixel radial distances and z values for cone rendering
+        self.radial = [math.sqrt(x*x + y*y) for x, y, z in self.coords]
+        self.z_vals = [z for _, _, z in self.coords]
+        # allow extra padding so cones can grow beyond the measured tree radius
+        # (increase factor to ensure fully-grown cones can reach every LED)
+        self.max_radius = max(self.radial) * 2 + 10
 
-    # Tree geometry
-    zs = [z for _, _, z in coords]
-    z_min = min(zs) # ~ -40
-    z_max = max(zs) # ~ +40
-    acc_for_error = 25
-    height = abs(z_max) + abs(z_min) + acc_for_error
+        # cone growth speed (g units per second, where g goes 0→1)
+        self.growth_speed = 0.5
+        self.spawn_interval = 2.5  # seconds between cones
 
-    max_radius = max(
-        math.sqrt(x*x + y*y)
-        for x, y, _ in coords
-    ) + 10
+        self.cones = []  # each: {"g": float, "color": (r,g,b)}
+        self.last_spawn = 0
+        self.frame_delay = 0.03
 
-    radial = [math.sqrt(x*x + y*y) for x, y, _ in coords]
-    z_vals = zs
+        self.color_manager = color_manager.ColorManager()
+        self.color_manager.generate_pleasant_colors()
+        self.color_manager.shuffle()
 
-    # Animation parameters
-    growth_speed = 0.5       # growth per second (0→1)
-    spawn_interval = 2.5
-    frame_delay = 0.01
-
-    cones = []   # each: {"g": float, "color": (r,g,b)}
-    last_spawn = 0
-
-    while duration is None or time.time() - start_time < duration:
-        now = time.time()
-        dt = now - last_frame_time
-        last_frame_time = now
-
-        # Spawn new cone
-        if now - last_spawn >= spawn_interval:
-            cones.append({
+    def update(self, dt):
+        # Spawn new cone (growth scalar g starts at 0)
+        if self.time_elapsed - self.last_spawn >= self.spawn_interval:
+            self.cones.append({
                 "g": 0.0,
-                "color": cm.next_color()
+                "color": self.color_manager.next_color()
             })
-            last_spawn = now
+            self.last_spawn = self.time_elapsed
 
-        # Grow cones
-        for c in cones:
-            c["g"] += growth_speed * dt
+        # Grow cones using elapsed time
+        for c in self.cones:
+            c["g"] += self.growth_speed * dt
 
-        # Remove cones that exceed full size
-        cones = [c for c in cones if c["g"] <= 1.2]
+        # Cull old cones
+        self.cones = [c for c in self.cones if c["g"] <= 1.2]
 
-        # Render
-        for i in range(len(coords)):
+        # Update pixels — render cones using vertical profile
+        for j, z in enumerate(self.z_vals):
             pixel_color = None
 
-            for c in reversed(cones):  # newest wins
-                z = z_vals[i]
-                frac_height = (z - z_min) / height
-                full_r = max_radius * (1 - frac_height)
+            # fraction up the tree (0 at bottom -> 1 at top)
+            frac_height = z / self.max_z
+            frac_height = max(0.0, min(1.0, frac_height))
 
-                if radial[i] <= full_r * c["g"]:
+            # cone radius at this height when fully grown
+            full_r = self.max_radius * (1.0 - frac_height)
+
+            # iterate newest cones first (newest wins)
+            for c in reversed(self.cones):
+                if self.radial[j] <= full_r * c["g"]:
                     pixel_color = c["color"]
                     break
 
             if pixel_color:
-                pixels[i] = pixel_color
-
-        pixels.show()
-        time.sleep(frame_delay)
+                self.pixels[j] = pixel_color

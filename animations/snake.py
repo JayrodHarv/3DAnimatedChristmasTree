@@ -1,22 +1,32 @@
-import time
-import random
-from utils import my_utils, color_manager
+from utils import color_manager
+from animations.animation import Animation
 
-HOLD_TIME = 0.0005
+class SnakeAnimation(Animation):
+  name = "Snake"
 
-def run(coords, pixels, duration = None):
-  start_time = time.time()
-  num_pixels = len(coords)
+  def setup(self):
+    self.color_manager = color_manager.ColorManager()
+    self.color_manager.generate_pleasant_colors()
+    self.color_manager.shuffle()
+    self.current_color = self.color_manager.next_color()
+    self.current_index = 0
 
-  cm = color_manager.ColorManager()
-  cm.generate_pleasant_colors()
-  cm.shuffle()
-  
-  while duration is None or time.time() - start_time < duration:
+  def update(self, dt):
+    speed = 0.075  # seconds per pixel
 
-    color = cm.next_color()
+    while self.time_elapsed >= speed:
+      self.time_elapsed -= speed
 
-    for i in range(num_pixels):
-      pixels[i] = color
-      pixels.show()
-      time.sleep(HOLD_TIME)
+      # Set current pixel to current color
+      self.pixels[self.current_index] = self.current_color
+
+      # Move to next pixel
+      self.current_index += 1
+
+      if self.current_index >= self.num_pixels:
+        # Reset to start
+        self.current_index = 0
+        self.current_color = self.color_manager.next_color()
+        # Clear pixels for new snake
+        for i in range(self.num_pixels):
+          self.pixels[i] = (0, 0, 0)

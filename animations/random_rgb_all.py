@@ -1,23 +1,20 @@
-import time
-import random
+from animations.animation import Animation
 from utils import color_manager
 
-HOLD_TIME = 3
+class RandomRGBAllAnimation(Animation):
+  name = "Random RGB All"
 
-def run(coords, pixels, duration = None):
-  start_time = time.time()
-  num_pixels = len(coords)
+  def setup(self):
+    self.color_manager = color_manager.ColorManager()
+    self.color_manager.generate_pleasant_colors()
+    self.color_manager.shuffle()
+    self.hold_time = 3
+    self.current_color = self.color_manager.next_color()
 
-  cm = color_manager.ColorManager()
-  cm.generate_pleasant_colors()
-  cm.shuffle()
+  def update(self, dt):
+    if self.time_elapsed >= self.hold_time:
+      self.time_elapsed = 0
+      self.current_color = self.color_manager.next_color()
 
-  while duration is None or time.time() - start_time < duration:
-    
-    color = cm.next_color()
-
-    for i in range(num_pixels):
-      pixels[i] = color
-      
-    pixels.show()
-    time.sleep(HOLD_TIME)
+    for i in range(self.num_pixels):
+      self.pixels[i] = self.current_color

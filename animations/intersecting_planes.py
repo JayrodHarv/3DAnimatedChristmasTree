@@ -1,99 +1,111 @@
-import random
-import time
 import math
+import random
 
-# Tree boundaries for bouncing (from your scanned coordinates)
-TREE_X_MIN, TREE_X_MAX = -25, 25
-TREE_Y_MIN, TREE_Y_MAX = -25, 25
-TREE_Z_MIN, TREE_Z_MAX = -50, 50   # z is height
+from animations.animation import Animation
+from utils import color_manager
 
-# Plane settings
-NUM_PLANES = 5
-PLANE_SIZE = 20  # Approximate size of the plane
-SPEED = 2        # Movement speed per frame
 
-# Time per frame
-FRAME_DELAY = 0.05
+class IntersectingPlanesAnimation(Animation):
+    name = "Intersecting Planes"
 
-# -----------------------------
-# PLANE CLASS
-# -----------------------------
-class Plane:
-    def __init__(self):
-        self.color = [random.randint(0, 255) for _ in range(3)]
-        # Spawn on a random edge
-        edge = random.choice(['x', 'y', 'z'])
-        if edge == 'x':
-            self.x = random.choice([TREE_X_MIN, TREE_X_MAX])
-            self.y = random.uniform(TREE_Y_MIN, TREE_Y_MAX)
-            self.z = random.uniform(TREE_Z_MIN, TREE_Z_MAX)
-        elif edge == 'y':
-            self.x = random.uniform(TREE_X_MIN, TREE_X_MAX)
-            self.y = random.choice([TREE_Y_MIN, TREE_Y_MAX])
-            self.z = random.uniform(TREE_Z_MIN, TREE_Z_MAX)
-        else:  # z-edge
-            self.x = random.uniform(TREE_X_MIN, TREE_X_MAX)
-            self.y = random.uniform(TREE_Y_MIN, TREE_Y_MAX)
-            self.z = random.choice([TREE_Z_MIN, TREE_Z_MAX])
+    def setup(self):
+        # Configuration
+        self.num_planes = 4
+        self.wrap_padding = 0.1  # padding when wrapping planes beyond bounds
 
-        # Random direction pointing into tree
-        self.dx = random.uniform(-1, 1)
-        self.dy = random.uniform(-1, 1)
-        self.dz = random.uniform(-1, 1)
-        # Normalize direction
-        mag = math.sqrt(self.dx**2 + self.dy**2 + self.dz**2)
-        self.dx = (self.dx / mag) * SPEED
-        self.dy = (self.dy / mag) * SPEED
-        self.dz = (self.dz / mag) * SPEED
+        # Prepare colors for the planes
+        self.color_manager = color_manager.ColorManager()
+        self.color_manager.generate_pleasant_colors(self.num_planes)
+        self.color_manager.shuffle()
 
-    def move(self):
-        self.x += self.dx
-        self.y += self.dy
-        self.z += self.dz
+        # Create planes with random normals, speeds and initial offsets
+        self.planes = []
 
-        # Bounce off tree boundaries
-        if self.x < TREE_X_MIN or self.x > TREE_X_MAX:
-            self.dx *= -1
-        if self.y < TREE_Y_MIN or self.y > TREE_Y_MAX:
-            self.dy *= -1
-        if self.z < TREE_Z_MIN or self.z > TREE_Z_MAX:
-            self.dz *= -1
+        for i in range(self.num_planes):
+            # Random unit normal
+            nx = random.gauss(0, 1)
+            ny = random.gauss(0, 1)
+            nz = random.gauss(0, 1)
+            norm = math.sqrt(nx*nx + ny*ny + nz*nz)
+            if norm == 0:
+                nx, ny, nz = 1.0, 0.0, 0.0
+                norm = 1.0
+            nx, ny, nz = nx / norm, ny / norm, nz / norm
 
-# -----------------------------
-# HELPER FUNCTIONS
-# -----------------------------
-def average_color(c1, c2):
-    return [(a+b)//2 for a,b in zip(c1,c2)]
+            # Project all coordinates onto the normal to find movement bounds
+            projs = [nx*x + ny*y + nz*z for x, y, z in self.coords]
+            min_p, max_p = min(projs), max(projs)
+            proj_range = max_p - min_p if max_p > min_p else 1.0
 
-# -----------------------------
-# INITIALIZE PLANES
-# -----------------------------
-planes = [Plane() for _ in range(NUM_PLANES)]
+            # Thickness relative to projection range
+            thickness = proj_range / 6.0
 
-# -----------------------------
-# MAIN LOOP
-# -----------------------------
-def run(coords, pixels, duration = None):
-    start_time = time.time()
+            # Speed chosen so plane crosses tree in a few seconds (random dir)
+            speed = random.choice([-1.0, 1.0]) * proj_range / random.uniform(4.0, 12.0)
 
-    while duration is None or time.time() - start_time < duration:
-        # Clear pixels
-        pixels.fill((0, 0, 0))
+            # Initial offset somewhere in the projection span
+            offset = random.uniform(min_p - self.wrap_padding * proj_range,
+                                     max_p + self.wrap_padding * proj_range)
 
-        # Move planes
-        for plane in planes:
-            plane.move()
+            color = self.color_manager.next_color()
 
-        # Update LEDs
-        for i, coord in enumerate(coords):
-            led_color = [0, 0, 0]
-            for plane in planes:
-                # Check if LED is within plane's influence
-                if (abs(coord[0] - plane.x) < PLANE_SIZE and
-                    abs(coord[1] - plane.y) < PLANE_SIZE and
-                    abs(coord[2] - plane.z) < PLANE_SIZE):
-                    led_color = average_color(led_color, plane.color)
-            pixels[i] = tuple(led_color)
+            self.planes.append({
+                "normal": (nx, ny, nz),
+                "projs": projs,
+                "min": min_p,
+                "max": max_p,
+                "range": proj_range,
+                "thickness": thickness,
+                "speed": speed,
+                "offset": offset,
+                "color": color
+            })
 
-        pixels.show()
-        time.sleep(FRAME_DELAY)
+    def update(self, dt):
+        if dt <= 0:
+            return
+
+        # Move planes and wrap around bounds
+        for p in self.planes:
+            p["offset"] += p["speed"] * dt
+
+            # wrap forward
+            if p["offset"] > p["max"] + p["thickness"] + p.get("range", 0) * self.wrap_padding:
+                p["offset"] = p["min"] - p["thickness"] - p.get("range", 0) * self.wrap_padding
+
+            # wrap backward
+            if p["offset"] < p["min"] - p["thickness"] - p.get("range", 0) * self.wrap_padding:
+                p["offset"] = p["max"] + p["thickness"] + p.get("range", 0) * self.wrap_padding
+
+        # For each pixel, accumulate contributions from all planes
+        for j, (x, y, z) in enumerate(self.coords):
+            r_acc = 0.0
+            g_acc = 0.0
+            b_acc = 0.0
+
+            for p in self.planes:
+                proj = p["projs"][j]
+                d = proj - p["offset"]
+
+                # Compute falloff (smooth, quadratic); plane is centered at offset
+                half_thick = max(1e-6, p["thickness"] / 2.0)
+                t = abs(d) / half_thick
+                if t <= 1.0:
+                    # smooth falloff: 1 - t^2 gives a soft edge
+                    falloff = 1.0 - (t * t)
+                else:
+                    falloff = 0.0
+
+                if falloff > 0.0:
+                    pr, pg, pb = p["color"]
+                    r_acc += pr * falloff
+                    g_acc += pg * falloff
+                    b_acc += pb * falloff
+
+            # Cap color values to 0-255 and assign
+            r = int(max(0, min(255, r_acc)))
+            g = int(max(0, min(255, g_acc)))
+            b = int(max(0, min(255, b_acc)))
+
+            # If no plane contributed, leave the pixel as black (0,0,0)
+            self.pixels[j] = (r, g, b)

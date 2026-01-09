@@ -1,64 +1,63 @@
-import time
 import math
 from utils import color_manager
+from animations.animation import Animation
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    last_frame_time = start_time
+class RGBSpheresAnimation(Animation):
+    name = "RGB Spheres"
 
-    cm = color_manager.ColorManager()
-    cm.generate_pleasant_colors()
-    cm.shuffle()
+    def setup(self):
+        # center height for spawning spheres
+        self.center_z = self.max_z / 2.0
 
-    distances = [
-        math.sqrt(x*x + y*y + z*z)
-        for x, y, z in coords
-    ]
-    max_radius = max(distances)
+        # distances measured from the tree center so culling and max radius are correct
+        self.distances = [
+            math.sqrt(x*x + y*y + (z - self.center_z)**2)
+            for x, y, z in self.coords
+        ]
+        self.max_radius = max(self.distances)
 
-    expansion_speed = max_radius / 6.0   # units per second
-    spawn_interval = 3                 # seconds
-    frame_delay = 0.03
+        self.expansion_speed = self.max_radius / 6.0   # units per second
+        self.spawn_interval = 3                 # seconds
 
-    spheres = []
-    last_spawn = start_time
+        self.spheres = []
+        self.last_spawn = 0
+        self.frame_delay = 0.03
 
-    while duration is None or time.time() - start_time < duration:
-        now = time.time()
-        dt = now - last_frame_time
-        last_frame_time = now
+        self.color_manager = color_manager.ColorManager()
+        self.color_manager.generate_pleasant_colors()
+        self.color_manager.shuffle()
 
-        # Spawn new sphere
-        if now - last_spawn >= spawn_interval:
-            spheres.append({
+    def update(self, dt):
+        # Spawn new sphere at center height of the tree
+        if self.time_elapsed - self.last_spawn >= self.spawn_interval:
+            self.spheres.append({
                 "radius": 0.0,
-                "color": cm.next_color()
+                "color": self.color_manager.next_color(),
+                # spawn vertically at middle of tree
+                "center_z": self.max_z / 2.0
             })
-            last_spawn = now
+            self.last_spawn = self.time_elapsed
 
         # Grow spheres using elapsed time
-        for s in spheres:
-            s["radius"] += expansion_speed * dt
+        for s in self.spheres:
+            s["radius"] += self.expansion_speed * dt
 
         # Cull old spheres
-        spheres = [
-            s for s in spheres
-            if s["radius"] <= max_radius * 1.2
+        self.spheres = [
+            s for s in self.spheres
+            if s["radius"] <= self.max_radius * 1.2
         ]
 
-        # Update pixels
-        for j, dist in enumerate(distances):
+        # Update pixels — compute distance from each pixel to the sphere center
+        for j, (x, y, z) in enumerate(self.coords):
             pixel_color = None
 
             # iterate newest spheres first
-            for s in reversed(spheres):
+            for s in reversed(self.spheres):
+                dist = math.sqrt(x*x + y*y + (z - s["center_z"])**2)
                 if dist <= s["radius"]:
                     pixel_color = s["color"]
                     break
 
             if pixel_color:
-                pixels[j] = pixel_color
-
-
-        pixels.show()
-        time.sleep(frame_delay)
+                self.pixels[j] = pixel_color
