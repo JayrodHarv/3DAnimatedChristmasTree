@@ -38,6 +38,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--fps",
+        type=int,
+        default=30,
+        help="Frames per second for animations"
+    )
+
+    parser.add_argument(
         "--coords",
         nargs="?",
         default=DEFAULT_COORDS_FILE,
@@ -71,7 +78,7 @@ try:
         for AnimClass in animations:
             anim = AnimClass(coords, pixels)
             print(f"Playing {anim.name} for {args.duration} seconds")
-            anim.run(duration=args.duration, fps=30, speed=args.speed)
+            anim.run(duration=args.duration, fps=args.fps, speed=args.speed)
             pixels.fill((0,0,0))
 
 except KeyboardInterrupt:

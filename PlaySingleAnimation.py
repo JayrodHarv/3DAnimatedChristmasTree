@@ -24,6 +24,13 @@ def parse_args():
         help="Speed multiplier for animations"
     )
 
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=30,
+        help="Frames per second for animations"
+    )
+
     return parser.parse_args()
 
 args = parse_args()
@@ -57,7 +64,7 @@ try:
 
             print(f"Playing {anim.name}")
 
-            anim.run(duration=None, fps=30, speed=args.speed)
+            anim.run(duration=None, fps=args.fps, speed=args.speed)
 
             # small blackout between animations
             pixels.fill((0,0,0))
