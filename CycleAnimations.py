@@ -27,7 +27,14 @@ def parse_args():
         "--duration",
         type=int,
         default=DEFAULT_DURATION,
-        help="Duration that each animation plays for"
+        help="Duration that each animation plays for in seconds"
+    )
+
+    parser.add_argument(
+        "--speed",
+        type=float,
+        default=1.0,
+        help="Speed multiplier for animations"
     )
 
     parser.add_argument(
@@ -64,7 +71,7 @@ try:
         for AnimClass in animations:
             anim = AnimClass(coords, pixels)
             print(f"Playing {anim.name} for {args.duration} seconds")
-            anim.run(duration=args.duration, fps=30)
+            anim.run(duration=args.duration, fps=30, speed=args.speed)
             pixels.fill((0,0,0))
 
 except KeyboardInterrupt:

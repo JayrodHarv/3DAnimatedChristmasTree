@@ -4,6 +4,7 @@ class Animation:
     name = "Unnamed"
 
     def __init__(self, coords, pixels):
+        # Light stuff
         self.coords = coords
         self.pixels = pixels
         self.num_pixels = len(pixels)
@@ -31,7 +32,7 @@ class Animation:
     def draw(self):
         self.pixels.show()
 
-    def run(self, duration=None, fps=30):
+    def run(self, duration=None, fps=30, speed=1.0):
         self.setup()
         start = last = time.time()
 
@@ -40,7 +41,7 @@ class Animation:
             dt = now - last
             last = now
 
-            self.update(dt)
+            self.update(dt * speed)
             self.draw()
 
             time.sleep(max(0, 1 / fps))
