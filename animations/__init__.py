@@ -12,6 +12,8 @@ from .tree_ception import TreeCeptionAnimation
 from .time_warp import TimeWarpAnimation
 from .scrolling_text import ScrollingTextAnimation
 from .xmaslights_spin import XmasLightsSpinAnimation
+from .enchantment_glint import EnchantmentGlintAnimation
+from .fire import FireAnimation
 
 ANIMATIONS = [
     VerticalScanAnimation,
@@ -28,4 +30,6 @@ ANIMATIONS = [
     TimeWarpAnimation,
     ScrollingTextAnimation,
     XmasLightsSpinAnimation,
+    EnchantmentGlintAnimation,
+    FireAnimation,
 ]

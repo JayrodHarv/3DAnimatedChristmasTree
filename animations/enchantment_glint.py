@@ -1,59 +1,79 @@
 import time
 import numpy as np
+import math
+
+from animations.animation import Animation
 
 
-# Plane animation parameters
-NUM_PLANES = 2
-THICKNESS = 8.0     # controls how wide the plane’s glow is
-SPEED_RANGE = (0.5, 2)
-FPS = 60
+# # Plane animation parameters
+# NUM_PLANES = 2
+# THICKNESS = 8.0     # controls how wide the plane’s glow is
+# SPEED_RANGE = (0.5, 2)
+# FPS = 60
 
-# Colors
-PURPLE = np.array([255, 0, 255], dtype=float)
-DARK = np.array([0, 0, 0], dtype=float)
+# # Colors
+# PURPLE = np.array([255, 0, 255], dtype=float)
+# DARK = np.array([0, 0, 0], dtype=float)
 
 
-def run(coords, pixels, duration = None):
-    start_time = time.time()
-    NUM_LEDS = len(coords)
+# def run(coords, pixels, duration = None):
+#     start_time = time.time()
+#     NUM_LEDS = len(coords)
 
-    coords -= np.mean(coords, axis=0)  # center tree
+#     coords -= np.mean(coords, axis=0)  # center tree
 
-    extent = np.max(np.ptp(coords, axis=0)) / 2
+#     extent = np.max(np.ptp(coords, axis=0)) / 2
 
-    # Generate random planes
-    rng = np.random.default_rng()
-    normals = rng.normal(size=(NUM_PLANES, 3))
-    normals /= np.linalg.norm(normals, axis=1)[:, None]
-    speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
-    offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
+#     # Generate random planes
+#     rng = np.random.default_rng()
+#     normals = rng.normal(size=(NUM_PLANES, 3))
+#     normals /= np.linalg.norm(normals, axis=1)[:, None]
+#     speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
+#     offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
 
-    half_thick = THICKNESS / 2.0
-    frame_delay = 1.0 / FPS
+#     half_thick = THICKNESS / 2.0
+#     frame_delay = 1.0 / FPS
 
-    # ===========================
-    # MAIN ANIMATION LOOP
-    # ===========================
+#     # ===========================
+#     # MAIN ANIMATION LOOP
+#     # ===========================
     
-    while duration is None or time.time() - start_time < duration:
-        # Advance plane offsets
-        offsets += speeds
-        offsets = np.where(offsets > extent, -extent, offsets)
+#     while duration is None or time.time() - start_time < duration:
+#         # Advance plane offsets
+#         offsets += speeds
+#         offsets = np.where(offsets > extent, -extent, offsets)
 
-        # Compute signed distance of each LED to all planes
-        distances = coords @ normals.T + offsets
-        min_dist = np.min(np.abs(distances), axis=1)
+#         # Compute signed distance of each LED to all planes
+#         distances = coords @ normals.T + offsets
+#         min_dist = np.min(np.abs(distances), axis=1)
 
-        # Brightness 0–1
-        brightness = np.clip(1.0 - (min_dist / half_thick), 0.0, 1.0)
+#         # Brightness 0–1
+#         brightness = np.clip(1.0 - (min_dist / half_thick), 0.0, 1.0)
 
-        # Compute color per LED
-        colors = DARK + (PURPLE - DARK) * brightness[:, None]
-        colors = np.clip(colors, 0, 255).astype(np.uint8)
+#         # Compute color per LED
+#         colors = DARK + (PURPLE - DARK) * brightness[:, None]
+#         colors = np.clip(colors, 0, 255).astype(np.uint8)
 
-        # Update physical LEDs
-        for i in range(NUM_LEDS):
-            pixels[i] = tuple(colors[i])
-        pixels.show()
+#         # Update physical LEDs
+#         for i in range(NUM_LEDS):
+#             pixels[i] = tuple(colors[i])
+#         pixels.show()
 
-        time.sleep(frame_delay)
+#         time.sleep(frame_delay)
+
+class EnchantmentGlintAnimation(Animation):
+    name = "Minecraft Enchantment Glint"
+
+    def setup(self):
+        self.start_time = time.time()
+        self.speed = 0.5  # speed of the glint animation
+
+    def update(self, dt):
+        # Calculate the position of the glint based on elapsed time and speed
+        glint_position = (self.time_elapsed * self.speed) % 1.0
+
+        # Update LED colors based on the glint position
+        for i in range(self.num_pixels):
+            # Simple example: pulse brightness
+            brightness = 0.5 + 0.5 * math.sin(glint_position * 2 * math.pi)
+            self.pixels[i] = (int(brightness * 255), int(brightness * 255), int(brightness * 255))
