@@ -1,79 +1,76 @@
-import time
-import numpy as np
 import math
+import random
 
 from animations.animation import Animation
-
-
-# # Plane animation parameters
-# NUM_PLANES = 2
-# THICKNESS = 8.0     # controls how wide the plane’s glow is
-# SPEED_RANGE = (0.5, 2)
-# FPS = 60
-
-# # Colors
-# PURPLE = np.array([255, 0, 255], dtype=float)
-# DARK = np.array([0, 0, 0], dtype=float)
-
-
-# def run(coords, pixels, duration = None):
-#     start_time = time.time()
-#     NUM_LEDS = len(coords)
-
-#     coords -= np.mean(coords, axis=0)  # center tree
-
-#     extent = np.max(np.ptp(coords, axis=0)) / 2
-
-#     # Generate random planes
-#     rng = np.random.default_rng()
-#     normals = rng.normal(size=(NUM_PLANES, 3))
-#     normals /= np.linalg.norm(normals, axis=1)[:, None]
-#     speeds = rng.uniform(*SPEED_RANGE, size=NUM_PLANES)
-#     offsets = rng.uniform(-extent, extent, size=NUM_PLANES)
-
-#     half_thick = THICKNESS / 2.0
-#     frame_delay = 1.0 / FPS
-
-#     # ===========================
-#     # MAIN ANIMATION LOOP
-#     # ===========================
-    
-#     while duration is None or time.time() - start_time < duration:
-#         # Advance plane offsets
-#         offsets += speeds
-#         offsets = np.where(offsets > extent, -extent, offsets)
-
-#         # Compute signed distance of each LED to all planes
-#         distances = coords @ normals.T + offsets
-#         min_dist = np.min(np.abs(distances), axis=1)
-
-#         # Brightness 0–1
-#         brightness = np.clip(1.0 - (min_dist / half_thick), 0.0, 1.0)
-
-#         # Compute color per LED
-#         colors = DARK + (PURPLE - DARK) * brightness[:, None]
-#         colors = np.clip(colors, 0, 255).astype(np.uint8)
-
-#         # Update physical LEDs
-#         for i in range(NUM_LEDS):
-#             pixels[i] = tuple(colors[i])
-#         pixels.show()
-
-#         time.sleep(frame_delay)
 
 class EnchantmentGlintAnimation(Animation):
     name = "Minecraft Enchantment Glint"
 
     def setup(self):
-        self.start_time = time.time()
-        self.speed = 0.5  # speed of the glint animation
+        # Choose a random direction for the plane normal
+        nx = random.gauss(0, 1)
+        ny = random.gauss(0, 1)
+        nz = random.gauss(0, 1)
+        norm = math.sqrt(nx*nx + ny*ny + nz*nz)
+        if norm == 0:
+            nx, ny, nz = 0.0, 0.0, 1.0
+            norm = 1.0
+        self.normal = (nx / norm, ny / norm, nz / norm)
+
+        # Precompute projections of all coordinates onto the normal
+        self.projs = [self.normal[0]*x + self.normal[1]*y + self.normal[2]*z
+                      for x, y, z in self.coords]
+
+        self.min_p = min(self.projs)
+        self.max_p = max(self.projs)
+        self.range = self.max_p - self.min_p if self.max_p > self.min_p else 1.0
+
+        # Plane thickness (controls visible band width)
+        self.thickness = self.range / 6.0
+
+        # Random speed so the plane crosses the tree in a few seconds
+        crossing_seconds = random.uniform(4.0, 10.0)
+        self.speed = (self.range + self.thickness * 2.0) / crossing_seconds
+        # Randomize direction
+        if random.choice([True, False]):
+            self.speed *= -1.0
+
+        # Initial offset (start somewhere within or slightly outside the tree projections)
+        pad = 0.1 * self.range
+        self.offset = random.uniform(self.min_p - pad, self.max_p + pad)
+
+        # Purple color for the glint (can be tuned)
+        self.color = (160, 64, 255)
 
     def update(self, dt):
-        # Calculate the position of the glint based on elapsed time and speed
-        glint_position = (self.time_elapsed * self.speed) % 1.0
+        if dt <= 0:
+            return
 
-        # Update LED colors based on the glint position
-        for i in range(self.num_pixels):
-            # Simple example: pulse brightness
-            brightness = 0.5 + 0.5 * math.sin(glint_position * 2 * math.pi)
-            self.pixels[i] = (int(brightness * 255), int(brightness * 255), int(brightness * 255))
+        # Move the plane
+        self.offset += self.speed * dt
+
+        # Loop the plane when it goes beyond the projection bounds
+        pad = 0.1 * self.range
+        if self.offset > self.max_p + self.thickness + pad:
+            self.offset = self.min_p - self.thickness - pad
+        if self.offset < self.min_p - self.thickness - pad:
+            self.offset = self.max_p + self.thickness + pad
+
+        # Compute per-pixel intensity based on distance from plane centerline
+        half_thick = max(1e-6, self.thickness / 2.0)
+
+        for j, (x, y, z) in enumerate(self.coords):
+            proj = self.projs[j]
+            d = proj - self.offset
+            t = abs(d) / half_thick
+
+            if t <= 1.0:
+                # Smooth quadratic falloff for a soft glint
+                falloff = 1.0 - (t * t)
+                pr, pg, pb = self.color
+                r = int(max(0, min(255, pr * falloff)))
+                g = int(max(0, min(255, pg * falloff)))
+                b = int(max(0, min(255, pb * falloff)))
+                self.pixels[j] = (r, g, b)
+            else:
+                self.pixels[j] = (0, 0, 0)
