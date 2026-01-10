@@ -77,7 +77,7 @@ try:
 
         for AnimClass in animations:
             anim = AnimClass(coords, pixels)
-            print(f"Playing {anim.name} for {args.duration} seconds")
+            # print(f"Playing {anim.name} for {args.duration} seconds")
             anim.run(duration=args.duration, fps=args.fps, speed=args.speed)
             pixels.fill((0,0,0))
 

@@ -39,6 +39,7 @@ class Animation:
         self.setup()
         start = last = time.time()
 
+        prev_remaining = None
         while duration is None or time.time() - start < duration:
             now = time.time()
             dt = now - last
@@ -51,4 +52,23 @@ class Animation:
             self.update(scaled_dt)
             self.draw()
 
+            # If a finite duration was provided, print a single-line countdown
+            if duration is not None:
+                elapsed = time.time() - start
+                remaining = max(0, int(duration - elapsed))
+                if remaining != prev_remaining:
+                    try:
+                        print(f"\rPlaying {self.name}: {remaining}s remaining", end="", flush=True)
+                    except Exception:
+                        # If stdout is not available or writing fails, ignore
+                        pass
+                    prev_remaining = remaining
+
             time.sleep(max(0, 1 / fps))
+
+        # If we printed a countdown, finish the line so further prints don't overwrite it
+        if duration is not None:
+            try:
+                print()
+            except Exception:
+                pass
