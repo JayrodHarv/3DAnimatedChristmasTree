@@ -12,10 +12,10 @@ class BreathingTreeAnimation(Animation):
         self.color = np.array(self.cm.next_color(), dtype=float)
 
         # cycle controls how fast the cone grows/shrinks
-        self.cycle_time = 6.0  # seconds per shrink + expand cycle
+        self.cycle_time = 3.0  # seconds per shrink + expand cycle
 
         # growth factor range (fraction of `self.radius` used)
-        self.growth_min = 0.2
+        self.growth_min = 0.0
         self.growth_max = 2.0
 
         # how quickly the cone's edge fades (as fraction of radius)
@@ -24,7 +24,8 @@ class BreathingTreeAnimation(Animation):
         # small offset above the highest LED so the cone tip sits slightly above the tree
         # (helps ensure top LEDs can be included at max growth)
         self.apex_offset = max(1.0, 0.5 * (self.max_z - self.min_z))
-
+        # track last completed cycle index so we change color once per full cycle
+        self.last_cycle_index = int(self.time_elapsed // self.cycle_time) if self.cycle_time > 0 else 0
     def update(self, dt):
         # compute phase t and smooth 0→1→0 scale using a sine wave
         t = (self.time_elapsed * (2 * np.pi / self.cycle_time)) % (2 * np.pi)
@@ -33,9 +34,12 @@ class BreathingTreeAnimation(Animation):
         # map smooth value to growth factor in [growth_min, growth_max]
         growth = self.growth_min + smooth * (self.growth_max - self.growth_min)
 
-        # pick a new color when the wave is at its minimum (start of expansion)
-        if np.sin(t - np.pi / 2) < -0.999:
-            self.color = np.array(self.cm.next_color(), dtype=float)
+        # change color once per completed cycle (avoid relying on floating-point sin thresholds)
+        if self.cycle_time > 0:
+            current_cycle = int(self.time_elapsed // self.cycle_time)
+            if current_cycle != self.last_cycle_index:
+                self.color = np.array(self.cm.next_color(), dtype=float)
+                self.last_cycle_index = current_cycle
 
         # vertical normalization using Animation's bounds, with a small apex offset
         z_vals = np.array([p[2] for p in self.coords])
