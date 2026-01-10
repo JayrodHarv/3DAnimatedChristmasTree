@@ -20,7 +20,8 @@ class RGBSpheresAnimation(Animation):
         self.spawn_interval = 3                 # seconds
 
         self.spheres = []
-        self.last_spawn = 0
+        # start last_spawn negative so the first sphere spawns immediately
+        self.last_spawn = -self.spawn_interval
         self.frame_delay = 0.03
 
         self.color_manager = color_manager.ColorManager()
