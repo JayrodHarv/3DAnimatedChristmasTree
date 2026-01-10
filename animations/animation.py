@@ -40,6 +40,7 @@ class Animation:
         start = last = time.time()
 
         prev_remaining = None
+        prev_print_len = 0
         while duration is None or time.time() - start < duration:
             now = time.time()
             dt = now - last
@@ -58,7 +59,11 @@ class Animation:
                 remaining = max(0, int(duration - elapsed))
                 if remaining != prev_remaining:
                     try:
-                        print(f"\rPlaying {self.name}: {remaining}s remaining", end="", flush=True)
+                        text = f"Playing {self.name}: {remaining}s remaining"
+                        # Pad with spaces if new text is shorter than previous printed text
+                        padding = " " * max(0, prev_print_len - len(text))
+                        print(f"\r{text}{padding}", end="", flush=True)
+                        prev_print_len = len(text)
                     except Exception:
                         # If stdout is not available or writing fails, ignore
                         pass
