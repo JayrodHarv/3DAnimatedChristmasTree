@@ -12,7 +12,7 @@ class BreathingTreeAnimation(Animation):
         self.color = np.array(self.cm.next_color(), dtype=float)
 
         # cycle controls how fast the cone grows/shrinks
-        self.cycle_time = 3.0  # seconds per shrink + expand cycle
+        self.cycle_time = 5.0  # seconds per shrink + expand cycle
 
         # growth factor range (fraction of `self.radius` used)
         self.growth_min = 0.0
