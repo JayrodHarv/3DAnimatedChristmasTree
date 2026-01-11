@@ -71,10 +71,9 @@ coords, pixels = runtime.setup_tree(
 print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
-    while True:
-        if args.order == "shuffle":
+    if args.order == "shuffle":
             random.shuffle(animations)
-
+    while True:
         for AnimClass in animations:
             anim = AnimClass(coords, pixels)
             # print(f"Playing {anim.name} for {args.duration} seconds")
