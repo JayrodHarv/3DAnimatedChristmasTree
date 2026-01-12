@@ -1,5 +1,6 @@
 import cv2
 import sys
+from utils import my_utils
 
 def load_image(light_num, folderPath):
     # Load the image
@@ -90,15 +91,6 @@ def generateCoordinatesFromImages(numImages, folderPath, name, display=False):
 
     if display:
         # Display coordinates using matplotlib
-        import matplotlib.pyplot as plt
-        xs = [c[0] for c in coords]
-        ys = [c[1] for c in coords]
-        plt.scatter(xs, ys)
-        plt.title(f"2D Coordinates from {name} Images")
-        plt.xlabel("X (pixels)")
-        plt.ylabel("Y (pixels)")
-        # flip Y axis for display
-        plt.ylim(plt.ylim()[::-1])
-        plt.show()
+        my_utils.plot_2d_coords_flipped(coords, title=f"2D Coordinates from {name} Images")
 
     return coords

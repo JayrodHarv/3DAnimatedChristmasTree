@@ -191,3 +191,161 @@ def randomly_rotate_tree(points):
     rotated_points = centered_points @ R.T + center
 
     return rotated_points
+
+
+def _set_axes_equal(ax):
+    """Set 3D plot axes to equal scale (works for matplotlib 3D axes).
+
+    Based on code in TreeVisualizer._set_axes_equal so the plot isn't
+    visually distorted when axis ranges differ.
+    """
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    x_middle = np.mean(x_limits)
+    y_range = abs(y_limits[1] - y_limits[0])
+    y_middle = np.mean(y_limits)
+    z_range = abs(z_limits[1] - z_limits[0])
+    z_middle = np.mean(z_limits)
+
+    plot_radius = 0.5 * max([x_range, y_range, z_range])
+
+    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
+    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
+    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
+
+
+def plot_tree_3d(coords, colors=None, point_size=20, ax=None, elev=None, azim=None, show=True, title=None):
+    """Create (and optionally display) a 3D scatter plot of tree coordinates.
+
+    Args:
+        coords: Iterable of (x, y, z) tuples or an (N,3) numpy array.
+        colors: Optional color specification. Can be:
+            - None: default to black
+            - single RGB tuple/list (r,g,b) in 0-255 or 0-1
+            - iterable of per-point colors as (r,g,b) 0-255 or 0-1
+        point_size: Marker size for scatter points.
+        ax: Optional matplotlib 3D axes to draw into. If omitted, a new
+            Figure and 3D Axes will be created.
+        elev, azim: Optional elevation/azimuth for the initial view.
+        show: If True and a new figure was created, call plt.show(). If an
+            `ax` was provided, show is ignored.
+        title: Optional title for the plot.
+
+    Returns:
+        (fig, ax, scatter) where fig may be None if `ax` was provided and the
+        caller manages the Figure externally.
+    """
+    try:
+        import matplotlib.pyplot as plt
+    except Exception as e:
+        raise ImportError("matplotlib is required for plotting: " + str(e))
+
+    arr = np.asarray(coords)
+    if arr.size == 0:
+        raise ValueError("No coordinates provided to plot_tree_3d")
+    if arr.ndim != 2 or arr.shape[1] != 3:
+        raise ValueError("coords must be an (N,3) array or iterable of (x,y,z)")
+
+    created_fig = False
+    if ax is None:
+        fig = plt.figure(figsize=(6, 6))
+        ax = fig.add_subplot(111, projection='3d')
+        created_fig = True
+    else:
+        fig = ax.figure
+
+    xs, ys, zs = arr[:, 0], arr[:, 1], arr[:, 2]
+
+    # Prepare colors: normalize to 0-1 tuples
+    def _normalize_color(c):
+        c = tuple(c)
+        if all(isinstance(v, int) for v in c):
+            return tuple(v / 255.0 for v in c)
+        return tuple(float(v) for v in c)
+
+    if colors is None:
+        cols = [(0.0, 0.0, 0.0)] * len(xs)
+    else:
+        # Single color
+        if not hasattr(colors, '__len__') or isinstance(colors[0], (int, float)):
+            cols = [_normalize_color(colors)] * len(xs)
+        else:
+            # Per-point sequence
+            cols = [_normalize_color(c) for c in colors]
+
+    sc = ax.scatter(xs, ys, zs, c=cols, s=point_size)
+
+    ax.set_xlabel('X (mm)')
+    ax.set_ylabel('Y (mm)')
+    ax.set_zlabel('Z (mm)')
+    if title:
+        ax.set_title(title)
+
+    # Set equal axis scaling for nicer visuals
+    try:
+        _set_axes_equal(ax)
+    except Exception:
+        pass
+
+    if elev is not None or azim is not None:
+        elev_val = elev if elev is not None else getattr(ax, 'elev', None)
+        azim_val = azim if azim is not None else getattr(ax, 'azim', None)
+        if elev_val is not None and azim_val is not None:
+            ax.view_init(elev=elev_val, azim=azim_val)
+
+    if created_fig and show:
+        plt.show()
+
+    return fig, ax, sc
+
+
+def plot_2d_coords_flipped(coords, ax=None, point_size=20, color='b', title=None, show=True):
+    """Simple helper that flips Y and labels ticks with original units.
+
+    - Flips Y by multiplying by -1 (useful for image coordinates where Y
+      increases downward).
+    - Replaces Y tick labels with negated values so labels show original units.
+    """
+    import matplotlib.pyplot as plt
+
+    arr = np.asarray(coords)
+    if arr.ndim != 2 or arr.shape[1] != 2:
+        raise ValueError("coords must be an (N,2) array or iterable of (x,y)")
+
+    x = arr[:, 0]
+    y = -arr[:, 1]
+
+    created_fig = False
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(6, 6))
+        created_fig = True
+    else:
+        fig = ax.figure
+
+    sc = ax.scatter(x, y, c=color, s=point_size)
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y (original units)')
+    if title:
+        ax.set_title(title)
+
+    # Use a FuncFormatter to display original (pre-flip) Y units by negating
+    # the tick values. This avoids setting tick labels directly and the
+    # associated Matplotlib warning about FixedFormatter/FixedLocator.
+    from matplotlib.ticker import FuncFormatter
+    def _fmt(y, pos):
+        try:
+            if float(y).is_integer():
+                return str(int(-y))
+        except Exception:
+            pass
+        return f"{(-y):.2f}"
+    ax.yaxis.set_major_formatter(FuncFormatter(_fmt))
+
+    if created_fig and show:
+        plt.show()
+
+    return fig, ax, sc

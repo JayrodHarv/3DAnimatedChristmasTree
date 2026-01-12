@@ -54,22 +54,12 @@ def find_incorrect_points(coords, max_distance_mm = 127):
 def plot_coords(coords, bad_indices, title):
     ax.clear()
 
-    xs, ys, zs = zip(*coords)
-    ax.scatter(xs, ys, zs, c="green", s=8)
+    # Build per-point color list: red for bad points, green otherwise.
+    bad_set = set(bad_indices or [])
+    colors = [ (255,0,0) if i in bad_set else (0,255,0) for i in range(len(coords)) ]
 
-    if bad_indices:
-        bx = [coords[i][0] for i in bad_indices]
-        by = [coords[i][1] for i in bad_indices]
-        bz = [coords[i][2] for i in bad_indices]
-
-        ax.scatter(bx, by, bz, c="red", s=8)
-
-    set_equal_3d_axes(ax, coords)
-
-    ax.set_title(title)
-    ax.set_xlabel("X (mm)")
-    ax.set_ylabel("Y (mm)")
-    ax.set_zlabel("Z (mm)")
+    # Use shared helper to draw into the existing axes
+    my_utils.plot_tree_3d(coords, colors=colors, point_size=8, ax=ax, show=False, title=title)
     plt.draw()
 
 def set_equal_3d_axes(ax, coords):

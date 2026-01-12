@@ -149,14 +149,10 @@ class TreeVisualizer(tk.Tk):
             self.canvas.draw()
             return
 
-        arr = np.array(self.coords)
-        xs, ys, zs = arr[:, 0], arr[:, 1], arr[:, 2]
-        self.sc = self.ax.scatter(xs, ys, zs, c=[(0, 0, 0)] * len(xs), s=20)
-
-        # Label axes
-        self.ax.set_xlabel('X')
-        self.ax.set_ylabel('Y')
-        self.ax.set_zlabel('Z')
+        # Use the shared plotting helper so standalone scripts can reuse the
+        # same plotting logic as the GUI.
+        fig, ax, sc = my_utils.plot_tree_3d(self.coords, ax=self.ax, point_size=20, show=False)
+        self.sc = sc
 
         # Set a sensible view and limits
         self._set_axes_equal()
