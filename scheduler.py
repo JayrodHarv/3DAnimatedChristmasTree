@@ -15,4 +15,4 @@ def run_scheduler(pixels, coords, controller, fps=30):
             anim.update(dt * controller.speed)
             pixels.show()
 
-        time.sleep(1 / fps)
+        time.sleep(max(0, 1 / fps))
