@@ -1,6 +1,6 @@
 import time
 
-def run_scheduler(pixels, coords, controller, fps=60):
+def run_scheduler(pixels, coords, controller, fps=30):
     last = time.time()
 
     while True:
