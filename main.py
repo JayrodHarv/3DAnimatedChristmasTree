@@ -1,8 +1,7 @@
 import threading
 from utils import runtime
-from animations import ANIMATIONS
-from controller import AnimationController
 from scheduler import run_scheduler
+from controller import controller
 
 COORDS_FILE = "tree_d_coords.txt"
 
@@ -10,8 +9,6 @@ COORDS_FILE = "tree_d_coords.txt"
 coords, pixels = runtime.setup_tree(
     coords_file=COORDS_FILE
 )
-
-controller = AnimationController(ANIMATIONS)
 
 # Start scheduler
 threading.Thread(

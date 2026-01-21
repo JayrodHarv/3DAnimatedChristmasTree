@@ -1,3 +1,5 @@
+from animations import ANIMATIONS
+
 class AnimationController:
     def __init__(self, animations):
         self.animations = animations
@@ -36,3 +38,5 @@ class AnimationController:
             "paused": self.paused,
             "speed": self.speed,
         }
+
+controller = AnimationController(ANIMATIONS)

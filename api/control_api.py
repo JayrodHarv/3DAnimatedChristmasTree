@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from controller import AnimationController as controller
+from controller import controller
 
 app = FastAPI()
 
