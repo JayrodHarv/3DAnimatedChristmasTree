@@ -11,9 +11,7 @@ coords, pixels = runtime.setup_tree(
     coords_file=COORDS_FILE
 )
 
-animations = ANIMATIONS
-
-controller = AnimationController(animations)
+controller = AnimationController(ANIMATIONS)
 
 # Start scheduler
 threading.Thread(
