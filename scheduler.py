@@ -12,7 +12,12 @@ def run_scheduler(pixels, coords, controller, fps=30):
             AnimClass = controller.current()
             anim = AnimClass(coords, pixels)
             anim.setup()
-            anim.update(dt * controller.speed)
+
+            scaled_dt = dt * controller.speed
+            anim.update(scaled_dt)
+
+            anim.time_elapsed += scaled_dt
+
             pixels.show()
 
         time.sleep(max(0, 1 / fps))
