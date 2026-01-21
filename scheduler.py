@@ -10,7 +10,7 @@ def run_scheduler(pixels, coords, controller, fps=60):
 
         if not controller.paused:
             anim = controller.current()
-            anim.update(dt * controller.speed, pixels, coords)
+            anim.update(dt * controller.speed)
             pixels.show()
 
         time.sleep(1 / fps)
