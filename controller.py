@@ -41,6 +41,9 @@ class AnimationController:
             "speed": self.speed,
         }
     
+    def list_animations(self):
+        return [anim.name for anim in self.animations]
+    
 COORDS_FILE = "tree_d_coords.txt"
 
 # Load hardware + data
