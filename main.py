@@ -20,6 +20,5 @@ threading.Thread(
 
 # Start API
 import uvicorn
-from api.control_api import app
 
-uvicorn.run(app, host="0.0.0.0", port=8000)
+uvicorn.run(web_router, host="0.0.0.0", port=8000)
