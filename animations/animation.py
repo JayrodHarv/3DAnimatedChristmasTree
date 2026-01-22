@@ -36,7 +36,6 @@ class Animation:
         self.pixels.show()
 
     def run(self, duration=None, fps=30, speed=1.0):
-        self.setup()
         start = last = time.time()
 
         prev_remaining = None

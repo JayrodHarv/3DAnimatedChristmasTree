@@ -3,7 +3,7 @@ from utils import my_utils
 from utils import runtime
 import argparse
 
-from animations import ANIMATIONS
+from animations import create_animations
 
 DEFAULT_ORDER = "shuffle" # Random order by default
 
@@ -55,14 +55,14 @@ def parse_args():
 
 args = parse_args()
 
-animations = ANIMATIONS[:]  # copy list
-
 # ===================================================
 # LED SETUP
 # ===================================================
 coords, pixels = runtime.setup_tree(
     coords_file=args.coords
 )
+
+animations = create_animations(coords, pixels)
 
 # ===================================================
 # SCHEDULER LOOP
@@ -72,10 +72,9 @@ print("Tree animation scheduler running. Press ctrl+c to stop...")
 
 try:
     if args.order == "shuffle":
-            random.shuffle(animations)
+        random.shuffle(animations)
     while True:
-        for AnimClass in animations:
-            anim = AnimClass(coords, pixels)
+        for anim in animations:
             # print(f"Playing {anim.name} for {args.duration} seconds")
             anim.run(duration=args.duration, fps=args.fps, speed=args.speed)
             pixels.fill((0,0,0))

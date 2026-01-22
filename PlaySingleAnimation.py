@@ -1,7 +1,7 @@
 import argparse
 from utils import runtime
 
-from animations import ANIMATIONS
+from animations import create_animations
 
 DEFAULT_COORDS_FILE = "tree_d_coords.txt" # set coords file as this by default
 
@@ -42,25 +42,25 @@ coords, pixels = runtime.setup_tree(
     coords_file=args.coords
 )
 
+animations = create_animations(coords, pixels)
+
 print("Tree animation scheduler running...")
 
 try:
     while True:
         print("Christmas Tree Animations:")
         i = 1
-        for anim in ANIMATIONS:
+        for anim in animations:
             print("\t" + str(i) + ") " + anim.name)
             i += 1
 
         try:
             number = int(input("Please select an animation to play by entering a number..."))
 
-            if number - 1 < 0 or number - 1 > len(ANIMATIONS):
+            if number - 1 < 0 or number - 1 > len(animations):
                 raise ValueError
             
-            AnimClass = ANIMATIONS[number - 1]
-
-            anim = AnimClass(coords, pixels)
+            anim = animations[number - 1]
 
             print(f"Playing {anim.name}")
 
