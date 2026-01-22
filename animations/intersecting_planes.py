@@ -64,8 +64,6 @@ class IntersectingPlanesAnimation(Animation):
 
     def reset(self):
         self.planes = []
-        for _ in range(self.num_planes):
-            self.planes.append(self._spawn_plane(initial=True))
 
     def update(self, dt):
         if dt <= 0:
