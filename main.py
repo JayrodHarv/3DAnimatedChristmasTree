@@ -1,6 +1,6 @@
 import threading
 from scheduler import run_scheduler
-from controller import controller
+from controller import controller, pixels, coords
 
 # Start scheduler
 threading.Thread(
