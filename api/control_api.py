@@ -3,35 +3,35 @@ from controller import controller
 
 router = APIRouter(prefix="/api")
 
-@router.get("/api/status")
+@router.get("/status")
 def status():
     return controller.status()
 
-@router.get("/api/animations")
+@router.get("/animations")
 def animations():
     return controller.list_animations()
 
-@router.post("/api/next")
+@router.post("/next")
 def next_anim():
     controller.next()
     return controller.status()
 
-@router.post("/api/play/{name}")
+@router.post("/play/{name}")
 def play(name: str):
     controller.play(name)
     return controller.status()
 
-@router.post("/api/pause")
+@router.post("/pause")
 def pause():
     controller.pause()
     return controller.status()
 
-@router.post("/api/resume")
+@router.post("/resume")
 def resume():
     controller.resume()
     return controller.status()
 
-@router.post("/api/speed/{value}")
+@router.post("/speed/{value}")
 def speed(value: float):
     controller.set_speed(value)
     return controller.status()
