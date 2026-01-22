@@ -135,7 +135,8 @@ class FireAnimation(Animation):
             else:
                 return 0.0
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # number of negative-flame particles
         self.num_particles = 50
 
@@ -147,6 +148,9 @@ class FireAnimation(Animation):
 
         # speed of animation
         self.speed = 0.4
+
+    def reset(self):
+        self.particles = [self.Particle() for _ in range(self.num_particles)]
 
     def update(self, dt):
         # advance particle positions

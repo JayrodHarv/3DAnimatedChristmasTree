@@ -5,11 +5,14 @@ from animations.animation import Animation
 class TimeWarpAnimation(Animation):
     name = "Time Warp"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
+        pass
+
+    def reset(self):
         pass
 
     def update(self, dt):
-
         for j, (x, y, z) in enumerate(self.coords):
             # Normalize coordinates
             z_norm = (z - self.min_z) / (self.max_z if self.max_z != 0 else 1)

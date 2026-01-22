@@ -5,7 +5,8 @@ from utils import color_manager
 class XmasLightsSpinAnimation(Animation):
     name = "Xmas Lights Spin"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         self.angle = 0.0
         self.rotation_speed = math.pi  # radians per second
 
@@ -13,6 +14,11 @@ class XmasLightsSpinAnimation(Animation):
         self.color_manager.generate_pleasant_colors()
         self.color_manager.shuffle()
 
+        self.colorA = self.color_manager.next_color()
+        self.colorB = self.color_manager.next_color()
+
+    def reset(self):
+        self.angle = 0.0
         self.colorA = self.color_manager.next_color()
         self.colorB = self.color_manager.next_color()
 

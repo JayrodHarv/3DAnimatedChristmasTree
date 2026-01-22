@@ -40,7 +40,8 @@ def make_letter_image(letter: str):
 class ScrollingTextAnimation(Animation):
     name = "Scrolling Text"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         self.NUM_LEDS = self.num_pixels
 
         self.coords -= np.mean(self.coords, axis=0)
@@ -63,6 +64,11 @@ class ScrollingTextAnimation(Animation):
         self.radius = np.max(np.linalg.norm(self.coords[:, :2], axis=1))
         self.angles = np.arctan2(self.coords[:, 1], self.coords[:, 0])  # radians around Z
         self.angles = (self.angles + np.pi) % (2 * np.pi)
+
+    def reset(self):
+        self.angle = 0.0
+        self.letter_index = 0
+        self.pause_remaining = 0.0
 
     def update(self, dt):
         img = self.letters[self.letter_index]

@@ -5,7 +5,8 @@ import math
 class SparkleAnimation(Animation):
     name = "Sparkle"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # Per-second constants (frame-rate independent)
         # fade_factor_per_sec: multiply color by this every 1 second (0 -> instant off, 1 -> no fade)
         self.fade_factor_per_sec = 0.25
@@ -13,6 +14,9 @@ class SparkleAnimation(Animation):
         self.spawn_rate_per_sec = 0.3
 
         # Pre-allocate color state per pixel
+        self.colors = [(0, 0, 0)] * self.num_pixels
+
+    def reset(self):
         self.colors = [(0, 0, 0)] * self.num_pixels
 
     def update(self, dt):

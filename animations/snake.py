@@ -4,12 +4,18 @@ from animations.animation import Animation
 class SnakeAnimation(Animation):
   name = "Snake"
 
-  def setup(self):
+  def __init__(self, coords, pixels):
+    super().__init__(coords, pixels)
     self.color_manager = color_manager.ColorManager()
     self.color_manager.generate_pleasant_colors()
     self.color_manager.shuffle()
     self.current_color = self.color_manager.next_color()
     self.current_index = 0
+
+  def reset(self):
+    self.current_index = 0
+    self.current_color = self.color_manager.next_color()
+    self.time_elapsed = 0
 
   def update(self, dt):
     speed = 0.02  # seconds per pixel

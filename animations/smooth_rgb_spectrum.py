@@ -4,8 +4,12 @@ from animations.animation import Animation
 class SmoothRGBSpectrumAnimation(Animation):
     name = "Smooth RGB Spectrum"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         self.hue_speed = 0.02   # smaller = slower transition
+        self.hue = 0.0
+
+    def reset(self):
         self.hue = 0.0
 
     def update(self, dt):

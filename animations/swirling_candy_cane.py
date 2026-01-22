@@ -4,7 +4,8 @@ from animations.animation import Animation
 class SwirlingCandyCaneAnimation(Animation):
     name = "Swirling Candy Cane"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # Precompute normalized height and angle for each LED
         self.x = np.array([p[0] for p in self.coords])
         self.y = np.array([p[1] for p in self.coords])
@@ -23,6 +24,9 @@ class SwirlingCandyCaneAnimation(Animation):
         self.stripe_width = 7
 
         self.stripe_twist = 4
+
+    def reset(self):
+        pass
 
     def update(self, dt):
         # Rotating phase term (uses configurable rotation_speed)

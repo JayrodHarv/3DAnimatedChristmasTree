@@ -26,7 +26,7 @@ class Animation:
             max(abs(self.min_y), abs(self.max_y))
         )
 
-    def setup(self):
+    def reset(self):
         pass
 
     def update(self, dt):

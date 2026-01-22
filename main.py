@@ -1,14 +1,6 @@
 import threading
-from utils import runtime
 from scheduler import run_scheduler
 from controller import controller
-
-COORDS_FILE = "tree_d_coords.txt"
-
-# Load hardware + data
-coords, pixels = runtime.setup_tree(
-    coords_file=COORDS_FILE
-)
 
 # Start scheduler
 threading.Thread(

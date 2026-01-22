@@ -5,7 +5,8 @@ from animations.animation import Animation
 class SweepAnimation(Animation):
     name = "Sweep"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # color management
         self.cm = color_manager.ColorManager()
         self.cm.generate_pleasant_colors()
@@ -25,6 +26,14 @@ class SweepAnimation(Animation):
         self.thickness_fraction = 0.03  # slab thickness as fraction of projection range
 
         # pick initial direction and precompute projections
+        self._choose_new_direction()
+
+    def reset(self):
+        # reset pixel states
+        self.pixel_states = [(0, 0, 0) for _ in range(self.num_pixels)]
+        for i in range(self.num_pixels):
+            self.pixels[i] = self.pixel_states[i]
+        # choose new sweep direction
         self._choose_new_direction()
 
     def _choose_new_direction(self):

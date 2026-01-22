@@ -4,13 +4,20 @@ from animations.animation import Animation
 class RandomDirectionScanAnimation(Animation):
   name = "Random Direction Scan"
 
-  def setup(self):
+  def __init__(self, coords, pixels):
+    super().__init__(coords, pixels)
     self.rotated_coords = my_utils.randomly_rotate_tree(self.coords)
     self.turn_on_min = 0
     self.turn_on_max = self.max_z / 10
     self.color_manager = color_manager.ColorManager()
     self.color_manager.generate_pleasant_colors()
     self.color_manager.shuffle()
+    self.current_color = self.color_manager.next_color()
+
+  def reset(self):
+    self.rotated_coords = my_utils.randomly_rotate_tree(self.coords)
+    self.turn_on_min = 0
+    self.turn_on_max = self.max_z / 10
     self.current_color = self.color_manager.next_color()
 
   def update(self, dt):

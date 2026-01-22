@@ -5,7 +5,8 @@ from animations.animation import Animation
 class BreathingTreeAnimation(Animation):
     name = "Breathing Tree"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         self.cm = color_manager.ColorManager()
         self.cm.generate_pleasant_colors()
         self.cm.shuffle()

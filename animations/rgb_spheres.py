@@ -5,7 +5,8 @@ from animations.animation import Animation
 class RGBSpheresAnimation(Animation):
     name = "RGB Spheres"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # center height for spawning spheres
         self.center_z = self.max_z / 2.0
 
@@ -27,6 +28,10 @@ class RGBSpheresAnimation(Animation):
         self.color_manager = color_manager.ColorManager()
         self.color_manager.generate_pleasant_colors()
         self.color_manager.shuffle()
+
+    def reset(self):
+        self.spheres = []
+        self.last_spawn = -self.spawn_interval
 
     def update(self, dt):
         # Spawn new sphere at center height of the tree

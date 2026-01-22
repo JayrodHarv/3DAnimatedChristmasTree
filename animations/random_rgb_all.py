@@ -4,11 +4,16 @@ from utils import color_manager
 class RandomRGBAllAnimation(Animation):
   name = "Random RGB All"
 
-  def setup(self):
+  def __init__(self, coords, pixels):
+    super().__init__(coords, pixels)
     self.color_manager = color_manager.ColorManager()
     self.color_manager.generate_pleasant_colors()
     self.color_manager.shuffle()
     self.hold_time = 3
+    self.current_color = self.color_manager.next_color()
+
+  def reset(self):
+    self.time_elapsed = 0
     self.current_color = self.color_manager.next_color()
 
   def update(self, dt):

@@ -10,12 +10,18 @@ from animations.animation import Animation
 class EnchantmentGlintAnimation(Animation):
     name = "Minecraft Enchantment Glint"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # Configuration: allow two simultaneous glint planes
         self.num_planes = 2
         self.base_color = (127,0,255)  # purple
 
         # Maintain a list of active planes
+        self.planes = []
+        for _ in range(self.num_planes):
+            self.planes.append(self._spawn_plane(initial=True))
+
+    def reset(self):
         self.planes = []
         for _ in range(self.num_planes):
             self.planes.append(self._spawn_plane(initial=True))

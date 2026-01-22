@@ -5,7 +5,8 @@ from animations.animation import Animation
 class TreeCeptionAnimation(Animation):
     name = "Tree-ception"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # precompute per-pixel radial distances and z values for cone rendering
         self.radial = [math.sqrt(x*x + y*y) for x, y, z in self.coords]
         self.z_vals = [z for _, _, z in self.coords]
@@ -29,6 +30,10 @@ class TreeCeptionAnimation(Animation):
         self.color_manager = color_manager.ColorManager()
         self.color_manager.generate_pleasant_colors()
         self.color_manager.shuffle()
+
+    def reset(self):
+        self.cones = []
+        self.last_spawn = -self.spawn_interval
 
     def update(self, dt):
         # Spawn new cone (growth scalar g starts at 0)

@@ -12,9 +12,7 @@ def run_scheduler(pixels, coords, controller, fps=30):
         dt = min(dt, max_dt)
 
         if not controller.paused:
-            AnimClass = controller.current()
-            anim = AnimClass(coords, pixels)
-            anim.setup()
+            anim = controller.current()
 
             scaled_dt = dt * controller.speed
             anim.time_elapsed += scaled_dt

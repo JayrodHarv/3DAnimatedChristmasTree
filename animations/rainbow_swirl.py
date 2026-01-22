@@ -5,7 +5,8 @@ from animations.animation import Animation
 class RainbowSwirlAnimation(Animation):
     name = "Rainbow Swirl"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # Precompute normalized height and angle for each LED
         self.x = np.array([p[0] for p in self.coords])
         self.y = np.array([p[1] for p in self.coords])
@@ -17,6 +18,9 @@ class RainbowSwirlAnimation(Animation):
 
         # Compute angle around trunk for each LED
         self.theta = np.arctan2(self.y, self.x)
+
+    def reset(self):
+        pass
 
     def update(self, dt):
         # Rotating phase term (ROTATION_SPEED = 2)

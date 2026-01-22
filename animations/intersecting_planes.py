@@ -8,7 +8,8 @@ from utils import color_manager
 class IntersectingPlanesAnimation(Animation):
     name = "Intersecting Planes"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # Configuration
         self.num_planes = 4
         self.wrap_padding = 0.1  # padding when wrapping planes beyond bounds
@@ -60,6 +61,11 @@ class IntersectingPlanesAnimation(Animation):
                 "offset": offset,
                 "color": color
             })
+
+    def reset(self):
+        self.planes = []
+        for _ in range(self.num_planes):
+            self.planes.append(self._spawn_plane(initial=True))
 
     def update(self, dt):
         if dt <= 0:

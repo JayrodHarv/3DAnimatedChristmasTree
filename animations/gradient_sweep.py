@@ -5,7 +5,8 @@ from animations.animation import Animation
 class GradientSweepAnimation(Animation):
     name = "Gradient Sweep"
 
-    def setup(self):
+    def __init__(self, coords, pixels):
+        super().__init__(coords, pixels)
         # color management (choose two endpoints for the gradient)
         self.cm = color_manager.ColorManager()
         self.cm.generate_pleasant_colors()
@@ -26,6 +27,12 @@ class GradientSweepAnimation(Animation):
         self.thickness_fraction = 0.03  # slab thickness relative to projection range
 
         # pick initial random direction
+        self._choose_new_direction()
+
+    def reset(self):
+        self.pixel_states = [ (0, 0, 0) for _ in range(self.num_pixels) ]
+        for i in range(self.num_pixels):
+            self.pixels[i] = self.pixel_states[i]
         self._choose_new_direction()
 
     def _choose_new_direction(self):

@@ -1,4 +1,5 @@
-from animations import ANIMATIONS
+from animations import create_animations
+from utils import runtime
 
 class AnimationController:
     def __init__(self, animations):
@@ -11,6 +12,7 @@ class AnimationController:
         return self.animations[self.index]
 
     def next(self):
+        self.animations[self.index].reset()
         self.index = (self.index + 1) % len(self.animations)
 
     def previous(self):
@@ -38,5 +40,14 @@ class AnimationController:
             "paused": self.paused,
             "speed": self.speed,
         }
+    
+COORDS_FILE = "tree_d_coords.txt"
 
-controller = AnimationController(ANIMATIONS)
+# Load hardware + data
+coords, pixels = runtime.setup_tree(
+    coords_file=COORDS_FILE
+)
+    
+animations = create_animations(coords, pixels)
+
+controller = AnimationController(animations)
