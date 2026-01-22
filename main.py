@@ -18,10 +18,11 @@ threading.Thread(
     daemon=True
 ).start()
 
+# For debugging: list all routes
+for r in app.routes:
+    print(r.path, r.methods)
+
 # Start API
 import uvicorn
 
 uvicorn.run(web_router, host="0.0.0.0", port=8000)
-# For debugging: list all routes
-for r in app.routes:
-    print(r.path, r.methods)
