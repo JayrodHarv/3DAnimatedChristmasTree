@@ -1,15 +1,21 @@
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-import os
+from pathlib import Path
 
 router = APIRouter()
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-WEB_DIR = os.path.join(BASE_DIR, "web")
+# Project root = parent of api/
+BASE_DIR = Path(__file__).resolve().parent.parent
+WEB_DIR = BASE_DIR / "web"
 
-router.mount("/web", StaticFiles(directory=WEB_DIR), name="web")
+# Serve /web/* → filesystem web/*
+router.mount(
+    "/web",
+    StaticFiles(directory=str(WEB_DIR)),
+    name="web"
+)
 
 @router.get("/")
 def index():
-    return FileResponse(os.path.join(WEB_DIR, "index.html"))
+    return FileResponse(WEB_DIR / "index.html")
