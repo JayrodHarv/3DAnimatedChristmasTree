@@ -16,10 +16,17 @@ h1 {
   justify-content: flex-end;
 }
 
-#footer {
+#status {
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .row {
