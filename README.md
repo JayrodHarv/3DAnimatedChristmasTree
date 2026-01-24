@@ -33,4 +33,4 @@ Enter command `sudo python PlaySingleAnimation.py` to select an animation from t
 Run the TreeVisualizer script to simulate the tree and the animations I have created for it. For the coordinates, use either the tree_d_coords.txt or the test_coords.txt files and you should be able to have a virtual version of my tree play the animations.
 
 ### How to use a phone as a remote control
-Start up the raspberrypi and run `sudo python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload`. This will start up a small web server that facilitates calls to the api endpoints that controll the tree. Go to the address `http:<insert-raspberrypi-hostname-here>:8000` to access the web interface.
+Start up the raspberrypi and run `sudo python -m uvicorn main:app --host 0.0.0.0 --port 80 --reload`. This will start up a small web server that facilitates calls to the api endpoints that controll the tree. Go to the address `http:<insert-raspberrypi-hostname-here>` to access the web interface.
