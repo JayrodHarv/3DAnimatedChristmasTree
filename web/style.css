@@ -4,6 +4,7 @@ body {
   color: #eee;
   padding: 1rem;
   margin: 0;
+  max-height: 100vh;
 }
 
 h1 {
