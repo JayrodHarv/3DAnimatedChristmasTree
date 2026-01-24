@@ -21,7 +21,9 @@ class IntersectingPlanesAnimation(Animation):
 
         # Create planes with random normals, speeds and initial offsets
         self.planes = []
+        self.spawn_planes()
 
+    def spawn_planes(self):
         for i in range(self.num_planes):
             # Random unit normal
             nx = random.gauss(0, 1)
@@ -64,6 +66,7 @@ class IntersectingPlanesAnimation(Animation):
 
     def reset(self):
         self.planes = []
+        self.spawn_planes()
 
     def update(self, dt):
         if dt <= 0:
