@@ -22,11 +22,11 @@ threading.Thread(
 for r in app.routes:
     print(r.path, r.methods)
 
-app.get("/ping")
+@app.get("/ping")
 def ping():
     return {"pong": True}
 
 # Start API
-import uvicorn
+# import uvicorn
 
-uvicorn.run(web_router, host="0.0.0.0", port=8000)
+# uvicorn.run(web_router, host="0.0.0.0", port=8000)
