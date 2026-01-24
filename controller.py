@@ -1,20 +1,52 @@
 from animations import create_animations
 from utils import runtime
+import time
+import random
 
 class AnimationController:
     def __init__(self, animations):
         self.animations = animations
+        self.order = list(range(len(animations)))
         self.index = 0
         self.speed = 1.0
         self.paused = False
 
+        self.until_time = None
+        self.shuffle_mode = True # start in shuffle mode
+        self.shuffle_duration = 30  # default seconds per animation
+
     def current(self):
         return self.animations[self.index]
+    
+    def start_shuffle(self, duration):
+        self.shuffle_mode = True
+        self.shuffle_duration = duration
+        
+        self.order = list(range(len(self.animations)))
+        random.shuffle(self.order)
+
+        self.index = 0
+        self._start_current_timer()
+
+        self.current().reset()
+        self.current().clear()
+
+    def stop_shuffle(self):
+        self.shuffle_mode = False
+        self.until_time = None
+
+    def _start_current_timer(self):
+        self.until_time = time.time() + self.shuffle_duration
 
     def next(self):
-        self.animations[self.index].reset() # reset current animation
-        self.animations[self.index].clear() # clear current animation
+        self.current().reset() # reset current animation
+        self.current().clear() # clear current animation
         self.index = (self.index + 1) % len(self.animations)
+
+        if self.shuffle_mode:
+            self._start_current_timer()
+        else:
+            self.until_time = None
 
     def previous(self):
         self.animations[self.index].reset() # reset current animation
@@ -45,6 +77,10 @@ class AnimationController:
     
     def list_animations(self):
         return [anim.name for anim in self.animations]
+    
+    def update_timer(self):
+        if self.until_time is not None and time.time() >= self.until_time:
+            self.next()
     
 COORDS_FILE = "tree_d_coords.txt"
 

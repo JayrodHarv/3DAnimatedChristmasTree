@@ -19,6 +19,8 @@ def run_scheduler(pixels, coords, controller, fps=30):
 
         dt = min(dt, max_dt)
 
+        controller.update_timer()
+
         if not controller.paused:
             anim = controller.current()
 

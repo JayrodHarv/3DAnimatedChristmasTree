@@ -33,6 +33,19 @@ async function loadAnimations() {
   });
 }
 
+const shuffleBtn = document.getElementById("shuffleBtn");
+const shuffleDuration = document.getElementById("shuffleDuration");
+
+shuffleBtn.addEventListener("click", async () => {
+  const duration = Number(shuffleDuration.value);
+
+  await fetch("/api/shuffle", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ duration })
+  });
+});
+
 function next()   { call("/next").then(refresh); }
 function prev()   { call("/previous").then(refresh); }
 function toggle() { call("/toggle").then(refresh); }

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from controller import controller
+from pydantic import BaseModel
 
 api_router = APIRouter()
 
@@ -35,3 +36,15 @@ def toggle():
 def speed(value: float):
     controller.set_speed(value)
     return controller.status()
+
+class ShuffleRequest(BaseModel):
+    duration: float  # seconds per animation
+
+@api_router.post("/shuffle")
+def shuffle_animations(req: ShuffleRequest):
+    controller.start_shuffle(duration=req.duration)
+    return {
+        "status": "ok",
+        "mode": "shuffle",
+        "duration": req.duration
+    }
