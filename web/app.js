@@ -13,7 +13,7 @@ async function call(path, method="POST", body=null) {
 async function refresh() {
   const s = await call("/status", "GET");
   document.getElementById("status").innerText =
-    `Playing: ${s.current} | Speed: ${s.speed.toFixed(2)} | Paused: ${s.paused}`;
+    `Playing: ${s.current} | Speed: ${s.speed.toFixed(2)} | Paused: ${s.paused} | Mode: ${s.mode} | Until: ${s.until ? new Date(s.until * 1000).toLocaleTimeString() : 'N/A'}`;
 
   document.getElementById("speed").value = s.speed;
   document.getElementById("speedLabel").innerText =

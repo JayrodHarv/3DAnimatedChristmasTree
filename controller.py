@@ -73,6 +73,8 @@ class AnimationController:
             "current": self.current().name,
             "paused": self.paused,
             "speed": self.speed,
+            "mode": "shuffle" if self.shuffle_mode else "normal",
+            "until": self.until_time,
         }
     
     def list_animations(self):
