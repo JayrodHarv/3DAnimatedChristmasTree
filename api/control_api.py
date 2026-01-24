@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from controller import controller, safe_shutdown, pixels
+from controller import controller, pixels
 from pydantic import BaseModel
 
 api_router = APIRouter()
@@ -51,5 +51,5 @@ def shuffle_animations(req: ShuffleRequest):
 
 @api_router.post("/shutdown")
 def shutdown_pi():
-    safe_shutdown(pixels)
+    controller.safe_shutdown(pixels)
     return {"status": "shutting down"}
