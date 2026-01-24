@@ -34,3 +34,37 @@ Run the TreeVisualizer script to simulate the tree and the animations I have cre
 
 ### How to use a phone as a remote control
 Start up the raspberrypi and run `sudo python -m uvicorn main:app --host 0.0.0.0 --port 80 --reload`. This will start up a small web server that facilitates calls to the api endpoints that controll the tree. Go to the address `http:<insert-raspberrypi-hostname-here>` to access the web interface.
+
+#### Remote Control Functionality on Startup of Raspberrypi
+If you want the remote control to work on startup of the raspberrypi, you need to create a background service for the api and to enable it to startup with the raspberrypi.
+To do this, create a systemd service file using `sudo nano /etc/systemd/system/tree-api.service`
+```bash
+[Unit]
+Description=Christmas Tree Animation API
+After=network.target
+
+[Service]
+Type=simple
+User=<insert-linux-username>
+WorkingDirectory=<insert-path-to-project>
+
+# Activate venv and start FastAPI
+ExecStart=sudo python \
+          -m uvicorn main:app \
+          --host 0.0.0.0 \
+          --port 80
+
+Restart=always
+RestartSec=3
+
+# Clean shutdown
+KillSignal=SIGINT
+TimeoutStopSec=10
+
+# Environment safety
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+```
+After making this file, run `sudo systemctl daemon-reload` then `sudo systemctl enable tree-api` to enable the api to startup with the raspberrypi. To start it initially, run the command `sudo systemctl start tree-api`. After doing this, you should be able to visit the web interface at the address: `http:<insert-raspberrypi-hostname-here>` in a browser and should see the gui to interface with the tree.
