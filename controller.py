@@ -24,7 +24,6 @@ class AnimationController:
         self.shuffle_mode = True
         self.shuffle_duration = duration
         
-        self.order = list(range(len(self.animations)))
         random.shuffle(self.order)
 
         self.index = self.order[0]
@@ -44,7 +43,7 @@ class AnimationController:
     def next(self):
         self.current().reset() # reset current animation
         self.current().clear() # clear current animation
-        self.index = self.order[self.index + 1 % len(self.order)]
+        self.index = self.order[(self.index + 1) % len(self.order)]
 
         if self.shuffle_mode:
             self._start_current_timer()
@@ -52,14 +51,14 @@ class AnimationController:
             self.until_time = None
 
     def previous(self):
-        self.animations[self.index].reset() # reset current animation
-        self.animations[self.index].clear() # clear current animation
-        self.index = self.order[self.index - 1 % len(self.order)]
+        self.current().reset() # reset current animation
+        self.current().clear() # clear current animation
+        self.index = self.order[(self.index - 1) % len(self.order)]
 
     def play(self, name):
         self.stop_shuffle() # stop shuffle mode
-        self.animations[self.index].reset() # reset current animation
-        self.animations[self.index].clear() # clear current animation
+        self.current().reset() # reset current animation
+        self.current().clear() # clear current animation
         for i, anim in enumerate(self.animations):
             if anim.name == name:
                 self.index = i
