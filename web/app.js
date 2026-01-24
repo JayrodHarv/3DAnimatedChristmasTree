@@ -46,6 +46,18 @@ shuffleBtn.addEventListener("click", async () => {
   });
 });
 
+document.getElementById("shutdownBtn").addEventListener("click", async () => {
+  const confirmed = confirm(
+    "This will safely shut down the Raspberry Pi.\n\nContinue?"
+  );
+
+  if (!confirmed) return;
+
+  await fetch("/api/shutdown", { method: "POST" });
+
+  alert("Shutting down… You can unplug power once the LEDs turn off.");
+});
+
 function next()   { call("/next").then(refresh); }
 function prev()   { call("/previous").then(refresh); }
 function toggle() { call("/toggle").then(refresh); }

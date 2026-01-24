@@ -36,3 +36,8 @@ input[type=range] {
   font-size: 0.9rem;
   color: #aaa;
 }
+
+.danger {
+  background: #b00020;
+  color: white;
+}

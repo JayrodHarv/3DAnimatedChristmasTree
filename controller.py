@@ -2,6 +2,7 @@ from animations import create_animations
 from utils import runtime
 import time
 import random
+import subprocess
 
 class AnimationController:
     def __init__(self, animations):
@@ -84,6 +85,16 @@ class AnimationController:
     def update_timer(self):
         if self.until_time is not None and time.time() >= self.until_time:
             self.next()
+
+    def safe_shutdown(pixels):
+        try:
+            pixels.fill((0, 0, 0)) # turn off all pixels
+            pixels.show()
+            time.sleep(0.5)
+        except Exception:
+            pass
+        # Now issue shutdown command
+        subprocess.Popen(["sudo", "/sbin/shutdown", "-h", "now"])
     
 COORDS_FILE = "tree_d_coords.txt"
 
