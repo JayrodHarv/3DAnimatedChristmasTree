@@ -56,7 +56,7 @@ class AnimationController:
         self.index = self.order[self.index - 1 % len(self.order)]
 
     def play(self, name):
-        self.shuffle_mode = False # stop shuffle mode if manual play
+        self.stop_shuffle() # stop shuffle mode
         self.animations[self.index].reset() # reset current animation
         self.animations[self.index].clear() # clear current animation
         for i, anim in enumerate(self.animations):
