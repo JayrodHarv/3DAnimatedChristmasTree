@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 WEB_DIR = BASE_DIR / "web"
 
 # Serve /web/* → filesystem web/*
-web_router.mount(
+app.mount(
     "/web",
     StaticFiles(directory=str(WEB_DIR)),
     name="web"
