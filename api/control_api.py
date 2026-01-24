@@ -21,14 +21,9 @@ def play(name: str):
     controller.play(name)
     return controller.status()
 
-@api_router.post("/pause")
-def pause():
-    controller.pause()
-    return controller.status()
-
-@api_router.post("/resume")
-def resume():
-    controller.resume()
+@api_router.post("/toggle")
+def toggle():
+    controller.toggle()
     return controller.status()
 
 @api_router.post("/speed/{value}")

@@ -28,11 +28,8 @@ class AnimationController:
     def set_speed(self, value):
         self.speed = max(0.05, value)
 
-    def pause(self):
-        self.paused = True
-
-    def resume(self):
-        self.paused = False
+    def toggle(self):
+        self.paused = not self.paused
 
     def status(self):
         return {
