@@ -26,7 +26,7 @@ class AnimationController:
         self.order = list(range(len(self.animations)))
         random.shuffle(self.order)
 
-        self.index = 0
+        self.index = self.order[0]
         self._start_current_timer()
 
         self.current().reset()

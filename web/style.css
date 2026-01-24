@@ -11,6 +11,17 @@ h1 {
   margin-top: 0;
 }
 
+#shutdownDiv {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
 .row {
   margin-bottom: 1.2rem;
 }
