@@ -43,7 +43,7 @@ class AnimationController:
     def next(self):
         self.current().reset() # reset current animation
         self.current().clear() # clear current animation
-        self.index = (self.index + 1) % len(self.order)
+        self.index = self.order[self.index + 1 % len(self.order)]
 
         if self.shuffle_mode:
             self._start_current_timer()
@@ -53,7 +53,7 @@ class AnimationController:
     def previous(self):
         self.animations[self.index].reset() # reset current animation
         self.animations[self.index].clear() # clear current animation
-        self.index = (self.index - 1) % len(self.order)
+        self.index = self.order[self.index - 1 % len(self.order)]
 
     def play(self, name):
         self.shuffle_mode = False # stop shuffle mode if manual play
