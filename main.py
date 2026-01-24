@@ -22,6 +22,10 @@ threading.Thread(
 for r in app.routes:
     print(r.path, r.methods)
 
+app.get("/ping")
+def ping():
+    return {"pong": True}
+
 # Start API
 import uvicorn
 
