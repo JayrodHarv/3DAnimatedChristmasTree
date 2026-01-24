@@ -19,6 +19,9 @@ h1 {
   position: fixed;
   bottom: 0;
   width: 100%;
+  background: #222;
+  color: #ccc;
+  padding: 0.5rem 1rem;
 }
 
 #controls {
