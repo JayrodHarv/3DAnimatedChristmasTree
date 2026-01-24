@@ -11,7 +11,7 @@ from api.web import web_router
 app = FastAPI()
 
 # Project root = parent of api/
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "web"
 
 # Serve /web/* → filesystem web/*
