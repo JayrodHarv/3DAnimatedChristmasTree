@@ -1,10 +1,18 @@
 import time
 
+_stop = False
+
+def stop_scheduler():
+    global _stop
+    _stop = True
+
 def run_scheduler(pixels, coords, controller, fps=30):
+    global _stop
+
     last = time.time()
     max_dt = 1.0 / fps * 2  # safety clamp
 
-    while True:
+    while not _stop:
         now = time.time()
         dt = now - last
         last = now
