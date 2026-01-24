@@ -16,6 +16,11 @@ def next_anim():
     controller.next()
     return controller.status()
 
+@api_router.post("/previous")
+def previous_anim():
+    controller.previous()
+    return controller.status()
+
 @api_router.post("/play/{name}")
 def play(name: str):
     controller.play(name)

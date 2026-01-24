@@ -12,14 +12,18 @@ class AnimationController:
         return self.animations[self.index]
 
     def next(self):
-        self.animations[self.index].reset()
+        self.animations[self.index].reset() # reset current animation
+        self.animations[self.index].clear() # clear current animation
         self.index = (self.index + 1) % len(self.animations)
 
     def previous(self):
+        self.animations[self.index].reset() # reset current animation
+        self.animations[self.index].clear() # clear current animation
         self.index = (self.index - 1) % len(self.animations)
 
     def play(self, name):
         self.animations[self.index].reset() # reset current animation
+        self.animations[self.index].clear() # clear current animation
         for i, anim in enumerate(self.animations):
             if anim.name == name:
                 self.index = i

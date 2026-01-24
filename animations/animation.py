@@ -26,6 +26,9 @@ class Animation:
             max(abs(self.min_y), abs(self.max_y))
         )
 
+    def clear(self):
+        self.pixels.fill((0, 0, 0))
+
     def reset(self):
         pass
 
