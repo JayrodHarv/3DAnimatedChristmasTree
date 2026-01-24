@@ -19,6 +19,7 @@ class AnimationController:
         self.index = (self.index - 1) % len(self.animations)
 
     def play(self, name):
+        self.animations[self.index].reset() # reset current animation
         for i, anim in enumerate(self.animations):
             if anim.name == name:
                 self.index = i
