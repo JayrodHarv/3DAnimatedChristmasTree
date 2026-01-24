@@ -86,7 +86,7 @@ class AnimationController:
         if self.until_time is not None and time.time() >= self.until_time:
             self.next()
 
-    def safe_shutdown(pixels):
+    def safe_shutdown(self, pixels):
         try:
             pixels.fill((0, 0, 0)) # turn off all pixels
             pixels.show()
