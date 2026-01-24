@@ -3,12 +3,12 @@ from scheduler import run_scheduler
 from controller import controller, pixels, coords
 
 from fastapi import FastAPI
-from api.control_api import router as api_router
-from api.web import router as web_router
+from api.control_api import api_router
+from api.web import web_router
 
 app = FastAPI()
 
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api")
 app.include_router(web_router)
 
 # Start scheduler
