@@ -24,7 +24,7 @@ First off, in order to use my code, you will have had to build your own tree. If
 
 You also need to be able to connect to the Raspberrypi. This is most conveniently done via ssh. This requires your pi to be connected to your local network and for ssh to be enabled on your pi. You do this by entering the command `sudo raspi-config`, navigating to the Interfacing Options, and select SSH. Do this step when first setting up the raspberrypi using a keyboard/mouse and monitor plugged into pi.
 
-Once you have the tree built, you need to scan it. This is done by setting up a camera at a fixed position so that it contains all the lights in its frame. You then need to set up AutoHotKey and use my scan_tree.ahk macro in tandem with the ScanTree.py to take pictures of each light from 4 different directions which are all 90 degrees apart. Once you have done this, use the TriangulateCoordinates.py script and pass it the necessary arguements to have it output the coordinates to a text file.
+Once you have the tree built, you need to scan it. This is done by setting up a camera at a fixed position so that it contains all the lights in its frame. You then need to set up AutoHotKey and use my `scan_tree.ahk` macro in tandem with the `ScanTree.py` to take pictures of each light from 4 different directions which are all 90 degrees apart. Once you have done this, use the `TriangulateCoordinates.py` script and pass it the necessary arguements to have it output the coordinates to a text file.
 
 Once you have the text file, try running any animation by running `sudo python PlaySingleAnimation.py` that requires the coordinates and see if it looks right. If it looks completely wrong, go through each step again. If only a handfull of lights appear to be incorrect, use the CoordinateCorrectionGUI.py script to correct those light coordinates.
 
@@ -34,7 +34,7 @@ Enter command `sudo python CycleAnimations.py` to cycle through every animation.
 Enter command `sudo python PlaySingleAnimation.py` to select an animation from the list to play indefinitely.
 
 ### How to simulate the tree
-Run the TreeVisualizer script to simulate the tree and the animations I have created for it. For the coordinates, use either the tree_d_coords.txt or the test_coords.txt files and you should be able to have a virtual version of my tree play the animations.
+Run the `TreeVisualizer.py` script to simulate the tree and the animations I have created for it. For the coordinates, use either the `tree_d_coords.txt` or the `test_coords.txt` files and you should be able to have a virtual version of my tree play the animations.
 
 ### How to use a phone as a remote control
 Start up the raspberrypi and run `sudo python -m uvicorn main:app --host 0.0.0.0 --port 80 --reload`. This will start up a small web server that facilitates calls to the api endpoints that controll the tree. Go to the address `http:<insert-raspberrypi-hostname-here>` to access the web interface.
