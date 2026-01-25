@@ -10,7 +10,7 @@ class TimeWarpAnimation(Animation):
         pass
 
     def reset(self):
-        pass
+        self.time_elapsed = 0.0
 
     def update(self, dt):
         for j, (x, y, z) in enumerate(self.coords):
