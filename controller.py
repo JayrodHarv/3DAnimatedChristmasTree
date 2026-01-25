@@ -19,7 +19,7 @@ class AnimationController:
         self.start_shuffle(duration=self.shuffle_duration) # start in shuffle mode
 
     def current(self):
-        return self.animations[self.index]
+        return self.animations[self.order[self.index]]
     
     def start_shuffle(self, duration):
         self.shuffle_mode = True
@@ -27,7 +27,7 @@ class AnimationController:
         
         random.shuffle(self.order)
 
-        self.index = self.order[0]
+        self.index = 0
         self._start_current_timer()
 
     def stop_shuffle(self):
