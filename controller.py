@@ -30,9 +30,6 @@ class AnimationController:
         self.index = self.order[0]
         self._start_current_timer()
 
-        self.current().reset()
-        self.current().clear()
-
     def stop_shuffle(self):
         self.shuffle_mode = False
         self.until_time = None
