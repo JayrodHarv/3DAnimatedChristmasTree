@@ -16,6 +16,7 @@ Utilizing the power of a lot of crappy python code, I was able to hook up 550 in
 
 ## External Python Libraries Used (Must be installed to use this program)
 board, neopixel, argparse, numpy, matplotlib, cv2, tkinter
+
 *To install dependencies, enter the command* `pip install board neopixel argparse numpy matplotlib cv2 tkinter`
 
 ## User Guide
