@@ -9,7 +9,7 @@ class AnimationController:
         self.animations = animations
         self.order = list(range(len(animations)))
         random.shuffle(self.order) # start in random order
-        self.index = 0
+        self.index = self.order[0]
         self.speed = 1.0
         self.paused = False
 
