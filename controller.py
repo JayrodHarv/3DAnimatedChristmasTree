@@ -8,14 +8,15 @@ class AnimationController:
     def __init__(self, animations):
         self.animations = animations
         self.order = list(range(len(animations)))
-        random.shuffle(self.order) # start in random order
-        self.index = self.order[0]
+        self.index = 0
         self.speed = 1.0
         self.paused = False
 
         self.until_time = None
-        self.shuffle_mode = True # start in shuffle mode
+        self.shuffle_mode = False
         self.shuffle_duration = 30  # default seconds per animation
+
+        self.start_shuffle(duration=self.shuffle_duration) # start in shuffle mode
 
     def current(self):
         return self.animations[self.index]
