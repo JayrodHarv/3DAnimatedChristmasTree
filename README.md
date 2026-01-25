@@ -16,13 +16,16 @@ Utilizing the power of a lot of crappy python code, I was able to hook up 550 in
 
 ## External Python Libraries Used (Must be installed to use this program)
 board, neopixel, argparse, numpy, matplotlib, cv2, tkinter
+*To install dependencies, enter the command* `pip install board neopixel argparse numpy matplotlib cv2 tkinter`
 
 ## User Guide
 First off, in order to use my code, you will have had to build your own tree. If you wish to do so, take the above video as a guide for how to do it. The video doesn't cover most of the wiring, but just know that I used pin 12 (GPIO 18) for the data wire and pin 6 (Ground) for the gound wire connections to the lights from the Raspberry Pi.
 
+You also need to be able to connect to the Raspberrypi. This is most conveniently done via ssh. This requires your pi to be connected to your local network and for ssh to be enabled on your pi. You do this by entering the command `sudo raspi-config`, navigating to the Interfacing Options, and select SSH. Do this step when first setting up the raspberrypi using a keyboard/mouse and monitor plugged into pi.
+
 Once you have the tree built, you need to scan it. This is done by setting up a camera at a fixed position so that it contains all the lights in its frame. You then need to set up AutoHotKey and use my scan_tree.ahk macro in tandem with the ScanTree.py to take pictures of each light from 4 different directions which are all 90 degrees apart. Once you have done this, use the TriangulateCoordinates.py script and pass it the necessary arguements to have it output the coordinates to a text file.
 
-Once you have the text file, try running any animation by running `sudo python PlaySingleAnimation.py` that requires the coordinates and see if it looks right. If it looks completely wrong, go through each step again. If only a handfull of lights appear to be incorrect, use the coordinate_correction.py script to correct those light coordinates.
+Once you have the text file, try running any animation by running `sudo python PlaySingleAnimation.py` that requires the coordinates and see if it looks right. If it looks completely wrong, go through each step again. If only a handfull of lights appear to be incorrect, use the CoordinateCorrectionGUI.py script to correct those light coordinates.
 
 ### How to use once tree is built and scanned
 Enter command `sudo python CycleAnimations.py` to cycle through every animation. By default, the ordering is shuffled and the duration of each animation is 60 seconds (1 minute). Enter command `sudo python CycleAnimations.py --help` for information on how to change these parameters
@@ -68,3 +71,7 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=multi-user.target
 ```
 After making this file, run `sudo systemctl daemon-reload` then `sudo systemctl enable tree-api` to enable the api to startup with the raspberrypi. To start it initially, run the command `sudo systemctl start tree-api`. After doing this, you should be able to visit the web interface at the address: `http:<insert-raspberrypi-hostname-here>` in a browser and should see the gui to interface with the tree.
+
+Also, to make it possible to shut off the raspberry pi from the web interface, you need to edit some config files on your pi. Normally this would be a bad idea but it's only hosted on the LAN and it's the only thing that still requires you to connect to the pi via ssh so it makes it more user friendly to do it this way. To edit the config, enter the command `sudo visudo` and add this line at the end of the file `<insert-your-linux-username> ALL=(ALL) NOPASSWD: /sbin/shutdown`. This allows for the user to run only the shutdown command without needing to enter the sudo password.
+
+After all of this, you should have it so when you start up the raspberrypi, after a few seconds it starts shuffling through the animations. You can then connect to the web interface by visiting the site `raspberrypi.local` on a browser to be able to control the tree. You should also be able to shutdown the raspberry pi via the web too.
