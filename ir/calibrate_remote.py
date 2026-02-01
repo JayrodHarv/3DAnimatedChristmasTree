@@ -1,47 +1,82 @@
-import json
-from ir_controller import IRController
 import time
+import json
+import lirc
+from collections import Counter
+from pathlib import Path
 
-BUTTON_MAP_FILE = "ir_buttons.json"
+OUTPUT_FILE = Path("ir_buttons.json")
+SAMPLE_TIME = 1.5
+MIN_SAMPLES = 3
 
-learned = {}
 
-def handle_code(code):
-    print(f"\nReceived IR code: {code}")
-    name = input("Enter action name for this button (or blank to skip): ").strip()
-    if name:
-        learned[code] = name
-        print(f"Mapped {code} → {name}")
+def learn_button(action_name):
+    print(f"\nPress and HOLD the button for '{action_name}'...")
+    print("Listening...")
 
-def dummy_handler(action):
-    pass
+    sockid = lirc.init("calibrate", blocking=False)
+    start = time.time()
+    codes = []
 
-ir = IRController(
-    gpio_pin=17,
-    action_map={},
-    action_handler=lambda action: None
-)
+    while time.time() - start < SAMPLE_TIME:
+        received = lirc.nextcode()
+        if received:
+            codes.append(received[0])
+        time.sleep(0.01)
 
-print("IR calibration mode")
-print("Press buttons on the remote (Ctrl+C to finish)")
+    lirc.deinit()
 
-try:
-    while True:
-        time.sleep(0.1)
+    if not codes:
+        print("❌ No signal detected")
+        return None
 
-        if ir.edges:
-            code = ir._decode_nec()
+    counts = Counter(codes)
+
+    # Remove obvious noise values
+    counts.pop("0x0", None)
+    counts.pop("0x80000000", None)
+
+    if not counts:
+        print("❌ Only noise detected")
+        return None
+
+    code, count = counts.most_common(1)[0]
+
+    if count < MIN_SAMPLES:
+        print("❌ Signal too unstable")
+        return None
+
+    print(f"✅ Learned code {code} ({count} hits)")
+    return code
+
+
+def main():
+    if OUTPUT_FILE.exists():
+        with open(OUTPUT_FILE, "r") as f:
+            mapping = json.load(f)
+    else:
+        mapping = {}
+
+    print("IR Button Calibration")
+    print("Press Ctrl+C to finish\n")
+
+    try:
+        while True:
+            action = input("Enter action name (e.g. next, shuffle, shutdown): ").strip()
+            if not action:
+                continue
+
+            code = learn_button(action)
             if code:
-                ir.edges.clear()
-                handle_code(code)
+                mapping[code] = action
 
-except KeyboardInterrupt:
-    pass
+                with open(OUTPUT_FILE, "w") as f:
+                    json.dump(mapping, f, indent=2)
 
-finally:
-    ir.stop()
+                print(f"Saved: {code} → {action}")
 
-    with open(BUTTON_MAP_FILE, "w") as f:
-        json.dump(learned, f, indent=2)
+    except KeyboardInterrupt:
+        print("\nCalibration complete")
 
-    print("\nSaved button mappings to ir_buttons.json")
+
+if __name__ == "__main__":
+    main()

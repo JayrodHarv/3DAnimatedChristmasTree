@@ -1,96 +1,68 @@
-import pigpio
 import time
-import threading
+import json
+import lirc
+from pathlib import Path
+
 
 class IRController:
-    """
-    Receives IR signals via GPIO and maps buttons to actions.
-    """
+    def __init__(
+        self,
+        mapping_file="ir_buttons.json",
+        debounce_time=0.35,
+    ):
+        self.debounce_time = debounce_time
+        self.last_code = None
+        self.last_time = 0
 
-    def __init__(self, gpio_pin, action_map, action_handler):
+        self.mapping_file = Path(mapping_file)
+        self.button_map = {}
+
+        self._load_mapping()
+        self.sockid = lirc.init("tree", blocking=False)
+
+    # -------------------------
+    # Mapping
+    # -------------------------
+
+    def _load_mapping(self):
+        if self.mapping_file.exists():
+            with open(self.mapping_file, "r") as f:
+                self.button_map = json.load(f)
+        else:
+            self.button_map = {}
+
+    def reload_mapping(self):
+        self._load_mapping()
+
+    # -------------------------
+    # Main update loop
+    # -------------------------
+
+    def poll(self):
         """
-        gpio_pin: GPIO pin connected to IR receiver
-        action_map: dict {hex_code: action_name}
-        action_handler: function(action_name)
+        Call this frequently (e.g. every frame / tick).
+        Returns the action name if a valid button was pressed.
         """
-        self.gpio = gpio_pin
-        self.action_map = action_map
-        self.action_handler = action_handler
+        codes = lirc.nextcode()
+        now = time.time()
 
-        self.pi = pigpio.pi()
-        if not self.pi.connected:
-            raise RuntimeError("pigpio daemon not running")
-
-        self.edges = []
-        self.last_action_time = 0
-        self.debounce = 0.4  # seconds
-
-        self.callback = self.pi.callback(
-            self.gpio,
-            pigpio.EITHER_EDGE,
-            self._edge_callback
-        )
-
-        self.running = True
-        self.thread = threading.Thread(target=self._process_loop, daemon=True)
-        self.thread.start()
-
-    def _edge_callback(self, gpio, level, tick):
-        self.edges.append((level, tick))
-
-    def _decode_nec(self):
-        """
-        Decode NEC IR pulses from edge timings.
-        Returns hex string or None.
-        """
-        if len(self.edges) < 66:
+        if not codes:
             return None
 
-        pulses = []
-        for i in range(1, len(self.edges)):
-            dt = pigpio.tickDiff(self.edges[i - 1][1], self.edges[i][1])
-            pulses.append(dt)
+        code = codes[0]
 
-        bits = []
-        for p in pulses:
-            if 1000 < p < 2000:
-                bits.append(0)
-            elif 2000 < p < 3000:
-                bits.append(1)
-
-        if len(bits) < 32:
+        # Ignore noise / repeat frames
+        if code == self.last_code and (now - self.last_time) < self.debounce_time:
             return None
 
-        code = 0
-        for b in bits[:32]:
-            code = (code << 1) | b
+        self.last_code = code
+        self.last_time = now
 
-        return hex(code)
+        return self.button_map.get(code)
 
-    def _process_loop(self):
-        while self.running:
-            time.sleep(0.05)
+    # -------------------------
+    # Utility
+    # -------------------------
 
-            code = self._decode_nec()
-            if not code:
-                continue
-
-            self.edges.clear()
-
-            now = time.time()
-            if now - self.last_action_time < self.debounce:
-                continue
-
-            self.last_action_time = now
-
-            action = self.action_map.get(code)
-            if action:
-                print(f"[IR] {code} → {action}")
-                self.action_handler(action)
-            else:
-                print(f"[IR] Unknown code: {code}")
-
-    def stop(self):
-        self.running = False
-        self.callback.cancel()
-        self.pi.stop()
+    def close(self):
+        lirc.deinit()
