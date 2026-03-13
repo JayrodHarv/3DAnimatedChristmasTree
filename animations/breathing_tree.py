@@ -5,11 +5,8 @@ from animations.animation import Animation
 class BreathingTreeAnimation(Animation):
     name = "Breathing Tree"
 
-    def __init__(self, coords, pixels):
-        super().__init__(coords, pixels)
-        self.cm = color_manager.ColorManager()
-        self.cm.generate_pleasant_colors()
-        self.cm.shuffle()
+    def __init__(self, tree, renderer):
+        super().__init__(tree, renderer)
         self.color = np.array(self.cm.next_color(), dtype=float)
 
         # cycle controls how fast the cone grows/shrinks

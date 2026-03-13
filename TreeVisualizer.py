@@ -31,6 +31,11 @@ from matplotlib.figure import Figure
 
 from utils import my_utils
 from animations import ANIMATIONS
+from model.tree_model import TreeModel
+
+# Use the engine controller/renderer to drive animations in the visualizer
+from engine.renderer import Renderer
+from engine.controller import AnimationController as EngineAnimationController
 
 
 class PixelBuffer:
@@ -64,13 +69,14 @@ class TreeVisualizer(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.coords = []
+        self.tree = None
         if coords_file:
             self.load_coords(coords_file)
 
         # GUI state
         self.anim_classes = ANIMATIONS
         self.anim_index = 0
-        self.animation = None
+        self.controller = None
         self.pixels = None
         self.playing = False
         self.speed = 1.0
@@ -83,8 +89,9 @@ class TreeVisualizer(tk.Tk):
         self._build_ui()
         self._init_plot()
 
-        # If we have coordinates, initialize a default animation
+        # If we have coordinates, initialize a default controller/animation
         if self.coords:
+            self.tree = TreeModel(self.coords)
             self._prepare_animation(self.anim_index)
 
         # Start the tk update loop
@@ -197,47 +204,79 @@ class TreeVisualizer(tk.Tk):
     def _prepare_animation(self, index):
         if not self.coords:
             return
+        # Create a pixel buffer and renderer, then construct the engine AnimationController
+        if self.tree is None:
+            self.tree = TreeModel(self.coords)
 
-        AnimClass = self.anim_classes[index]
         self.pixels = PixelBuffer(len(self.coords))
+        renderer = Renderer(self.pixels)
         try:
-            self.animation = AnimClass(self.coords, self.pixels)
-            self.animation.setup()
-            # Ensure initial draw
+            self.controller = EngineAnimationController(self.tree, renderer)
+
+            # Ensure selected index is honored
+            self.controller.index = index % len(self.controller.animations)
+            self.controller.current = self.controller.animations[self.controller.index]
+
+            # Initial draw
             self._apply_pixels_to_plot()
-            self.status_var.set(f"Selected animation: {AnimClass.name}")
+            anim_name = getattr(self.controller.current, 'name', self.controller.current.__class__.__name__)
+            self.status_var.set(f"Selected animation: {anim_name}")
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to initialize animation: {e}")
-            self.animation = None
+            messagebox.showerror("Error", f"Failed to initialize controller: {e}")
+            self.controller = None
 
     def _toggle_play(self):
-        if not self.animation:
+        if not self.controller:
             messagebox.showinfo("Info", "Load coordinates and select an animation first")
             return
         self.playing = not self.playing
         if self.playing:
             self.last_time = time.time()
-            self.status_var.set(f"Playing: {self.animation.name}")
+            name = getattr(self.controller.current, 'name', self.controller.current.__class__.__name__)
+            self.status_var.set(f"Playing: {name}")
         else:
-            self.status_var.set(f"Paused: {self.animation.name}")
+            name = getattr(self.controller.current, 'name', self.controller.current.__class__.__name__)
+            self.status_var.set(f"Paused: {name}")
 
     def _on_anim_selected(self, event=None):
         name = self.anim_combo.get()
         for i, cls in enumerate(self.anim_classes):
             if cls.name == name:
                 self.anim_index = i
-                self._prepare_animation(i)
+                # If controller exists, set selected animation by class name
+                if self.controller:
+                    try:
+                        self.controller.set(cls.__name__)
+                        self.controller.index = i
+                        self.status_var.set(f"Selected animation: {name}")
+                    except Exception:
+                        # fallback to re-preparing controller
+                        self._prepare_animation(i)
+                else:
+                    self._prepare_animation(i)
                 break
 
     def _next_anim(self):
-        self.anim_index = (self.anim_index + 1) % len(self.anim_classes)
-        self.anim_combo.current(self.anim_index)
-        self._prepare_animation(self.anim_index)
+        if self.controller:
+            self.controller.next()
+            self.anim_index = self.controller.index
+            self.anim_combo.current(self.anim_index)
+            self.status_var.set(f"Selected animation: {getattr(self.controller.current,'name', self.controller.current.__class__.__name__)}")
+        else:
+            self.anim_index = (self.anim_index + 1) % len(self.anim_classes)
+            self.anim_combo.current(self.anim_index)
+            self._prepare_animation(self.anim_index)
 
     def _prev_anim(self):
-        self.anim_index = (self.anim_index - 1) % len(self.anim_classes)
-        self.anim_combo.current(self.anim_index)
-        self._prepare_animation(self.anim_index)
+        if self.controller:
+            self.controller.previous()
+            self.anim_index = self.controller.index
+            self.anim_combo.current(self.anim_index)
+            self.status_var.set(f"Selected animation: {getattr(self.controller.current,'name', self.controller.current.__class__.__name__)}")
+        else:
+            self.anim_index = (self.anim_index - 1) % len(self.anim_classes)
+            self.anim_combo.current(self.anim_index)
+            self._prepare_animation(self.anim_index)
 
     def _on_speed(self, val):
         try:
@@ -258,8 +297,8 @@ class TreeVisualizer(tk.Tk):
 
         dt = now - self.last_time
         self.last_time = now
-
         if self.playing and self.animation:
+            # Legacy animation path (shouldn't be used when controller is present)
             scaled_dt = dt * self.speed
             try:
                 # Keep animation.time_elapsed in sync (many animations reference it)
@@ -269,6 +308,21 @@ class TreeVisualizer(tk.Tk):
                 self._apply_pixels_to_plot()
             except Exception as e:
                 # If an animation raises, show error and pause
+                self.playing = False
+                messagebox.showerror("Animation Error", f"Animation raised an exception: {e}")
+
+        # New controller-driven update path
+        if self.playing and self.controller:
+            scaled_dt = dt * self.speed
+            try:
+                # Drive the current animation through the controller's renderer
+                # instead of using controller.update() so we can apply speed.
+                self.controller.current.time_elapsed = getattr(self.controller.current, 'time_elapsed', 0) + scaled_dt
+                self.controller.current.update(scaled_dt)
+                # ensure renderer pushes pixels through
+                self.controller.renderer.show()
+                self._apply_pixels_to_plot()
+            except Exception as e:
                 self.playing = False
                 messagebox.showerror("Animation Error", f"Animation raised an exception: {e}")
 
